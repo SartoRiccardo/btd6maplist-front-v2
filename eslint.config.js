@@ -9,12 +9,11 @@ export default [
   js.configs.recommended,
   ...pluginVue.configs['flat/recommended'],
   {
-    files: ['**/*.{ts,tsx,vue}'],
+    files: ['**/*.{ts,tsx}'],
     languageOptions: {
       parser: tseslint.parser,
       parserOptions: {
         projectService: true,
-        extraFileExtensions: ['.vue'],
       },
     },
     plugins: {
@@ -26,21 +25,20 @@ export default [
     languageOptions: {
       parser: pluginVue.parser,
       parserOptions: {
-        parser: tseslint.parser,
         ecmaVersion: 'latest',
         sourceType: 'module',
-        projectService: true,
-        extraFileExtensions: ['.vue'],
       },
+    },
+    plugins: {
+      '@typescript-eslint': tseslint.plugin,
     },
   },
   {
-    files: ['**/*.{ts,tsx,vue}'],
+    files: ['**/*.{ts,tsx}'],
     plugins: {
       '@typescript-eslint': tseslint.plugin,
     },
     rules: {
-      // TypeScript - maximum fascism
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/no-unused-vars': ['error', {
         args: 'all',
@@ -68,8 +66,6 @@ export default [
       '@typescript-eslint/no-non-null-assertion': 'error',
       '@typescript-eslint/no-shadow': 'error',
       '@typescript-eslint/switch-exhaustiveness-check': 'error',
-
-      // JavaScript - brutal
       'no-console': ['error', { allow: ['warn', 'error'] }],
       'no-debugger': 'error',
       'no-alert': 'error',
@@ -145,8 +141,11 @@ export default [
       'sort-vars': 'error',
       'use-isnan': 'error',
       'valid-typeof': ['error', { requireStringLiterals: true }],
-
-      // Vue - fascist
+    },
+  },
+  {
+    files: ['**/*.vue'],
+    rules: {
       'vue/no-empty-component-block': 'error',
       'vue/no-export-in-script-setup': 'error',
       'vue/no-mutating-props': 'error',

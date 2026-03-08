@@ -1,9 +1,10 @@
 <template>
   <div>
-    <RouterView />
+    <p>Home page</p>
   </div>
 </template>
 
 <script setup lang="ts">
-import { RouterView } from 'vue-router';
+// Home page
 </script>
+
