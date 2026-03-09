@@ -11,6 +11,7 @@
     "lint:fix": "eslint . --max-warnings=0 --fix"
   },
   "dependencies": {
+    "bootstrap-icons": "^1.13.1",
     "vue": "^3.5.25",
     "vue-router": "^4.6.4"
   },
