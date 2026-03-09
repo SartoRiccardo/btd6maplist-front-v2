@@ -1,3 +1,36 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Oswald&display=swap');
+
+:root {
+  --color-primary: #0d1b2a;     
+  --color-secondary: #1b3a5c;    
+  --color-highlight: #ff8c42;    
+  --color-active: #fec6a3;       
+  --color-contrast: #4a7fa5;     
+  --color-text: #e8f1f8;         
+
+  --color-mention-text: #a2d2ff;
+  --color-mention-bg: var(--color-secondary);
+}
+
+body {
+  background-color: var(--color-primary);
+  color: var(--color-text);
+  min-height: 100vh;
+  display: flex;
+  margin: 0;
+}
+
+#app {
+  width: 100%;
+}
+
+a,
+a:visited {
+  color: var(--color-highlight);
+  transition: color 0.1s linear;
+}
+
+a:hover {
+  color: var(--color-active);
+}
