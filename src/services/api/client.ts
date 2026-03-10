@@ -1,4 +1,20 @@
-import { useAuthStore } from '@/stores/auth';
+// Token storage key
+const TOKEN_KEY = 'auth_token';
+
+// Helper to get token from localStorage
+function getAuthToken(): string | null {
+  return localStorage.getItem(TOKEN_KEY);
+}
+
+// Helper to set token in localStorage (exported for auth store to use)
+export function setAuthToken(token: string): void {
+  localStorage.setItem(TOKEN_KEY, token);
+}
+
+// Helper to remove token from localStorage (exported for auth store to use)
+export function removeAuthToken(): void {
+  localStorage.removeItem(TOKEN_KEY);
+}
 
 // Base API configuration
 const API_BASE_URL = import.meta.env['VITE_API_BASE_URL'] || '';
@@ -14,22 +30,11 @@ export class ApiError extends Error {
   }
 }
 
-async function getAuthToken(): Promise<string | null> {
-  // Check if we're in a Vue component context
-  try {
-    const authStore = useAuthStore();
-    return authStore.token;
-  } catch {
-    // Not in Vue context, return null
-    return null;
-  }
-}
-
 export async function apiRequest<T>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<T> {
-  const token = await getAuthToken();
+  const token = getAuthToken();
   const isFormData = options.body instanceof FormData;
 
   const headers: Record<string, string> = {

@@ -2,6 +2,8 @@
 import { RouterLink } from 'vue-router';
 import Badge from './Badge.vue';
 import { useDiscordAuth } from '@/composables/useDiscordAuth';
+import { useAuthStore } from '@/stores/auth';
+import { DEFAULT_AVATAR_URL } from '@/constants/user';
 
 interface NavChild {
   url: string;
@@ -31,21 +33,23 @@ const navItems: NavItem[] = [
   },
 ];
 
-const { launchLoginWindow, isLoading } = useDiscordAuth();
+const authStore = useAuthStore();
+const { launchLoginWindow, isLoading: loginLoading } = useDiscordAuth();
 
 async function handleDiscordLogin() {
   const result = await launchLoginWindow();
 
   if (result.type === 'success') {
-    // TODO: Store token and user data in Pinia store
-    console.log('Login successful:', result);
-    // For now, just reload page to update auth state
-    window.location.reload();
+    authStore.setToken(result.token);
   } else if (result.type === 'canceled') {
     console.log('Login canceled by user');
   } else {
     console.error('Login failed:', result.error, result.message);
   }
+}
+
+function handleLogout() {
+  authStore.logout();
 }
 </script>
 
@@ -95,16 +99,78 @@ async function handleDiscordLogin() {
           </span>
         </template>
 
-        <!-- Discord Login Button -->
+        <!-- Discord Login Button or User Profile -->
+        <template v-if="authStore.isAuthenticated">
+          <!-- Skeleton while loading user data -->
+          <div
+            v-if="authStore.isLoading"
+            class="ml-2 w-12 h-12 bg-gray-600 rounded-md border-2 border-[#E0E3FF] animate-pulse"
+          ></div>
+
+          <!-- User profile picture -->
+          <div
+            v-else-if="authStore.user && !authStore.isError"
+            class="ml-2 relative group transition-colors duration-200 ease rounded-xl px-2 py-1 hover:cursor-pointer hover:bg-(--color-secondary)"
+          >
+            <button
+              class="w-12 h-12 overflow-hidden border-2 rounded-md border-[#E0E3FF] transition-colors cursor-pointer"
+              :aria-label="`Logged in as ${authStore.user.name}`"
+            >
+              <img
+                :src="authStore.user.avatar_url || DEFAULT_AVATAR_URL"
+                :alt="authStore.user.name"
+                class="w-full h-full object-cover"
+              />
+            </button>
+
+            <!-- Dropdown menu -->
+            <div class="absolute right-0 top-full max-w-min min-w-70 pointer-events-none opacity-0 -translate-y-4 transition-all duration-200 ease pt-3 group-hover:pointer-events-auto group-hover:opacity-100 group-hover:translate-y-0 dropdown">
+              <ul class="mt-2 mb-0 bg-(--color-secondary) px-4 py-2 rounded-lg list-none">
+                <li class="py-[0.1rem]">
+                  <RouterLink to="/profile" class="no-underline text-(--color-text)! inline-block w-full hover:text-(--color-active)!">
+                    Profile
+                  </RouterLink>
+                </li>
+                <li class="py-[0.1rem]">
+                  <RouterLink to="/my-submissions/maps" class="no-underline text-(--color-text)! inline-block w-full hover:text-(--color-active)!">
+                    My Submissions
+                  </RouterLink>
+                </li>
+                <li class="py-[0.1rem] border-t border-gray-600 mt-1 pt-1">
+                  <button
+                    @click="handleLogout"
+                    class="no-underline text-red-400! inline-block w-full text-left hover:text-red-300! transition-colors"
+                  >
+                    Logout
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Error state -->
+          <button
+            v-else
+            @click="handleLogout"
+            class="ml-2 flex items-center gap-2 bg-red-500 text-white rounded-xl px-4 py-2 hover:bg-red-600 transition-colors"
+            aria-label="Logout due to error"
+          >
+            <i class="bi bi-exclamation-triangle"></i>
+            <span class="text-sm">Error</span>
+          </button>
+        </template>
+
+        <!-- Discord Login Button (not authenticated) -->
         <button
+          v-else
           @click="handleDiscordLogin"
-          :disabled="isLoading"
+          :disabled="loginLoading"
           class="ml-2 flex items-center gap-2 bg-[#5865F2] text-[#E0E3FF] rounded-xl px-4 py-2 hover:cursor-pointer hover:bg-[#4752C4] transition-colors duration-200 ease disabled:opacity-50 disabled:cursor-not-allowed"
           aria-label="Login with Discord"
         >
           <i class="bi bi-discord text-xl scale-150 mr-1 ml-1 translate-y-[-0.1rem]"></i>
           <span class="text-[1.6rem] font-['Oswald'] font-bold uppercase">
-            {{ isLoading ? 'Loading...' : 'Login' }}
+            {{ loginLoading ? 'Loading...' : 'Login' }}
           </span>
         </button>
       </div>

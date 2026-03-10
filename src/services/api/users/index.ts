@@ -1,7 +1,7 @@
 import type { User, UpdateUserRequest, GetUserParams } from './types';
 import { apiRequest } from '../client';
 
-const BASE_PATH = '/users';
+const BASE_PATH = '/api/users';
 
 /**
  * Build query string from GetUserParams
