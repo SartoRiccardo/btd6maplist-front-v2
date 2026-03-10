@@ -101,6 +101,12 @@ const routes: RouteRecordRaw[] = [
     name: 'OAuth2Callback',
     path: '/oauth2/callback',
   },
+  {
+    component: () => import('@/views/OAuth2DiscordCallbackView.vue'),
+    name: 'OAuth2DiscordCallback',
+    path: '/oauth2/discord/callback',
+    meta: { standalone: true },
+  },
 ];
 
 const router = createRouter({
