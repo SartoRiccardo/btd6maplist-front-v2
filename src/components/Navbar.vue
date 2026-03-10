@@ -124,10 +124,10 @@ function handleLogout() {
             </button>
 
             <!-- Dropdown menu -->
-            <div class="absolute right-0 top-full max-w-min min-w-70 pointer-events-none opacity-0 -translate-y-4 transition-all duration-200 ease pt-3 group-hover:pointer-events-auto group-hover:opacity-100 group-hover:translate-y-0 dropdown">
+            <div class="absolute right-0 top-full max-w-min min-w-70 pointer-events-none opacity-0 -translate-y-4 transition-all duration-200 ease pt-3 group-hover:pointer-events-auto group-hover:opacity-100 group-hover:translate-y-0 dropdown cursor-default">
               <ul class="mt-2 mb-0 bg-(--color-secondary) px-4 py-2 rounded-lg list-none">
                 <li class="py-[0.1rem]">
-                  <RouterLink to="/profile" class="no-underline text-(--color-text)! inline-block w-full hover:text-(--color-active)!">
+                  <RouterLink :to="`/users/${authStore.user.discord_id}`" class="no-underline text-(--color-text)! inline-block w-full hover:text-(--color-active)!">
                     Profile
                   </RouterLink>
                 </li>
@@ -136,12 +136,17 @@ function handleLogout() {
                     My Submissions
                   </RouterLink>
                 </li>
-                <li class="py-[0.1rem] border-t border-gray-600 mt-1 pt-1">
+                <li class="py-[0.1rem]">
+                  <hr class="border-(--color-contrast) my-1 opacity-50">
+                </li>
+                <li class="py-[0.1rem] flex items-center justify-between gap-4">
+                  <span class="text-(--color-text-muted) truncate max-w-50 normal-case">{{ authStore.user.name }}</span>
                   <button
                     @click="handleLogout"
-                    class="no-underline text-red-400! inline-block w-full text-left hover:text-red-300! transition-colors"
+                    class="bg-(--color-danger) brightness-100 hover:brightness-110 saturate-100 hover:saturate-125 text-white px-3 py-2 rounded-lg text-sm cursor-pointer"
+                    aria-label="Logout"
                   >
-                    Logout
+                    <i class="bi bi-box-arrow-right"></i>
                   </button>
                 </li>
               </ul>

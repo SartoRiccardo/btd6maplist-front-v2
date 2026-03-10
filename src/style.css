@@ -3,15 +3,16 @@
 @import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css');
 
 :root {
-  --color-primary: #0d1b2a;     
-  --color-secondary: #1b3a5c;    
-  --color-highlight: #ff8c42;    
-  --color-active: #fec6a3;       
-  --color-contrast: #4a7fa5;     
-  --color-text: #e8f1f8;         
+  --color-primary: #0d1b2a;
+  --color-secondary: #1b3a5c;
+  --color-highlight: #ff8c42;
+  --color-active: #fec6a3;
+  --color-contrast: #4a7fa5;
 
-  --color-mention-text: #a2d2ff;
-  --color-mention-bg: var(--color-secondary);
+  --color-text: #e8f1f8;
+  --color-text-muted: #a8b8c8;
+
+  --color-danger: #e05c5c;
 }
 
 body {
@@ -20,6 +21,10 @@ body {
   min-height: 100vh;
   display: flex;
   margin: 0;
+}
+
+button {
+  transition: filter 0.2s ease;
 }
 
 #app {
