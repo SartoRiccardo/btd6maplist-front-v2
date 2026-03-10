@@ -1,7 +1,7 @@
 import { useAuthStore } from '@/stores/auth';
 
 // Base API configuration
-const API_BASE_URL = import.meta.env['VITE_API_BASE_URL'] || '/api';
+const API_BASE_URL = import.meta.env['VITE_API_BASE_URL'] || '';
 
 export class ApiError extends Error {
   constructor(
