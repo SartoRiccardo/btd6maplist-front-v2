@@ -37,7 +37,11 @@
     "resolveJsonModule": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@": ["./src"],
+      "@/components": ["./src/components"],
+      "@/lib": ["./src/lib"],
+      "@/utils": ["./src/utils"]
     },
 
     /* Emit */
