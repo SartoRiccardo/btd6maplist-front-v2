@@ -27,6 +27,14 @@ export const useAuthStore = defineStore('auth', () => {
   const isError = userQuery.isError;
   const refetch = userQuery.refetch;
 
+  // Watch for errors and logout automatically
+  watch(isError, (error) => {
+    if (error) {
+      console.error('Auth error - logging out');
+      logout();
+    }
+  });
+
   // Watch for token changes and refetch user
   watch(isAuthenticated, (authenticated) => {
     if (authenticated && refetch) {
