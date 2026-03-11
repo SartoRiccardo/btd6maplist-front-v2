@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router';
-import Badge from './Badge.vue';
+import Badge from '@/components/common/Badge.vue';
 import DiscordLoginButton from './DiscordLoginButton.vue';
 import { useAuthStore } from '@/stores/auth';
 import { DEFAULT_AVATAR_URL } from '@/constants/user';
