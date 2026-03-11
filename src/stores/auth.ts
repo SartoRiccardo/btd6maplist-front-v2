@@ -1,25 +1,22 @@
 import { ref, computed, watch } from 'vue';
 import { defineStore } from 'pinia';
-import { useMe } from '@/services/api/users/queries';
+import { useQueryClient } from '@tanstack/vue-query';
+import { useMe, userQueryKeys } from '@/services/api/users/queries';
 import { setAuthToken, removeAuthToken } from '@/services/api/client';
 
 export const useAuthStore = defineStore('auth', () => {
   // State
   const token = ref<string | null>(localStorage.getItem('auth_token'));
   const isAuthenticated = computed(() => !!token.value);
+  const queryClient = useQueryClient();
 
-  // User query - only create if we have a token
-  const userQuery = token.value ? useMe(
+  // User query
+  const userQuery = useMe(
     { include: ['flair'] },
     {
       enabled: isAuthenticated,
     }
-  ) : {
-    data: ref(undefined),
-    isLoading: ref(false),
-    isError: ref(false),
-    refetch: () => Promise.resolve(undefined),
-  };
+  );
 
   const user = userQuery.data;
   const isLoading = userQuery.isLoading;
@@ -49,7 +46,8 @@ export const useAuthStore = defineStore('auth', () => {
 
   function logout() {
     token.value = null;
-    removeAuthToken(); // Use shared helper
+    removeAuthToken();
+    queryClient.resetQueries({ queryKey: userQueryKeys.me() });
   }
 
   return {

@@ -43,6 +43,7 @@ function openMobileMenu() {
     <nav class="navigation flex-1 self-center order-1 lg:order-2">
       <MobileNav
         :is-open="isMobileMenuOpen"
+        :nav-items="navItems"
         @open="openMobileMenu"
       />
       <DesktopNavbar :nav-items="navItems" class="hidden lg:flex" />

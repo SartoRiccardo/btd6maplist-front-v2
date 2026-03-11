@@ -108,16 +108,6 @@ function handleLogout() {
         </div>
       </div>
 
-      <!-- Error state -->
-      <button
-        v-else
-        @click="handleLogout"
-        class="ml-2 flex items-center gap-2 bg-red-500 text-white rounded-xl px-4 py-2 hover:bg-red-600 transition-colors"
-        aria-label="Logout due to error"
-      >
-        <i class="bi bi-exclamation-triangle"></i>
-        <span class="text-sm">Error</span>
-      </button>
     </template>
 
     <!-- Discord Login Button (not authenticated) -->
