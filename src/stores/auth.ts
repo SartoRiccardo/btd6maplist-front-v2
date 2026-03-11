@@ -9,7 +9,6 @@ export const useAuthStore = defineStore('auth', () => {
   const isAuthenticated = computed(() => !!token.value);
 
   // User query - only create if we have a token
-  console.log(token.value)
   const userQuery = token.value ? useMe(
     { include: ['flair'] },
     {
