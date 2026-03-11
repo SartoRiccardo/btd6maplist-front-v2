@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { RouterLink } from 'vue-router';
-import { Drawer, DrawerClose, DrawerContent, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer';
+import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer';
 import Badge from '@/components/common/Badge.vue';
 import MobileUserSection from './MobileUserSection.vue';
 import type { NavItem } from './types';
@@ -43,6 +43,7 @@ function closeDrawer() {
       <DrawerContent class="h-screen bg-(--color-primary) text-(--color-text)">
         <div class="sr-only">
           <DrawerTitle>Navigation Menu</DrawerTitle>
+          <DrawerDescription>Mobile navigation menu with links and user profile</DrawerDescription>
         </div>
         <div class="flex flex-col h-full font-['Oswald']">
           <!-- Header -->
