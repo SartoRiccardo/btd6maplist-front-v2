@@ -12,7 +12,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   // User query
   const userQuery = useMe(
-    { include: ['flair'] },
+    { include: ['flair', 'medals'] },
     {
       enabled: isAuthenticated,
     }
