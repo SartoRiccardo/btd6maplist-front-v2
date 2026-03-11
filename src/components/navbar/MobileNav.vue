@@ -3,9 +3,7 @@ import { ref } from 'vue';
 import { RouterLink } from 'vue-router';
 import { Drawer, DrawerClose, DrawerContent, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer';
 import Badge from '@/components/common/Badge.vue';
-import DiscordLoginButton from './DiscordLoginButton.vue';
-import { useAuthStore } from '@/stores/auth';
-import { DEFAULT_AVATAR_URL } from '@/constants/user';
+import MobileUserSection from './MobileUserSection.vue';
 import type { NavItem } from './types';
 
 interface Props {
@@ -19,7 +17,6 @@ const emit = defineEmits<{
   open: [];
 }>();
 
-const authStore = useAuthStore();
 const isDrawerOpen = ref(false);
 
 function openDrawer() {
@@ -27,8 +24,7 @@ function openDrawer() {
   emit('open');
 }
 
-function handleLogout() {
-  authStore.logout();
+function closeDrawer() {
   isDrawerOpen.value = false;
 }
 </script>
@@ -105,57 +101,7 @@ function handleLogout() {
             </ul>
           </div>
 
-          <div class="bg-(--color-secondary) px-4 py-4">
-            <div
-              v-if="authStore.isAuthenticated && authStore.isLoading"
-              class="flex items-center gap-3"
-            >
-              <div class="aspect-square w-12 animate-pulse rounded-md border-2 border-[#E0E3FF] bg-gray-600"></div>
-              <div class="flex-1">
-                <div class="mb-2 h-4 animate-pulse rounded bg-gray-600"></div>
-                <div class="h-3 animate-pulse rounded bg-gray-600 w-2/3"></div>
-              </div>
-            </div>
-
-            <div
-              v-else-if="authStore.isAuthenticated && authStore.user && !authStore.isError"
-              class="flex items-center gap-3"
-            >
-              <img
-                :src="authStore.user.avatar_url || DEFAULT_AVATAR_URL"
-                :alt="authStore.user.name"
-                class="aspect-square w-12 rounded-md border-2 border-[#E0E3FF] object-cover"
-              />
-              <div class="min-w-0 flex-1">
-                <div class="truncate font-bold uppercase">{{ authStore.user.name }}</div>
-                <div class="flex gap-3">
-                  <RouterLink
-                    :to="`/users/${authStore.user.discord_id}`"
-                    @click="isDrawerOpen = false"
-                    class="text-sm uppercase text-(--color-text-muted) hover:text-(--color-active)"
-                  >
-                    Profile
-                  </RouterLink>
-                  <RouterLink
-                    to="/my-submissions/maps"
-                    @click="isDrawerOpen = false"
-                    class="text-sm uppercase text-(--color-text-muted) hover:text-(--color-active)"
-                  >
-                    Submissions
-                  </RouterLink>
-                </div>
-              </div>
-              <button
-                @click="handleLogout"
-                class="rounded-lg bg-(--color-danger) p-2 text-white brightness-100 saturate-100 hover:brightness-110 hover:saturate-125"
-                aria-label="Logout"
-              >
-                <i class="bi bi-box-arrow-right text-lg"></i>
-              </button>
-            </div>
-
-            <DiscordLoginButton v-else @success="isDrawerOpen = false" class="w-full" />
-          </div>
+          <MobileUserSection @close="closeDrawer" />
         </div>
       </DrawerContent>
     </Drawer>
