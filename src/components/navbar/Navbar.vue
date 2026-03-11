@@ -4,18 +4,7 @@ import Badge from '@/components/common/Badge.vue';
 import DiscordLoginButton from './DiscordLoginButton.vue';
 import { useAuthStore } from '@/stores/auth';
 import { DEFAULT_AVATAR_URL } from '@/constants/user';
-
-interface NavChild {
-  url: string;
-  name: string;
-  icon_url?: string;
-}
-
-interface NavItem {
-  name: string;
-  url?: string;
-  children?: NavChild[];
-}
+import type { NavItem } from './types';
 
 const navItems: NavItem[] = [
   {
