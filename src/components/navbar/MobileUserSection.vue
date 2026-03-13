@@ -58,7 +58,7 @@ function handleLogout() {
         </button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent class="bg-(--color-secondary) border-none w-66" side="top" :side-offset="25">
+      <DropdownMenuContent class="bg-(--color-secondary) border-none w-(--reka-dropdown-menu-trigger-width)" side="top" :side-offset="25">
         <DropdownMenuItem as-child>
           <RouterLink
             :to="`/users/${authStore.user.discord_id}`"
