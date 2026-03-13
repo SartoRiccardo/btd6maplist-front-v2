@@ -1,10 +1,22 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useFormats } from '@/services/api/formats/queries';
+import { useCompletions } from '@/services/api/completions/queries';
+import { useUser } from '@/services/api/users/queries';
 import FormatSection from '@/components/home/FormatSection.vue';
+import CompletionRow from '@/components/completions/CompletionRow.vue';
+import CompletionRowSkeleton from '@/components/completions/CompletionRowSkeleton.vue';
 import UserEntry from '@/components/users/UserEntry.vue';
 
 const { data: formats } = useFormats();
+const { data: creditUser1 } = useUser('508409944736006154', { include: ['flair'] });
+const { data: creditUser2 } = useUser('1077309729942024302', { include: ['flair'] });
+const { data: recentCompletions } = useCompletions({
+  sort_by: 'created_on',
+  sort_order: 'desc',
+  per_page: 6,
+  include: 'players.flair',
+});
 
 const visibleFormats = computed(() =>
   formats.value?.data.filter((f) => !f.hidden) ?? []
@@ -68,6 +80,21 @@ function formatIcon(id: number): string {
       />
     </div>
 
+    <!-- Recent Completions -->
+    <h2 class="font-['Oswald'] text-2xl md:text-3xl font-bold mt-10">Recent Completions</h2>
+    <div class="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-2">
+      <template v-if="recentCompletions">
+        <CompletionRow
+          v-for="completion in recentCompletions.data"
+          :key="completion.id"
+          :completion="completion"
+        />
+      </template>
+      <template v-else>
+        <CompletionRowSkeleton v-for="i in 6" :key="i" />
+      </template>
+    </div>
+
     <!-- Credits -->
     <hr class="my-10 border-(--color-secondary)" />
     <div class="text-left px-4">
@@ -78,15 +105,15 @@ function formatIcon(id: number): string {
           behind this project, as well as smaller projects like the 2 Player
           List and Insane Demon List.
         </li>
-        <li>
+        <li v-if="creditUser1">
           <span class="inline-block">
-            <UserEntry id="508409944736006154" :centered="true" :inline="true" />
+            <UserEntry :user="creditUser1" :centered="true" :inline="true" />
           </span>
           for helping to set up the Discord server and designing the project's icon
         </li>
-        <li>
+        <li v-if="creditUser2">
           <span class="inline-block">
-            <UserEntry id="1077309729942024302" :centered="true" :inline="true" />
+            <UserEntry :user="creditUser2" :centered="true" :inline="true" />
           </span>
           for making and hosting both the website and the Discord bot
         </li>
