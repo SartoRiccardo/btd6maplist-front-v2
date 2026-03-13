@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, watch } from 'vue';
 import { useRoute, RouterLink } from 'vue-router';
 import { useFormats } from '@/services/api/formats/queries';
 import { useMaps } from '@/services/api/maps/queries';
+import { useConfig } from '@/services/api/config/queries';
 import Btd6Map from '@/components/maps/Btd6Map.vue';
 
 const route = useRoute();
@@ -16,9 +17,12 @@ const format = computed(() =>
 const formatId = computed(() => format.value?.id);
 
 const { data: mapsResponse } = useMaps(
-  computed(() => formatId.value != null ? { format_id: formatId.value } : undefined),
+  () => formatId.value != null ? { format_id: formatId.value } : undefined,
   { enabled: computed(() => formatId.value != null) },
 );
+
+const { data: config } = useConfig();
+const btd6Version = computed(() => config.value?.current_btd6_ver);
 </script>
 
 <template>
@@ -39,14 +43,14 @@ const { data: mapsResponse } = useMaps(
           :to="`/map/${map.code}`"
           class="group no-underline! text-(--color-text)!"
         >
-          <Btd6Map :map="map" />
+          <Btd6Map :map="map" :btd6-version="btd6Version" />
         </RouterLink>
       </template>
       <template v-else>
         <div
           v-for="i in 12"
           :key="i"
-          class="bg-(--color-secondary) rounded-(--radius-panel) animate-pulse"
+          class="bg-(--color-secondary) rounded-(--radius-panel) animate-pulse my-6"
         >
           <div class="h-5 w-3/4 bg-(--color-primary) rounded mx-auto my-2" />
           <div class="aspect-[3/2] bg-(--color-primary) mx-1.5 mb-1.5 rounded-sm" />

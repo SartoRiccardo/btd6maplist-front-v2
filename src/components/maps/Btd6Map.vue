@@ -5,6 +5,7 @@ import type { MapWithMetadata } from '@/services/api/maps/types';
 const props = defineProps<{
   code?: string;
   map?: MapWithMetadata;
+  btd6Version?: number;
 }>();
 
 const previewUrl = computed(
@@ -13,6 +14,11 @@ const previewUrl = computed(
 );
 
 const mapName = computed(() => props.map?.name);
+
+const versionLabel = computed(() => {
+  if (!props.btd6Version) return '';
+  return `v${props.btd6Version / 10}`;
+});
 </script>
 
 <template>
@@ -29,5 +35,12 @@ const mapName = computed(() => props.map?.name);
       alt=""
       loading="lazy"
     />
+    <div
+      v-if="map?.is_verified && btd6Version"
+      class="absolute left-[-0.7rem] bg-[#b2ebf2] text-black px-1 py-0.5 rounded text-xs"
+      :class="mapName ? 'bottom-[-0.5rem]' : 'top-[-0.7rem]'"
+    >
+      <i class="bi bi-check" />{{ versionLabel }}
+    </div>
   </div>
 </template>
