@@ -28,13 +28,13 @@ defineProps<{
         class="w-[350px] h-[350px] object-contain"
       />
       <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[22rem] h-full">
-        <div v-if="format.preview_map1" class="absolute bottom-8 left-0 w-[40%]">
+        <div v-if="format.preview_map1" class="absolute bottom-8 left-0 w-[40%] animate-float-slow" style="animation-delay: 0s">
           <Btd6Map :code="format.preview_map1.code" />
         </div>
-        <div v-if="format.preview_map2" class="absolute bottom-8 right-0 w-[40%]">
+        <div v-if="format.preview_map2" class="absolute bottom-8 right-0 w-[40%] animate-float-slow" style="animation-delay: -2.3s">
           <Btd6Map :code="format.preview_map2.code" />
         </div>
-        <div v-if="format.preview_map3" class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[40%]">
+        <div v-if="format.preview_map3" class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[40%] animate-float-slow" style="animation-delay: -4.7s">
           <Btd6Map :code="format.preview_map3.code" />
         </div>
       </div>
