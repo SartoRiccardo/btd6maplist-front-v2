@@ -4,6 +4,7 @@ import { useFormats } from '@/services/api/formats/queries';
 import { useCompletions } from '@/services/api/completions/queries';
 import { useUser } from '@/services/api/users/queries';
 import FormatSection from '@/components/home/FormatSection.vue';
+import FormatSectionSkeleton from '@/components/home/FormatSectionSkeleton.vue';
 import CompletionMapRow from '@/components/completions/CompletionMapRow.vue';
 import CompletionMapRowSkeleton from '@/components/completions/CompletionMapRowSkeleton.vue';
 import UserEntry from '@/components/users/UserEntry.vue';
@@ -78,6 +79,9 @@ function formatIcon(id: number): string {
         :inverted="index % 2 !== 0"
         :bordered="index < visibleFormats.length - 1"
       />
+    </div>
+    <div v-else>
+      <FormatSectionSkeleton v-for="i in 4" :key="i" :inverted="i % 2 === 0" :bordered="i < 4" />
     </div>
 
     <!-- Recent Completions -->
