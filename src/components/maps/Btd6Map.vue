@@ -16,7 +16,7 @@ const mapName = computed(() => props.map?.name);
 </script>
 
 <template>
-  <div class="bg-(--color-secondary) p-[0.4rem] pb-4 rounded-(--radius-panel) shadow relative my-6 mx-0.5 transition-colors duration-200">
+  <div class="bg-(--color-secondary) p-[0.4rem] pb-4 rounded-(--radius-panel) shadow-md hover:shadow-lg relative my-6 mx-0.5 transition-all duration-200 group-hover:bg-(--color-active)">
     <p
       v-if="mapName"
       class="absolute top-[-0.7rem] left-[-0.1rem] w-full text-center font-['Luckiest_Guy'] font-border text-base md:text-2xl break-words z-10"

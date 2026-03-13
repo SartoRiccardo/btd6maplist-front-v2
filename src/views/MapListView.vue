@@ -37,7 +37,7 @@ const { data: mapsResponse } = useMaps(
           v-for="map in mapsResponse.data"
           :key="map.code"
           :to="`/map/${map.code}`"
-          class="no-underline! text-(--color-text)!"
+          class="group no-underline! text-(--color-text)!"
         >
           <Btd6Map :map="map" />
         </RouterLink>
