@@ -8,6 +8,8 @@ const route = useRoute();
 <template>
   <div>
     <Navbar v-if="!route.meta['standalone']" />
-    <RouterView />
+    <main class="mx-auto w-full max-w-screen-sm md:max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl px-4">
+      <RouterView />
+    </main>
   </div>
 </template>
