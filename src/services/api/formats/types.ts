@@ -17,13 +17,3 @@ export interface Format {
   preview_map2: Map | null;
   preview_map3: Map | null;
 }
-
-export interface PaginatedResponse<T> {
-  data: T[];
-  meta: {
-    current_page: number;
-    last_page: number;
-    per_page: number;
-    total: number;
-  };
-}

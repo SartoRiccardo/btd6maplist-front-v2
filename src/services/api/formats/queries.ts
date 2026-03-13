@@ -1,6 +1,7 @@
 import { useQuery, type UseQueryOptions } from '@tanstack/vue-query';
 import { getFormats } from './index';
-import type { Format, PaginatedResponse } from './types';
+import type { Format } from './types';
+import type { PaginatedResponse } from '@/services/api/common/types';
 
 export const formatQueryKeys = {
   all: ['formats'] as const,

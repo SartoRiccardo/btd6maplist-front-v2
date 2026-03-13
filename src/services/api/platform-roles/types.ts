@@ -1,5 +1,6 @@
 export interface PlatformRole {
-  id: string;
+  id: number;
   name: string;
-  // Add other platform role properties as needed
+  internal: boolean;
+  can_grant: number[];
 }

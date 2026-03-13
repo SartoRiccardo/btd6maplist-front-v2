@@ -1,4 +1,5 @@
-import type { Format, PaginatedResponse } from './types';
+import type { Format } from './types';
+import type { PaginatedResponse } from '@/services/api/common/types';
 import { apiRequest } from '../client';
 
 const BASE_PATH = '/api/formats';
