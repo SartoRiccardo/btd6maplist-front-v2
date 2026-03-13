@@ -57,12 +57,12 @@ function handleLogout() {
         </button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent class="bg-(--color-secondary) border-none w-(--reka-dropdown-menu-trigger-width)" side="top" :side-offset="25">
+      <DropdownMenuContent class="bg-(--color-secondary) font-[Oswald] border-none w-(--reka-dropdown-menu-trigger-width)" side="top" :side-offset="25">
         <DropdownMenuItem as-child>
           <RouterLink
             :to="`/users/${authStore.user.discord_id}`"
             @click="onClose"
-            class="flex items-center rounded-lg px-4 font-bold uppercase text-(--color-text)! transition-colors duration-200 hover:bg-(--color-secondary)! cursor-pointer"
+            class="flex text-xl! items-center rounded-lg px-4 font-bold uppercase text-(--color-text)! transition-colors duration-200 hover:bg-(--color-secondary)! cursor-pointer"
           >
             Profile
           </RouterLink>
@@ -71,7 +71,7 @@ function handleLogout() {
           <RouterLink
             to="/my-submissions/maps"
             @click="onClose"
-            class="flex items-center rounded-lg px-4 font-bold uppercase text-(--color-text)! transition-colors duration-200 hover:bg-(--color-secondary)! cursor-pointer"
+            class="flex text-xl! items-center rounded-lg px-4 font-bold uppercase text-(--color-text)! transition-colors duration-200 hover:bg-(--color-secondary)! cursor-pointer"
           >
             My Submissions
           </RouterLink>
@@ -79,7 +79,7 @@ function handleLogout() {
         <DropdownMenuSeparator />
         <DropdownMenuItem
           @click="handleLogout"
-          class="flex items-center rounded-lg px-4 font-bold uppercase text-(--color-danger)! transition-colors duration-200 hover:bg-(--color-secondary)! cursor-pointer"
+          class="flex text-xl! items-center rounded-lg px-4 font-bold uppercase text-(--color-danger)! transition-colors duration-200 hover:bg-(--color-secondary)! cursor-pointer"
         >
           Logout
         </DropdownMenuItem>
