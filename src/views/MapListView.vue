@@ -7,6 +7,7 @@ import { useConfig } from '@/services/api/config/queries';
 import Btd6Map from '@/components/maps/Btd6Map.vue';
 import PlacementBadge from '@/components/maps/badges/PlacementBadge.vue';
 import MinimapBadge from '@/components/maps/badges/MinimapBadge.vue';
+import { FORMAT_MAPLIST, FORMAT_NOSTALGIA_PACK } from '@/constants/formats';
 
 const route = useRoute();
 const slug = computed(() => route.params['slug'] as string);
@@ -49,13 +50,13 @@ const btd6Version = computed(() => config.value?.current_btd6_ver);
             <template #badge>
               <!-- Maplist: placement circle with points -->
               <PlacementBadge
-                v-if="formatId === 1 && map.placement_curver != null && config"
+                v-if="formatId === FORMAT_MAPLIST && map.placement_curver != null && config"
                 :placement="map.placement_curver"
                 :config="config"
               />
               <!-- Nostalgia Pack: retro minimap -->
               <MinimapBadge
-                v-else-if="formatId === 11 && map.retro_map"
+                v-else-if="formatId === FORMAT_NOSTALGIA_PACK && map.retro_map"
                 :src="map.retro_map.preview_url"
               />
             </template>

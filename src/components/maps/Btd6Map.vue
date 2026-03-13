@@ -3,9 +3,9 @@ import { computed } from 'vue';
 import type { MapWithMetadata } from '@/services/api/maps/types';
 
 const props = defineProps<{
-  code?: string;
-  map?: MapWithMetadata;
-  btd6Version?: number;
+  code?: string | undefined;
+  map?: MapWithMetadata | undefined;
+  btd6Version?: number | undefined;
 }>();
 
 const previewUrl = computed(

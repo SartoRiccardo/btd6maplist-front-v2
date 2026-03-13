@@ -4,12 +4,12 @@ import { RouterLink } from 'vue-router';
 import type { Completion } from '@/services/api/completions/types';
 import UserEntry from '@/components/users/UserEntry.vue';
 import { fromNow } from '@/utils/dates';
+import { FORMATS_WITHOUT_GERALDO } from '@/constants/formats';
 
 const props = defineProps<{
   completion: Completion;
 }>();
 
-const FORMATS_WITHOUT_GERALDO = [11, 52];
 const hideNoGeraldo = computed(() => FORMATS_WITHOUT_GERALDO.includes(props.completion.format_id));
 </script>
 
