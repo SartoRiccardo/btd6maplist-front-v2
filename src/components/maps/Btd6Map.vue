@@ -11,7 +11,7 @@ const previewUrl = computed(
 </script>
 
 <template>
-  <div class="bg-(--color-secondary) p-1.5 rounded-lg relative shadow transition-colors duration-200">
+  <div class="bg-(--color-secondary) p-1.5 pb-4 rounded-lg relative shadow transition-colors duration-200">
     <img
       class="w-full h-auto aspect-[3/2] bg-(--color-primary) block rounded-sm"
       :src="previewUrl"
