@@ -12,24 +12,24 @@ const routes: RouteRecordRaw[] = [
     path: '/leaderboard',
   },
   {
-    component: () => import('@/views/ListDetailView.vue'),
-    name: 'ListDetail',
-    path: '/lists/:id',
+    component: () => import('@/views/MapListView.vue'),
+    name: 'MapList',
+    path: '/maps/:slug',
   },
   {
     component: () => import('@/views/MapDetailView.vue'),
     name: 'MapDetail',
-    path: '/maps/:id',
+    path: '/map/:code',
   },
   {
     component: () => import('@/views/SubmitCompletionView.vue'),
     name: 'SubmitCompletion',
-    path: '/maps/:id/submit-completion',
+    path: '/map/:code/submit-completion',
   },
   {
     component: () => import('@/views/SubmitMapView.vue'),
     name: 'SubmitMap',
-    path: '/lists/:id/submit-map',
+    path: '/maps/:id/submit-map',
   },
   {
     component: () => import('@/views/ProfileView.vue'),

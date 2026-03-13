@@ -1,3 +1,5 @@
+import type { FilterOption } from '@/services/api/common/types';
+
 export interface Map {
   code: string;
   name: string;
@@ -26,7 +28,7 @@ export interface RetroMap {
   game: RetroGame;
 }
 
-/** Extended map fields, only present with ?include=map.metadata */
+/** Extended map fields — present on /maps index and /maps/{code} show */
 export interface MapWithMetadata extends Map {
   placement_curver: number | null;
   placement_allver: number | null;
@@ -37,4 +39,20 @@ export interface MapWithMetadata extends Map {
   deleted_on: string | null;
   retro_map: RetroMap | null;
   is_verified: boolean;
+}
+
+export interface GetMapsParams {
+  timestamp?: number;
+  format_id?: number;
+  format_subfilter?: number;
+  page?: number;
+  per_page?: number;
+  deleted?: FilterOption;
+  created_by?: number;
+  verified_by?: number;
+}
+
+export interface GetMapParams {
+  timestamp?: number;
+  include?: string;
 }
