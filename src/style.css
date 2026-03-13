@@ -15,6 +15,10 @@
 
   --color-danger: #e05c5c;
 
+  /* Border radius */
+  --radius-panel: 0.5rem;   /* panels, cards */
+  --radius-btn: 0.375rem;   /* buttons */
+
   /* Breakpoints */
   --breakpoint-sm: 640px;
   --breakpoint-md: 768px;

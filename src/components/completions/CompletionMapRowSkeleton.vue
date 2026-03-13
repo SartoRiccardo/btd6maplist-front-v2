@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-(--color-secondary) rounded-lg my-2 py-2 px-3 animate-pulse">
+  <div class="bg-(--color-secondary) rounded-(--radius-panel) my-2 py-2 px-3 animate-pulse">
     <!-- Row 1: Map preview + name -->
     <div class="flex items-center">
       <div class="w-24 aspect-[3/2] bg-(--color-primary) rounded-sm shrink-0" />

@@ -54,7 +54,7 @@ defineProps<{
       <div class="pt-6">
         <RouterLink
           :to="`/maps/${format.id}`"
-          class="font-border inline-block no-underline! px-5 py-2 rounded-md text-lg font-bold
+          class="font-border inline-block no-underline! px-5 py-2 rounded-(--radius-btn) text-lg font-bold
                  bg-(--color-highlight) text-(--color-text)!
                  hover:bg-(--color-active) hover:text-(--color-text)! transition-colors duration-200"
         >
