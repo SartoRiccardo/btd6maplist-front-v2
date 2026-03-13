@@ -17,7 +17,7 @@ const format = computed(() =>
 const formatId = computed(() => format.value?.id);
 
 const { data: mapsResponse } = useMaps(
-  () => formatId.value != null ? { format_id: formatId.value } : undefined,
+  computed(() => formatId.value != null ? { format_id: formatId.value } : undefined),
   { enabled: computed(() => formatId.value != null) },
 );
 
