@@ -20,7 +20,7 @@ function handleLogout() {
 </script>
 
 <template>
-  <div class="justify-end flex">
+  <div class="justify-end flex gap-x-3">
     <template
       v-for="item in navItems"
       :key="item.name"
