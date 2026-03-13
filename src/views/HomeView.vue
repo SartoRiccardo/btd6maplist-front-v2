@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import { useFormats } from '@/services/api/formats/queries';
 import FormatSection from '@/components/home/FormatSection.vue';
+import UserEntry from '@/components/users/UserEntry.vue';
 
 const { data: formats } = useFormats();
 
@@ -66,7 +67,7 @@ function formatIcon(id: number): string {
     <!-- Credits -->
     <hr class="my-10 border-(--color-secondary)" />
     <div class="text-left px-4">
-      <p>Special thanks to:</p>
+      <p class="mb-5">Special thanks to:</p>
       <ul class="list-disc pl-6 space-y-2">
         <li>
           The Geometry Dash Demon List, which was the primary inspiration
@@ -74,11 +75,15 @@ function formatIcon(id: number): string {
           List and Insane Demon List.
         </li>
         <li>
-          <span class="font-bold">hemidemisemiquaver</span>
+          <span class="inline-block">
+            <UserEntry id="508409944736006154" :centered="true" :inline="true" />
+          </span>
           for helping to set up the Discord server and designing the project's icon
         </li>
         <li>
-          <span class="font-bold">SartoRiccardo</span>
+          <span class="inline-block">
+            <UserEntry id="1077309729942024302" :centered="true" :inline="true" />
+          </span>
           for making and hosting both the website and the Discord bot
         </li>
       </ul>
