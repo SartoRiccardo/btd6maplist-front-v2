@@ -51,7 +51,7 @@ defineProps<{
         {{ format.name }}
       </h2>
       <p class="px-4 md:px-12">{{ format.description }}</p>
-      <div class="pt-3">
+      <div class="pt-6">
         <RouterLink
           :to="`/maps/${format.id}`"
           class="font-border inline-block no-underline! px-5 py-2 rounded-md text-lg font-bold
