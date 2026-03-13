@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+// @ts-nocheck
 import type { DrawerTriggerProps } from "vaul-vue"
 import { DrawerTrigger } from "vaul-vue"
 

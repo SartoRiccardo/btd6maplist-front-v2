@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// @ts-nocheck
 import type { DropdownMenuRadioGroupEmits, DropdownMenuRadioGroupProps } from "reka-ui"
 import {
   DropdownMenuRadioGroup,

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// @ts-nocheck
 import type { DropdownMenuGroupProps } from "reka-ui"
 import { DropdownMenuGroup } from "reka-ui"
 

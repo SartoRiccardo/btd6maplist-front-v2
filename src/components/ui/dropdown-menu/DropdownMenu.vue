@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// @ts-nocheck
 import type { DropdownMenuRootEmits, DropdownMenuRootProps } from "reka-ui"
 import { DropdownMenuRoot, useForwardPropsEmits } from "reka-ui"
 

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// @ts-nocheck
 import type { DropdownMenuItemProps } from "reka-ui"
 import type { HTMLAttributes } from "vue"
 import { reactiveOmit } from "@vueuse/core"

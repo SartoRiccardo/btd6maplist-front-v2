@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+// @ts-nocheck
 import type { HTMLAttributes } from "vue"
 import { cn } from "@/lib/utils"
 

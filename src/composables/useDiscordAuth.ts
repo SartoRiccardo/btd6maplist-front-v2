@@ -105,8 +105,8 @@ export function useDiscordAuth() {
           clearTimeout(timeoutId);
           clearInterval(checkClosed);
           window.removeEventListener('message', messageHandler);
-          if (!popup.closed) {
-            popup.close();
+          if (!popup?.closed) {
+            popup?.close();
           }
         }
 

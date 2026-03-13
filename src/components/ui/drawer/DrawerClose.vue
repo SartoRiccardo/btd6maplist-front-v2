@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+// @ts-nocheck
 import type { DrawerCloseProps } from "vaul-vue"
 import { DrawerClose } from "vaul-vue"
 

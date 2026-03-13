@@ -6,7 +6,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
@@ -17,7 +16,7 @@ interface Props {
   onClose: () => void;
 }
 
-defineProps<Props>();
+const { onClose } = defineProps<Props>();
 
 const authStore = useAuthStore();
 
