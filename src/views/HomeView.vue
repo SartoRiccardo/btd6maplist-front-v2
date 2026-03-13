@@ -4,8 +4,8 @@ import { useFormats } from '@/services/api/formats/queries';
 import { useCompletions } from '@/services/api/completions/queries';
 import { useUser } from '@/services/api/users/queries';
 import FormatSection from '@/components/home/FormatSection.vue';
-import CompletionRow from '@/components/completions/CompletionRow.vue';
-import CompletionRowSkeleton from '@/components/completions/CompletionRowSkeleton.vue';
+import CompletionMapRow from '@/components/completions/CompletionMapRow.vue';
+import CompletionMapRowSkeleton from '@/components/completions/CompletionMapRowSkeleton.vue';
 import UserEntry from '@/components/users/UserEntry.vue';
 
 const { data: formats } = useFormats();
@@ -84,14 +84,14 @@ function formatIcon(id: number): string {
     <h2 class="font-['Oswald'] text-2xl md:text-3xl font-bold mt-10">Recent Completions</h2>
     <div class="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-2">
       <template v-if="recentCompletions">
-        <CompletionRow
+        <CompletionMapRow
           v-for="completion in recentCompletions.data"
           :key="completion.id"
           :completion="completion"
         />
       </template>
       <template v-else>
-        <CompletionRowSkeleton v-for="i in 6" :key="i" />
+        <CompletionMapRowSkeleton v-for="i in 6" :key="i" />
       </template>
     </div>
 
