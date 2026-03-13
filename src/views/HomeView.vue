@@ -46,9 +46,13 @@ function formatIcon(id: number): string {
       players looking to test their tower defense skills.
     </p>
     <div class="text-sm mb-6">
-      <a href="https://www.youtube.com/@btd6maplist" target="_blank">YouTube</a>
+      <a href="https://www.youtube.com/@btd6maplist" target="_blank">
+        <i class="bi bi-youtube" />&nbsp;YouTube
+      </a>
       {{ " | " }}
-      <a href="https://github.com/stars/SartoRiccardo/lists/btd6-maplist" target="_blank">GitHub</a>
+      <a href="https://github.com/stars/SartoRiccardo/lists/btd6-maplist" target="_blank">
+        <i class="bi bi-github" />&nbsp;GitHub
+      </a>
     </div>
 
     <!-- Format Sections -->
