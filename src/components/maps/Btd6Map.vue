@@ -29,6 +29,10 @@ const versionLabel = computed(() => {
     >
       {{ mapName }}
     </p>
+
+    <!-- Badge slot — absolutely positioned top-left over the image -->
+    <slot name="badge" />
+
     <img
       class="w-full h-auto aspect-[3/2] bg-(--color-primary) block rounded-sm"
       :src="previewUrl"
