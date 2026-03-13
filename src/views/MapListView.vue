@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, watch } from 'vue';
+import { computed } from 'vue';
 import { useRoute, RouterLink } from 'vue-router';
 import { useFormats } from '@/services/api/formats/queries';
 import { useMaps } from '@/services/api/maps/queries';

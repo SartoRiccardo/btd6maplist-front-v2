@@ -29,7 +29,7 @@ function openMobileMenu() {
 </script>
 
 <template>
-  <header class="flex px-8 py-4 text-[1.6rem] font-['Oswald'] font-bold uppercase">
+  <header class="flex px-8 py-4 text-[1.6rem] font-['Oswald'] font-bold uppercase relative z-50">
     <!-- Logo (swaps to right on mobile) -->
     <RouterLink to="/" class="flex items-center no-underline text-(--color-text)! self-center hover:text-inherit! order-2 lg:order-1 ml-auto lg:ml-0">
       <img
