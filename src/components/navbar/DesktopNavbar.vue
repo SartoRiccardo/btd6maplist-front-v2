@@ -3,7 +3,9 @@ import { RouterLink } from 'vue-router';
 import Badge from '@/components/common/Badge.vue';
 import DiscordLoginButton from './DiscordLoginButton.vue';
 import { useAuthStore } from '@/stores/auth';
+import { useThemeStore } from '@/stores/theme';
 import { DEFAULT_AVATAR_URL } from '@/constants/user';
+import { themes } from '@/constants/themes';
 import type { NavItem } from './types';
 
 interface Props {
@@ -13,6 +15,7 @@ interface Props {
 defineProps<Props>();
 
 const authStore = useAuthStore();
+const themeStore = useThemeStore();
 
 function handleLogout() {
   authStore.logout();
@@ -91,6 +94,28 @@ function handleLogout() {
                 My Submissions
               </RouterLink>
             </li>
+            <li class="py-[0.1rem] relative theme-trigger">
+              <span class="no-underline text-(--color-text)! inline-block w-full hover:text-(--color-active)! cursor-pointer select-none">
+                Theme
+              </span>
+              <!-- Theme sub-panel -->
+              <div class="absolute right-full top-0 mr-2 pointer-events-none opacity-0 translate-x-2 transition-all duration-200 ease theme-panel">
+                <ul class="bg-(--color-secondary) px-3 py-2 rounded-lg list-none min-w-44">
+                  <li
+                    v-for="theme in themes"
+                    :key="theme.id"
+                    class="py-1"
+                  >
+                    <button
+                      @click="themeStore.setTheme(theme.id)"
+                      class="flex items-center gap-2 w-full text-left bg-transparent border-none text-(--color-text) hover:text-(--color-active) cursor-pointer px-1 py-1 rounded"
+                    >
+                      <span class="whitespace-nowrap uppercase">{{ theme.name }}</span>
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            </li>
             <li class="py-[0.1rem]">
               <hr class="border-(--color-contrast) my-1 opacity-50">
             </li>
@@ -114,3 +139,11 @@ function handleLogout() {
     <DiscordLoginButton v-else />
   </div>
 </template>
+
+<style scoped>
+.theme-trigger:hover .theme-panel {
+  pointer-events: auto;
+  opacity: 1;
+  transform: translateX(0);
+}
+</style>

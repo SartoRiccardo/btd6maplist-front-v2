@@ -2,8 +2,11 @@
 import { RouterView, useRoute } from 'vue-router';
 import Navbar from '@/components/navbar/Navbar.vue';
 import Footer from '@/components/layout/Footer.vue';
+import { useThemeStore } from '@/stores/theme';
 
 const route = useRoute();
+// Initialize theme store so saved theme is applied on load
+useThemeStore();
 </script>
 
 <template>
