@@ -11,6 +11,7 @@ import DifficultySelector from '@/components/maps/DifficultySelector.vue';
 import { FORMAT_MAPLIST, FORMAT_NOSTALGIA_PACK, FORMAT_BEST_OF_THE_BEST, FORMAT_DESCRIPTIONS } from '@/constants/formats';
 import { FORMAT_DIFFICULTIES } from '@/constants/difficulties';
 import { useNostalgiaPackData } from '@/composables/useNostalgiaPackData';
+import { useMapGroups } from '@/composables/useMapGroups';
 import GhostBtd6Map from '@/components/maps/GhostBtd6Map.vue';
 import type { GhostMap } from '@/services/api/maps/types';
 
@@ -106,10 +107,10 @@ const {
 const filteredMaps = computed(() => {
   const maps = mapsResponse.value?.data;
   if (!maps || !selectedCategory.value) return maps;
-  const filtered = maps.filter((m) => m.retro_map?.game.category_id === selectedCategory.value!.id);
-  if (!isNP.value) return filtered;
-  return [...filtered].sort((a, b) => (a.retro_map?.sort_order ?? 0) - (b.retro_map?.sort_order ?? 0));
+  return maps.filter((m) => m.retro_map?.game.category_id === selectedCategory.value!.id);
 });
+
+const mapGroups = useMapGroups(filteredMaps, formatId);
 </script>
 
 <template>
@@ -171,22 +172,30 @@ const filteredMaps = computed(() => {
       if you would like to interact with the community more!
     </p>
 
-    <!-- Map Grid -->
-    <MapGrid :maps="filteredMaps" :btd6-version="btd6Version" :burning="isBurning">
-      <template #badge="{ map }">
-        <PlacementBadge
-          v-if="formatId === FORMAT_MAPLIST && map.placement_curver != null && config"
-          :placement="map.placement_curver"
-          :config="config"
-        />
-        <MinimapBadge
-          v-else-if="formatId === FORMAT_NOSTALGIA_PACK && map.retro_map"
-          :src="map.retro_map.preview_url"
-        />
-      </template>
-      <template #ghost="{ map }">
-        <GhostBtd6Map :map="(map as GhostMap)" />
-      </template>
-    </MapGrid>
+    <!-- Map Groups -->
+    <template v-if="mapGroups">
+      <div v-for="(group, i) in mapGroups" :key="i">
+        <h2 v-if="group.subcategoryName" class="text-center mt-8 mb-2 font-['Luckiest_Guy'] text-2xl">
+          {{ group.subcategoryName }}
+        </h2>
+        <MapGrid :maps="group.maps" :btd6-version="btd6Version" :burning="isBurning">
+          <template #badge="{ map }">
+            <PlacementBadge
+              v-if="formatId === FORMAT_MAPLIST && map.placement_curver != null && config"
+              :placement="map.placement_curver"
+              :config="config"
+            />
+            <MinimapBadge
+              v-else-if="formatId === FORMAT_NOSTALGIA_PACK && map.retro_map"
+              :src="map.retro_map.preview_url"
+            />
+          </template>
+          <template #ghost="{ map }">
+            <GhostBtd6Map :map="(map as GhostMap)" />
+          </template>
+        </MapGrid>
+      </div>
+    </template>
+    <MapGrid v-else :btd6-version="btd6Version" />
   </div>
 </template>
