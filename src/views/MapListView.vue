@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
-import { useRoute, useRouter, RouterLink } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { useFormats } from '@/services/api/formats/queries';
 import { useMaps } from '@/services/api/maps/queries';
 import { useConfig } from '@/services/api/config/queries';
-import Btd6Map from '@/components/maps/Btd6Map.vue';
+import MapGrid from '@/components/maps/MapGrid.vue';
 import PlacementBadge from '@/components/maps/badges/PlacementBadge.vue';
 import MinimapBadge from '@/components/maps/badges/MinimapBadge.vue';
 import DifficultySelector from '@/components/maps/DifficultySelector.vue';
@@ -105,41 +105,18 @@ const btd6Version = computed(() => config.value?.current_btd6_ver);
     </p>
 
     <!-- Map Grid -->
-    <div class="grid grid-cols-2 lg:grid-cols-3 gap-2 md:gap-4">
-      <template v-if="mapsResponse">
-        <RouterLink
-          v-for="map in mapsResponse.data"
-          :key="map.code"
-          :to="`/map/${map.code}`"
-          class="group no-underline! text-(--color-text)!"
-        >
-          <Btd6Map :map="map" :btd6-version="btd6Version">
-            <template #badge>
-              <!-- Maplist: placement circle with points -->
-              <PlacementBadge
-                v-if="formatId === FORMAT_MAPLIST && map.placement_curver != null && config"
-                :placement="map.placement_curver"
-                :config="config"
-              />
-              <!-- Nostalgia Pack: retro minimap -->
-              <MinimapBadge
-                v-else-if="formatId === FORMAT_NOSTALGIA_PACK && map.retro_map"
-                :src="map.retro_map.preview_url"
-              />
-            </template>
-          </Btd6Map>
-        </RouterLink>
+    <MapGrid :maps="mapsResponse?.data" :btd6-version="btd6Version">
+      <template #badge="{ map }">
+        <PlacementBadge
+          v-if="formatId === FORMAT_MAPLIST && map.placement_curver != null && config"
+          :placement="map.placement_curver"
+          :config="config"
+        />
+        <MinimapBadge
+          v-else-if="formatId === FORMAT_NOSTALGIA_PACK && map.retro_map"
+          :src="map.retro_map.preview_url"
+        />
       </template>
-      <template v-else>
-        <div
-          v-for="i in 12"
-          :key="i"
-          class="bg-(--color-secondary) rounded-(--radius-panel) animate-pulse my-6"
-        >
-          <div class="h-5 w-3/4 bg-(--color-primary) rounded mx-auto my-2" />
-          <div class="aspect-3/2 bg-(--color-primary) mx-1.5 mb-1.5 rounded-sm" />
-        </div>
-      </template>
-    </div>
+    </MapGrid>
   </div>
 </template>
