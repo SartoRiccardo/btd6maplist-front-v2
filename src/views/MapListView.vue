@@ -4,67 +4,69 @@ import { useRoute, useRouter } from 'vue-router';
 import { useFormats } from '@/services/api/formats/queries';
 import { useMaps } from '@/services/api/maps/queries';
 import { useConfig } from '@/services/api/config/queries';
+import { useAuthStore } from '@/stores/auth';
+import { useNostalgiaPackData } from '@/composables/useNostalgiaPackData';
+import { useMapGroups } from '@/composables/useMapGroups';
+import { FORMAT_MAPLIST, FORMAT_NOSTALGIA_PACK, FORMAT_BEST_OF_THE_BEST, FORMAT_DESCRIPTIONS } from '@/constants/formats';
+import { FORMAT_DIFFICULTIES } from '@/constants/difficulties';
+import type { GhostMap, MapWithMetadata } from '@/services/api/maps/types';
 import MapGrid from '@/components/maps/MapGrid.vue';
 import PlacementBadge from '@/components/maps/badges/PlacementBadge.vue';
 import MinimapBadge from '@/components/maps/badges/MinimapBadge.vue';
 import DifficultySelector from '@/components/maps/DifficultySelector.vue';
-import { FORMAT_MAPLIST, FORMAT_NOSTALGIA_PACK, FORMAT_BEST_OF_THE_BEST, FORMAT_DESCRIPTIONS } from '@/constants/formats';
-import { FORMAT_DIFFICULTIES } from '@/constants/difficulties';
-import { useNostalgiaPackData } from '@/composables/useNostalgiaPackData';
-import { useMapGroups } from '@/composables/useMapGroups';
 import GhostBtd6Map from '@/components/maps/GhostBtd6Map.vue';
-import type { GhostMap } from '@/services/api/maps/types';
-import { useAuthStore } from '@/stores/auth';
 import LinkButton from '@/components/ui/LinkButton.vue';
 
+// --- Services & stores ---
 const route = useRoute();
 const router = useRouter();
-const slug = computed(() => route.params['slug'] as string);
-
+const auth = useAuthStore();
 const { data: formats } = useFormats();
-const format = computed(() =>
-  formats.value?.data.find((f) => f.slug === slug.value)
-);
+const { data: config } = useConfig();
 
+// --- Route & format ---
+const slug = computed(() => route.params['slug'] as string);
+const format = computed(() => formats.value?.data.find((f) => f.slug === slug.value));
 const formatId = computed(() => format.value?.id);
+const isNP = computed(() => formatId.value === FORMAT_NOSTALGIA_PACK);
+const btd6Version = computed(() => config.value?.current_btd6_ver);
 
-// Difficulty selector
+// --- Difficulty selector ---
 const difficulties = computed(() =>
   formatId.value != null ? FORMAT_DIFFICULTIES[formatId.value] ?? null : null
 );
 
-const selectedQuery = ref('');
+const selectedDifficultyQuery = ref('');
 
-// Read initial difficulty from query param
 watch([difficulties, () => route.query['difficulty']], ([diffs, queryDiff]) => {
   if (!diffs) return;
   if (typeof queryDiff === 'string' && diffs.some((d) => d.query === queryDiff)) {
-    selectedQuery.value = queryDiff;
+    selectedDifficultyQuery.value = queryDiff;
     return;
   }
-  selectedQuery.value = diffs[0]!.query;
+  selectedDifficultyQuery.value = diffs[0]!.query;
 }, { immediate: true });
 
 const selectedDifficulty = computed(() =>
-  difficulties.value?.find((d) => d.query === selectedQuery.value) ?? difficulties.value?.[0]
+  difficulties.value?.find((d) => d.query === selectedDifficultyQuery.value) ?? difficulties.value?.[0]
 );
-
-function onDifficultyChange(query: string) {
-  selectedQuery.value = query;
-  const { category: _, ...rest } = route.query;
-  router.replace({ query: { ...rest, difficulty: query } });
-}
 
 const currentDescription = computed(() =>
   selectedDifficulty.value?.description
   ?? (formatId.value != null ? FORMAT_DESCRIPTIONS[formatId.value] : undefined)
 );
 
+function onDifficultyChange(query: string) {
+  selectedDifficultyQuery.value = query;
+  const { category: _, ...rest } = route.query;
+  router.replace({ query: { ...rest, difficulty: query } });
+}
+
 function subfilterString(value: number | number[]): string {
   return Array.isArray(value) ? value.join(',') : value.toString();
 }
 
-// Maps query — include format_subfilter when difficulties exist
+// --- Maps query ---
 const { data: mapsResponse } = useMaps(
   computed(() => {
     if (formatId.value == null) return undefined;
@@ -80,7 +82,7 @@ const { data: mapsResponse } = useMaps(
     if (selectedDifficulty.value) {
       params.format_subfilter = subfilterString(selectedDifficulty.value.value);
     }
-    if (formatId.value === FORMAT_NOSTALGIA_PACK) {
+    if (isNP.value) {
       params.fill_missing_retro = true;
     }
     return params;
@@ -88,17 +90,7 @@ const { data: mapsResponse } = useMaps(
   { enabled: computed(() => formatId.value != null) },
 );
 
-const { data: config } = useConfig();
-const btd6Version = computed(() => config.value?.current_btd6_ver);
-
-const isBurning = computed(() =>
-  formatId.value === FORMAT_BEST_OF_THE_BEST
-    ? (map: import('@/services/api/maps/types').MapWithMetadata) => map.botb_difficulty === 4
-    : undefined
-);
-
-// NP category selector
-const isNP = computed(() => formatId.value === FORMAT_NOSTALGIA_PACK);
+// --- NP-specific: categories & progress ---
 const {
   categories,
   selected: selectedCategory,
@@ -107,6 +99,7 @@ const {
   progress,
 } = useNostalgiaPackData(isNP, computed(() => selectedDifficulty.value));
 
+// --- Filtered & grouped maps ---
 const filteredMaps = computed(() => {
   const maps = mapsResponse.value?.data;
   if (!maps || !selectedCategory.value) return maps;
@@ -115,11 +108,18 @@ const filteredMaps = computed(() => {
 
 const mapGroups = useMapGroups(filteredMaps, formatId);
 
-const auth = useAuthStore();
+// --- Display flags ---
+const isBurning = computed(() =>
+  formatId.value === FORMAT_BEST_OF_THE_BEST
+    ? (map: MapWithMetadata) => map.botb_difficulty === 4
+    : undefined
+);
+
 const showSubmitButton = computed(() =>
   formatId.value != null
   && (!auth.isAuthenticated || auth.hasPermission('create:map_submission', formatId.value))
 );
+
 const showAddButton = computed(() =>
   formatId.value != null && auth.hasPermission('create:map', formatId.value)
 );
@@ -138,7 +138,7 @@ const showAddButton = computed(() =>
     <DifficultySelector
       v-if="difficulties"
       :difficulties="difficulties"
-      :model-value="selectedQuery"
+      :model-value="selectedDifficultyQuery"
       @update:model-value="onDifficultyChange"
     />
 
