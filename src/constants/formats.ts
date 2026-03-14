@@ -5,3 +5,7 @@ export const FORMAT_EXPERT_LIST = 51;
 export const FORMAT_BEST_OF_THE_BEST = 52;
 
 export const FORMATS_WITHOUT_GERALDO = [FORMAT_NOSTALGIA_PACK, FORMAT_BEST_OF_THE_BEST];
+
+export const FORMAT_DESCRIPTIONS: Partial<Record<number, string>> = {
+  [FORMAT_MAPLIST]: "The 50 hardest custom maps in the game, ordered by difficulty. Good luck, you'll need it...",
+};

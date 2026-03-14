@@ -8,7 +8,7 @@ import MapGrid from '@/components/maps/MapGrid.vue';
 import PlacementBadge from '@/components/maps/badges/PlacementBadge.vue';
 import MinimapBadge from '@/components/maps/badges/MinimapBadge.vue';
 import DifficultySelector from '@/components/maps/DifficultySelector.vue';
-import { FORMAT_MAPLIST, FORMAT_NOSTALGIA_PACK, FORMAT_BEST_OF_THE_BEST } from '@/constants/formats';
+import { FORMAT_MAPLIST, FORMAT_NOSTALGIA_PACK, FORMAT_BEST_OF_THE_BEST, FORMAT_DESCRIPTIONS } from '@/constants/formats';
 import { FORMAT_DIFFICULTIES } from '@/constants/difficulties';
 
 const route = useRoute();
@@ -48,7 +48,10 @@ function onDifficultyChange(query: string) {
   router.replace({ query: { ...route.query, difficulty: query } });
 }
 
-const currentDifficultyDescription = computed(() => selectedDifficulty.value?.description);
+const currentDescription = computed(() =>
+  selectedDifficulty.value?.description
+  ?? (formatId.value != null ? FORMAT_DESCRIPTIONS[formatId.value] : undefined)
+);
 
 function subfilterString(value: number | number[]): string {
   return Array.isArray(value) ? value.join(',') : value.toString();
@@ -97,8 +100,8 @@ const isBurning = computed(() =>
     />
 
     <!-- Difficulty Description -->
-    <p v-if="currentDifficultyDescription" class="text-center w-[90%] mx-auto my-8">
-      {{ currentDifficultyDescription }}
+    <p v-if="currentDescription" class="text-center w-[90%] mx-auto my-8">
+      {{ currentDescription }}
     </p>
 
     <!-- Discord Link -->
