@@ -175,6 +175,19 @@ const showAddButton = computed(() =>
       {{ currentDescription }}
     </p>
 
+    <!-- Submission Rules Links -->
+    <p v-if="format?.map_submission_status !== 'closed' || format?.run_submission_status !== 'closed'" class="text-center my-4">
+      <RouterLink v-if="format?.map_submission_status !== 'closed'" :to="`/maps/${slug}/map-rules`">
+        Map Submission Rules
+      </RouterLink>
+      <template v-if="format?.map_submission_status !== 'closed' && format?.run_submission_status !== 'closed'">
+        {{ ' | ' }}
+      </template>
+      <RouterLink v-if="format?.run_submission_status !== 'closed'" :to="`/maps/${slug}/completion-rules`">
+        Completion Submission Rules
+      </RouterLink>
+    </p>
+
     <!-- Action Buttons -->
     <div v-if="showSubmitButton || showAddButton" class="flex justify-center gap-4 my-4">
       <LinkButton v-if="showSubmitButton" :to="`/map/submit?on=${formatId}`">
