@@ -49,7 +49,8 @@ const selectedDifficulty = computed(() =>
 
 function onDifficultyChange(query: string) {
   selectedQuery.value = query;
-  router.replace({ query: { ...route.query, difficulty: query } });
+  const { category: _, ...rest } = route.query;
+  router.replace({ query: { ...rest, difficulty: query } });
 }
 
 const currentDescription = computed(() =>
