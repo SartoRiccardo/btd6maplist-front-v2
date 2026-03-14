@@ -112,7 +112,7 @@ const nostalgiaInfo = computed(() => {
     <div class="flex flex-col md:flex-row gap-6 my-4">
       <!-- Left: Map preview -->
       <div class="w-full md:w-5/12">
-        <Btd6Map :map="mapData" :code="mapData.code" :show-name="false" show-play-button class="mb-0 mt-0">
+        <Btd6Map :map="mapData" :code="mapData.code" :show-name="false" :btd6-version="config?.current_btd6_ver" show-play-button class="mb-0 mt-0">
           <template #badge>
             <!-- Maplist placement badge -->
             <div
