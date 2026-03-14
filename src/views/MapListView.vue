@@ -133,15 +133,14 @@ const filteredMaps = computed(() => {
 
     <!-- Progress Bar (NP) -->
     <div v-if="progress" class="w-[90%] max-w-md mx-auto my-6">
-      <div class="flex justify-between text-sm mb-1">
-        <span>Remade</span>
-        <span>{{ progress.mapsRemade }} / {{ progress.totalMaps }}</span>
-      </div>
-      <div class="h-4 bg-(--color-secondary) rounded-full overflow-hidden">
+      <div class="relative h-6 bg-(--color-secondary) rounded-full overflow-hidden">
         <div
           class="h-full bg-(--color-highlight) rounded-full transition-[width] duration-500"
           :style="{ width: `${progress.totalMaps > 0 ? (progress.mapsRemade / progress.totalMaps) * 100 : 0}%` }"
         />
+        <span class="absolute inset-0 flex items-center justify-center text-sm font-bold font-border">
+          {{ Math.round(progress.totalMaps > 0 ? (progress.mapsRemade / progress.totalMaps) * 100 : 0) }}% remade — {{ progress.mapsRemade }}/{{ progress.totalMaps }}
+        </span>
       </div>
     </div>
 
