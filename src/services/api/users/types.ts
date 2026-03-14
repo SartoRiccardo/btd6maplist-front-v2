@@ -8,6 +8,9 @@ export interface UserMedals {
   current_lcc: number;
 }
 
+/** Permission map: key is permission name, value is array of format IDs (null = global) */
+export type Permissions = Record<string, (number | null)[]>;
+
 export interface User {
   discord_id: string;
   name: string;
@@ -20,6 +23,8 @@ export interface User {
   medals?: UserMedals;
   // Only included when 'achievement_roles' is in include parameter
   achievement_roles?: AchievementRole[];
+  // Only included when 'permissions' is in include parameter
+  permissions?: Permissions;
 }
 
 export interface UpdateUserRequest {
@@ -27,7 +32,7 @@ export interface UpdateUserRequest {
   nk_oak?: string | null; // optional - Ninja Kiwi OpenAPI Key
 }
 
-export type UserIncludeParams = Array<'flair' | 'medals' | 'achievement_roles'>;
+export type UserIncludeParams = Array<'flair' | 'medals' | 'achievement_roles' | 'permissions'>;
 
 export interface GetUserParams {
   include?: UserIncludeParams;

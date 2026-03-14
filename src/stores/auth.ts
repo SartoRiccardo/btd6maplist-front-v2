@@ -12,7 +12,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   // User query
   const userQuery = useMe(
-    { include: ['flair', 'medals'] },
+    { include: ['flair', 'medals', 'permissions'] },
     {
       enabled: isAuthenticated,
     }
@@ -50,6 +50,23 @@ export const useAuthStore = defineStore('auth', () => {
     queryClient.resetQueries({ queryKey: userQueryKeys.me() });
   }
 
+  function hasPermission(perm: string, format: number | null = null): boolean {
+    if (user.value?.is_banned) return false;
+    const perms = user.value?.permissions;
+    if (!perms) return false;
+    const formats = perms[perm];
+    if (!formats) return false;
+    return formats.includes(null) || (format !== null && formats.includes(format));
+  }
+
+  function hasAnyPermission(perms: string[], format: number | null = null): boolean {
+    return perms.some((p) => hasPermission(p, format));
+  }
+
+  function hasAllPermissions(perms: string[], format: number | null = null): boolean {
+    return perms.every((p) => hasPermission(p, format));
+  }
+
   return {
     token,
     user,
@@ -59,5 +76,8 @@ export const useAuthStore = defineStore('auth', () => {
     setToken,
     logout,
     refetchUser: refetch,
+    hasPermission,
+    hasAnyPermission,
+    hasAllPermissions,
   };
 });
