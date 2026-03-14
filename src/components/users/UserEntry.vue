@@ -10,6 +10,7 @@ const props = withDefaults(
     label?: string;
     centered?: boolean;
     inline?: boolean;
+    textSize?: 'sm' | 'lg';
   }>(),
   {
     centered: false,
@@ -20,17 +21,24 @@ const props = withDefaults(
 const avatarUrl = computed(
   () => props.user.avatar_url ?? DEFAULT_AVATAR_URL
 );
+
+const textSizeClass = computed(() => {
+  if (props.textSize === 'lg') return 'lg:text-xl';
+  if (props.textSize === 'sm') return 'lg:text-sm';
+  return '';
+});
 </script>
 
 <template>
   <div>
     <RouterLink
       :to="`/users/${user.discord_id}`"
-      class="no-underline! inline-block hover:[&_.user-name]:text-(--color-active)"
+      class="no-underline! hover:[&_.user-name]:text-(--color-active)"
+      :class="{ 'inline-block': inline, 'block': !inline }"
     >
       <div
-        class="flex items-stretch text-(--color-text) relative w-fit"
-        :class="{ 'my-1.5': !inline }"
+        class="flex items-stretch text-(--color-text) relative"
+        :class="{ 'my-1.5': !inline, 'w-fit': inline }"
       >
         <img
           loading="lazy"
@@ -43,10 +51,13 @@ const avatarUrl = computed(
         />
 
         <div
-          class="pl-2"
+          class="pl-2 min-w-0"
           :class="{ 'flex flex-col justify-center': centered }"
         >
-          <p class="user-name text-start font-bold mb-0 transition-colors duration-100">
+          <p
+            class="user-name text-start font-bold mb-0 transition-colors duration-100 truncate"
+            :class="textSizeClass"
+          >
             <span v-if="inline" class="ml-[1.8em]" />
             {{ user.name }}
           </p>

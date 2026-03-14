@@ -33,7 +33,7 @@ const isTopThree = computed(() => props.placement <= 3);
     </div>
 
     <div class="flex-1 min-w-0">
-      <UserEntry :user="user" centered />
+      <UserEntry :user="user" centered text-size="lg" />
     </div>
 
     <div class="shrink-0 text-right">
