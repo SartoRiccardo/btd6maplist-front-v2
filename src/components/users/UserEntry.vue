@@ -10,11 +10,13 @@ const props = withDefaults(
     label?: string | undefined;
     centered?: boolean;
     inline?: boolean;
+    noLink?: boolean;
     textSize?: 'sm' | 'lg';
   }>(),
   {
     centered: false,
     inline: false,
+    noLink: false,
   }
 );
 
@@ -31,10 +33,14 @@ const textSizeClass = computed(() => {
 
 <template>
   <div>
-    <RouterLink
-      :to="`/users/${user.discord_id}`"
-      class="no-underline! hover:[&_.user-name]:text-(--color-active)"
-      :class="{ 'inline-block': inline, 'block': !inline }"
+    <component
+      :is="noLink ? 'div' : RouterLink"
+      v-bind="noLink ? {} : { to: `/users/${user.discord_id}` }"
+      class="no-underline!"
+      :class="[
+        { 'inline-block': inline, 'block': !inline },
+        noLink ? '' : 'hover:[&_.user-name]:text-(--color-active)',
+      ]"
     >
       <div
         class="flex items-stretch text-(--color-text) relative"
@@ -64,6 +70,6 @@ const textSizeClass = computed(() => {
           <p v-if="label" class="text-start mb-0 text-xs">{{ label }}</p>
         </div>
       </div>
-    </RouterLink>
+    </component>
   </div>
 </template>

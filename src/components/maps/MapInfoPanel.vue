@@ -1,13 +1,35 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import type { MapCreator, MapVerification } from '@/services/api/maps/types';
+import type { User } from '@/services/api/users/types';
+import { useNKMapCreator } from '@/composables/useNKMapCreator';
 import UserEntry from '@/components/users/UserEntry.vue';
+import UserEntrySkeleton from '@/components/users/UserEntrySkeleton.vue';
 import Icon from '@/components/common/Icon.vue';
 
-defineProps<{
+const props = defineProps<{
+  code: string;
   creators: MapCreator[];
   verifications: MapVerification[];
   optimalHeros: string[] | null;
 }>();
+
+const noCreators = computed(() => props.creators.length === 0);
+const { creatorName: nkCreatorName, creatorAvatar: nkCreatorAvatar, isLoading: nkLoading } = useNKMapCreator(
+  () => props.code,
+  noCreators,
+);
+
+const nkSyntheticUser = computed<User | null>(() => {
+  if (!nkCreatorName.value) return null;
+  return {
+    discord_id: '',
+    name: nkCreatorName.value,
+    is_banned: false,
+    platform_roles: [],
+    avatar_url: nkCreatorAvatar.value,
+  };
+});
 </script>
 
 <template>
@@ -26,6 +48,13 @@ defineProps<{
             :label="creator.role ?? undefined"
           />
         </template>
+        <UserEntry
+          v-else-if="nkSyntheticUser"
+          :user="nkSyntheticUser"
+          label="This user does not have a BTD6 Maplist account"
+          no-link
+        />
+        <UserEntrySkeleton v-else-if="nkLoading" />
         <p v-else class="text-(--color-text-muted) text-sm">
           Unknown creator
         </p>

@@ -184,6 +184,7 @@ const nostalgiaInfo = computed(() => {
       <!-- Right: Info panel -->
       <div class="flex-1">
         <MapInfoPanel
+          :code="mapData.code"
           :creators="mapData.creators"
           :verifications="mapData.verifications"
           :optimal-heros="mapData.optimal_heros"
