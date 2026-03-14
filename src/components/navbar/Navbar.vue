@@ -3,6 +3,7 @@ import { ref } from 'vue';
 import { RouterLink } from 'vue-router';
 import DesktopNavbar from './DesktopNavbar.vue';
 import MobileNav from './MobileNav.vue';
+import { FORMAT_ICONS } from '@/constants/formats';
 import type { NavItem } from './types';
 
 const navItems: NavItem[] = [
@@ -11,13 +12,10 @@ const navItems: NavItem[] = [
     url: '/leaderboard',
   },
   {
+    children: FORMAT_ICONS
+      .filter((f) => f.slug)
+      .map((f) => ({ icon_url: f.image, name: f.name, url: `/maps/${f.slug}` })),
     name: 'Maps',
-    children: [
-      { url: '/maps/maplist', name: 'Maplist', icon_url: '/images/list_icons/icon_curver.webp' },
-      { url: '/maps/expert-list', name: 'Expert List', icon_url: '/images/list_icons/icon_hard.webp' },
-      { url: '/maps/best-of-the-best', name: 'Best of the Best', icon_url: '/images/list_icons/icon_botb.png' },
-      { url: '/maps/nostalgia-pack', name: 'Nostalgia Pack', icon_url: '/images/list_icons/icon_np_1.png' },
-    ],
   },
 ];
 

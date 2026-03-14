@@ -13,7 +13,7 @@ import type { GhostMap, MapWithMetadata } from '@/services/api/maps/types';
 import MapGrid from '@/components/maps/MapGrid.vue';
 import PlacementBadge from '@/components/maps/badges/PlacementBadge.vue';
 import MinimapBadge from '@/components/maps/badges/MinimapBadge.vue';
-import DifficultySelector from '@/components/maps/DifficultySelector.vue';
+import IconSelector from '@/components/ui/IconSelector.vue';
 import GhostBtd6Map from '@/components/maps/GhostBtd6Map.vue';
 import LinkButton from '@/components/ui/LinkButton.vue';
 
@@ -34,6 +34,10 @@ const btd6Version = computed(() => config.value?.current_btd6_ver);
 // --- Difficulty selector ---
 const difficulties = computed(() =>
   formatId.value != null ? FORMAT_DIFFICULTIES[formatId.value] ?? null : null
+);
+
+const difficultyOptions = computed(() =>
+  difficulties.value?.map((d) => ({ image: d.image, key: d.query, name: d.name })) ?? []
 );
 
 const selectedDifficultyQuery = ref('');
@@ -135,9 +139,9 @@ const showAddButton = computed(() =>
     </div>
 
     <!-- Difficulty Selector -->
-    <DifficultySelector
+    <IconSelector
       v-if="difficulties"
-      :difficulties="difficulties"
+      :options="difficultyOptions"
       :model-value="selectedDifficultyQuery"
       @update:model-value="onDifficultyChange"
     />

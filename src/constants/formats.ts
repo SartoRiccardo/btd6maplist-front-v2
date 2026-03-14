@@ -9,3 +9,34 @@ export const FORMATS_WITHOUT_GERALDO = [FORMAT_NOSTALGIA_PACK, FORMAT_BEST_OF_TH
 export const FORMAT_DESCRIPTIONS: Partial<Record<number, string>> = {
   [FORMAT_MAPLIST]: "The 50 hardest custom maps in the game, ordered by difficulty. Good luck, you'll need it...",
 };
+
+// TODO: image should come from the API (format object) instead of being hardcoded here
+export interface FormatIcon {
+  id: number;
+  image: string;
+  name: string;
+  slug: string | null;
+}
+
+export const FORMAT_ICONS: FormatIcon[] = [
+  { id: FORMAT_MAPLIST, image: '/images/list_icons/icon_curver.webp', name: 'Maplist', slug: 'maplist' },
+  { id: FORMAT_MAPLIST_ALL_VER, image: '/images/list_icons/icon_allver.webp', name: 'All Versions', slug: null },
+  { id: FORMAT_EXPERT_LIST, image: '/images/list_icons/icon_hard.webp', name: 'Expert List', slug: 'expert-list' },
+  { id: FORMAT_BEST_OF_THE_BEST, image: '/images/list_icons/icon_botb.png', name: 'Best of the Best', slug: 'best-of-the-best' },
+  { id: FORMAT_NOSTALGIA_PACK, image: '/images/list_icons/icon_np_1.png', name: 'Nostalgia Pack', slug: 'nostalgia-pack' },
+];
+
+export const FORMATS_WITH_POINTS = [FORMAT_MAPLIST, FORMAT_MAPLIST_ALL_VER, FORMAT_EXPERT_LIST];
+
+export interface LeaderboardValueOption {
+  key: string;
+  label: string;
+  suffix: string;
+}
+
+export const LEADERBOARD_VALUES: LeaderboardValueOption[] = [
+  { key: 'points', label: 'Points', suffix: 'pts' },
+  { key: 'lccs', label: 'LCCs', suffix: '' },
+  { key: 'no_geraldo', label: 'No Optimal Hero', suffix: '' },
+  { key: 'black_border', label: 'Black Border', suffix: '' },
+];

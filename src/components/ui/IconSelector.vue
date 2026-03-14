@@ -1,8 +1,12 @@
 <script setup lang="ts">
-import type { Difficulty } from '@/constants/difficulties';
+export interface IconOption {
+  key: string;
+  name: string;
+  image: string;
+}
 
 defineProps<{
-  difficulties: Difficulty[];
+  options: IconOption[];
   modelValue: string;
 }>();
 
@@ -12,26 +16,26 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div v-if="difficulties.length >= 2" class="flex flex-wrap justify-center gap-2 md:gap-4">
+  <div v-if="options.length >= 2" class="flex flex-wrap justify-center gap-2 md:gap-4">
     <div
-      v-for="diff in difficulties"
-      :key="diff.query"
+      v-for="option in options"
+      :key="option.key"
       class="px-2 py-4 cursor-pointer"
-      @click="emit('update:modelValue', diff.query)"
+      @click="emit('update:modelValue', option.key)"
     >
       <div
         class="relative bg-(--color-secondary) rounded-full border-[7px] transition-[border-color] duration-300"
-        :class="diff.query === modelValue
+        :class="option.key === modelValue
           ? 'border-(--color-highlight)'
           : 'border-(--color-contrast) hover:border-(--color-active)'"
       >
         <img
-          :src="diff.image"
-          :alt="diff.name"
+          :src="option.image"
+          :alt="option.name"
           class="w-[60px] h-[60px] lg:w-[80px] lg:h-[80px] rounded-full"
         />
         <p class="absolute w-full left-0 bottom-[-1rem] mb-0 text-center font-['Luckiest_Guy'] font-border text-sm whitespace-nowrap">
-          <span class="mx-[-100%]">{{ diff.name }}</span>
+          <span class="mx-[-100%]">{{ option.name }}</span>
         </p>
       </div>
     </div>
