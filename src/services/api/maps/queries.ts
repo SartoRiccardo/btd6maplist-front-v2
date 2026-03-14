@@ -1,7 +1,7 @@
 import { computed, toValue, type MaybeRefOrGetter } from 'vue';
 import { useQuery, type UseQueryOptions } from '@tanstack/vue-query';
 import { getMaps, getMap } from './index';
-import type { MapWithMetadata, MaybeGhostMap, GetMapsParams, GetMapParams } from './types';
+import type { MapWithMetadata, MapDetail, MaybeGhostMap, GetMapsParams, GetMapParams } from './types';
 import type { PaginatedResponse } from '@/services/api/common/types';
 
 export const mapQueryKeys = {
@@ -40,7 +40,7 @@ export function useMaps(
 export function useMap(
   code: MaybeRefOrGetter<string>,
   params?: MaybeRefOrGetter<GetMapParams | undefined>,
-  options?: Omit<UseQueryOptions<MapWithMetadata>, 'queryKey' | 'queryFn'>
+  options?: Omit<UseQueryOptions<MapDetail>, 'queryKey' | 'queryFn'>
 ) {
   return useQuery({
     queryKey: computed(() => mapQueryKeys.detail(toValue(code), toValue(params))),

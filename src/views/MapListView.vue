@@ -15,6 +15,7 @@ import PlacementBadge from '@/components/maps/badges/PlacementBadge.vue';
 import MinimapBadge from '@/components/maps/badges/MinimapBadge.vue';
 import IconSelector from '@/components/ui/IconSelector.vue';
 import GhostBtd6Map from '@/components/maps/GhostBtd6Map.vue';
+import Button from '@/components/ui/Button.vue';
 import LinkButton from '@/components/ui/LinkButton.vue';
 
 // --- Services & stores ---
@@ -148,17 +149,14 @@ const showAddButton = computed(() =>
 
     <!-- Category Buttons (NP) -->
     <div v-if="categories" class="flex flex-wrap justify-center gap-4 my-6">
-      <button
+      <Button
         v-for="cat in categories"
         :key="cat.id"
-        class="px-4 py-2 rounded-(--radius-btn) font-bold font-border cursor-pointer transition-colors duration-200"
-        :class="cat.query === selectedCategoryQuery
-          ? 'bg-(--color-highlight) text-white'
-          : 'bg-(--color-contrast) text-(--color-text) hover:bg-(--color-active)'"
+        :active="cat.query === selectedCategoryQuery"
         @click="onCategoryChange(cat.query)"
       >
         {{ cat.name }}
-      </button>
+      </Button>
     </div>
 
     <!-- Progress Bar (NP) -->

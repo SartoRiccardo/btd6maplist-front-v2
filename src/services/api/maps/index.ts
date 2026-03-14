@@ -1,4 +1,4 @@
-import type { MapWithMetadata, MaybeGhostMap, GetMapsParams, GetMapParams } from './types';
+import type { MapWithMetadata, MapDetail, MaybeGhostMap, GetMapsParams, GetMapParams } from './types';
 import type { PaginatedResponse } from '@/services/api/common/types';
 import { apiRequest } from '../client';
 
@@ -57,7 +57,7 @@ export function getMaps(
 export async function getMap(
   code: string,
   params?: GetMapParams
-): Promise<MapWithMetadata> {
+): Promise<MapDetail> {
   const queryString = buildMapParams(params);
-  return apiRequest<MapWithMetadata>(`${BASE_PATH}/${code}${queryString}`);
+  return apiRequest<MapDetail>(`${BASE_PATH}/${code}${queryString}`);
 }

@@ -1,5 +1,6 @@
 import type { FilterOption } from '@/services/api/common/types';
 import type { RetroGame } from '@/services/api/retro-games/types';
+import type { User } from '@/services/api/users/types';
 
 export interface Map {
   code: string;
@@ -39,6 +40,21 @@ export interface GhostMap extends Omit<MapWithMetadata, 'code' | 'retro_map'> {
 }
 
 export type MaybeGhostMap = MapWithMetadata | GhostMap;
+
+export interface MapCreator extends User {
+  role: string | null;
+}
+
+export interface MapVerification extends User {
+  version: number | null;
+}
+
+/** Full map detail — returned by GET /maps/{code} */
+export interface MapDetail extends MapWithMetadata {
+  creators: MapCreator[];
+  verifications: MapVerification[];
+  aliases: string[];
+}
 
 export interface GetMapsParams {
   timestamp?: number;
