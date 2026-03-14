@@ -8,6 +8,7 @@ const props = defineProps<{
   map?: MapWithMetadata | undefined;
   btd6Version?: number | undefined;
   burning?: boolean | undefined;
+  showPlayButton?: boolean | undefined;
 }>();
 
 const previewUrl = computed(
@@ -16,6 +17,12 @@ const previewUrl = computed(
 );
 
 const mapName = computed(() => props.map?.name);
+
+const mapCode = computed(() => props.map?.code ?? props.code);
+
+const playUrl = computed(() =>
+  mapCode.value ? `https://join.btd6.com/Map/${mapCode.value}` : undefined
+);
 
 const versionLabel = computed(() => {
   if (!props.btd6Version) return '';
@@ -43,6 +50,18 @@ const { containerRef: fireContainer } = useFireEffect(() => props.burning);
       alt=""
       loading="lazy"
     />
+
+    <!-- Play button -->
+    <div v-if="showPlayButton && playUrl" class="flex justify-center mt-3">
+      <a
+        :href="playUrl"
+        target="_blank"
+        class="bg-(--color-highlight) hover:brightness-110 text-(--color-text)! no-underline font-['Luckiest_Guy'] font-border text-2xl px-5 pt-3 pb-2 rounded-(--radius-btn) shadow transition-[filter] duration-200 text-center"
+      >
+        Play
+      </a>
+    </div>
+
     <div
       v-if="map?.is_verified && btd6Version"
       class="absolute left-[-0.7rem] bg-[#b2ebf2] text-black px-1 py-0.5 rounded text-xs z-20"
