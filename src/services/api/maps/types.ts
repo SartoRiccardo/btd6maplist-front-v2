@@ -1,4 +1,5 @@
 import type { FilterOption } from '@/services/api/common/types';
+import type { RetroGame } from '@/services/api/retro-games/types';
 
 export interface Map {
   code: string;
@@ -7,16 +8,6 @@ export interface Map {
   map_data: unknown | null;
   map_preview_url: string;
   map_notes: string | null;
-}
-
-export interface RetroGame {
-  id: number;
-  game_id: number;
-  category_id: number;
-  subcategory_id: number;
-  game_name: string;
-  category_name: string;
-  subcategory_name: string;
 }
 
 export interface RetroMap {
