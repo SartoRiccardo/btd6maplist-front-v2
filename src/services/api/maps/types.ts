@@ -44,7 +44,7 @@ export interface MapWithMetadata extends Map {
 export interface GetMapsParams {
   timestamp?: number;
   format_id?: number;
-  format_subfilter?: number;
+  format_subfilter?: string;
   page?: number;
   per_page?: number;
   deleted?: FilterOption;
