@@ -8,7 +8,7 @@ import MapGrid from '@/components/maps/MapGrid.vue';
 import PlacementBadge from '@/components/maps/badges/PlacementBadge.vue';
 import MinimapBadge from '@/components/maps/badges/MinimapBadge.vue';
 import DifficultySelector from '@/components/maps/DifficultySelector.vue';
-import { FORMAT_MAPLIST, FORMAT_NOSTALGIA_PACK } from '@/constants/formats';
+import { FORMAT_MAPLIST, FORMAT_NOSTALGIA_PACK, FORMAT_BEST_OF_THE_BEST } from '@/constants/formats';
 import { FORMAT_DIFFICULTIES } from '@/constants/difficulties';
 
 const route = useRoute();
@@ -71,6 +71,12 @@ const { data: mapsResponse } = useMaps(
 
 const { data: config } = useConfig();
 const btd6Version = computed(() => config.value?.current_btd6_ver);
+
+const isBurning = computed(() =>
+  formatId.value === FORMAT_BEST_OF_THE_BEST
+    ? (map: import('@/services/api/maps/types').MapWithMetadata) => map.botb_difficulty === 4
+    : undefined
+);
 </script>
 
 <template>
@@ -105,7 +111,7 @@ const btd6Version = computed(() => config.value?.current_btd6_ver);
     </p>
 
     <!-- Map Grid -->
-    <MapGrid :maps="mapsResponse?.data" :btd6-version="btd6Version">
+    <MapGrid :maps="mapsResponse?.data" :btd6-version="btd6Version" :burning="isBurning">
       <template #badge="{ map }">
         <PlacementBadge
           v-if="formatId === FORMAT_MAPLIST && map.placement_curver != null && config"

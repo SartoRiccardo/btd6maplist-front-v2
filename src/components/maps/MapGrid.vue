@@ -7,6 +7,7 @@ import Btd6MapPlaceholder from '@/components/maps/Btd6MapPlaceholder.vue';
 defineProps<{
   maps?: MapWithMetadata[] | undefined;
   btd6Version?: number | undefined;
+  burning?: ((map: MapWithMetadata) => boolean) | undefined;
 }>();
 
 defineSlots<{
@@ -23,7 +24,7 @@ defineSlots<{
         :to="`/map/${map.code}`"
         class="group no-underline! text-(--color-text)!"
       >
-        <Btd6Map :map="map" :btd6-version="btd6Version">
+        <Btd6Map :map="map" :btd6-version="btd6Version" :burning="burning?.(map)">
           <template v-if="$slots['badge']" #badge>
             <slot name="badge" :map="map" />
           </template>

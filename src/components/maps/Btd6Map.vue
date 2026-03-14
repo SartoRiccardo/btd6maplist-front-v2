@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import type { MapWithMetadata } from '@/services/api/maps/types';
+import { useFireEffect } from '@/composables/useFireEffect';
 
 const props = defineProps<{
   code?: string | undefined;
   map?: MapWithMetadata | undefined;
   btd6Version?: number | undefined;
+  burning?: boolean | undefined;
 }>();
 
 const previewUrl = computed(
@@ -19,6 +21,8 @@ const versionLabel = computed(() => {
   if (!props.btd6Version) return '';
   return `v${props.btd6Version / 10}`;
 });
+
+const { containerRef: fireContainer } = useFireEffect(() => props.burning);
 </script>
 
 <template>
@@ -41,10 +45,16 @@ const versionLabel = computed(() => {
     />
     <div
       v-if="map?.is_verified && btd6Version"
-      class="absolute left-[-0.7rem] bg-[#b2ebf2] text-black px-1 py-0.5 rounded text-xs"
+      class="absolute left-[-0.7rem] bg-[#b2ebf2] text-black px-1 py-0.5 rounded text-xs z-20"
       :class="mapName ? 'bottom-[-0.5rem]' : 'top-[-0.7rem]'"
     >
       <i class="bi bi-check" />{{ versionLabel }}
     </div>
+
+    <!-- Fire effect -->
+    <template v-if="burning">
+      <div class="absolute inset-[-3px] rounded-[calc(var(--radius-panel)+3px)] pointer-events-none z-[2] shadow-[0_0_20px_6px_rgba(255,140,0,0.6),0_0_50px_15px_rgba(255,60,0,0.3)]" />
+      <div ref="fireContainer" class="absolute inset-0 pointer-events-none z-10 overflow-visible" />
+    </template>
   </div>
 </template>
