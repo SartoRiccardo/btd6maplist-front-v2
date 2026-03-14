@@ -10,6 +10,7 @@ import MinimapBadge from '@/components/maps/badges/MinimapBadge.vue';
 import DifficultySelector from '@/components/maps/DifficultySelector.vue';
 import { FORMAT_MAPLIST, FORMAT_NOSTALGIA_PACK, FORMAT_BEST_OF_THE_BEST, FORMAT_DESCRIPTIONS } from '@/constants/formats';
 import { FORMAT_DIFFICULTIES } from '@/constants/difficulties';
+import { useCategorySelector } from '@/composables/useCategorySelector';
 
 const route = useRoute();
 const router = useRouter();
@@ -80,6 +81,21 @@ const isBurning = computed(() =>
     ? (map: import('@/services/api/maps/types').MapWithMetadata) => map.botb_difficulty === 4
     : undefined
 );
+
+// NP category selector
+const isNP = computed(() => formatId.value === FORMAT_NOSTALGIA_PACK);
+const {
+  categories,
+  selected: selectedCategory,
+  selectedQuery: selectedCategoryQuery,
+  onCategoryChange,
+} = useCategorySelector(isNP, computed(() => selectedDifficulty.value));
+
+const filteredMaps = computed(() => {
+  const maps = mapsResponse.value?.data;
+  if (!maps || !selectedCategory.value) return maps;
+  return maps.filter((m) => m.retro_map?.game.category_id === selectedCategory.value!.id);
+});
 </script>
 
 <template>
@@ -99,6 +115,21 @@ const isBurning = computed(() =>
       @update:model-value="onDifficultyChange"
     />
 
+    <!-- Category Buttons (NP) -->
+    <div v-if="categories" class="flex flex-wrap justify-center gap-4 my-6">
+      <button
+        v-for="cat in categories"
+        :key="cat.id"
+        class="px-4 py-2 rounded-(--radius-btn) font-bold font-border cursor-pointer transition-colors duration-200"
+        :class="cat.query === selectedCategoryQuery
+          ? 'bg-(--color-highlight) text-white'
+          : 'bg-(--color-contrast) text-(--color-text) hover:bg-(--color-active)'"
+        @click="onCategoryChange(cat.query)"
+      >
+        {{ cat.name }}
+      </button>
+    </div>
+
     <!-- Difficulty Description -->
     <p v-if="currentDescription" class="text-center w-[90%] mx-auto my-8">
       {{ currentDescription }}
@@ -114,7 +145,7 @@ const isBurning = computed(() =>
     </p>
 
     <!-- Map Grid -->
-    <MapGrid :maps="mapsResponse?.data" :btd6-version="btd6Version" :burning="isBurning">
+    <MapGrid :maps="filteredMaps" :btd6-version="btd6Version" :burning="isBurning">
       <template #badge="{ map }">
         <PlacementBadge
           v-if="formatId === FORMAT_MAPLIST && map.placement_curver != null && config"
