@@ -32,10 +32,19 @@ export interface MapWithMetadata extends Map {
   is_verified: boolean;
 }
 
+/** A backfilled retro map that hasn't been remade yet */
+export interface GhostMap extends Omit<MapWithMetadata, 'code' | 'retro_map'> {
+  code: null;
+  retro_map: RetroMap;
+}
+
+export type MaybeGhostMap = MapWithMetadata | GhostMap;
+
 export interface GetMapsParams {
   timestamp?: number;
   format_id?: number;
   format_subfilter?: string;
+  fill_missing_retro?: boolean;
   page?: number;
   per_page?: number;
   deleted?: FilterOption;

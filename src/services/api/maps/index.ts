@@ -1,4 +1,4 @@
-import type { MapWithMetadata, GetMapsParams, GetMapParams } from './types';
+import type { MapWithMetadata, MaybeGhostMap, GetMapsParams, GetMapParams } from './types';
 import type { PaginatedResponse } from '@/services/api/common/types';
 import { apiRequest } from '../client';
 
@@ -17,6 +17,7 @@ function buildMapsParams(params?: GetMapsParams): string {
   if (params.deleted != null) searchParams.set('deleted', params.deleted);
   if (params.created_by != null) searchParams.set('created_by', params.created_by.toString());
   if (params.verified_by != null) searchParams.set('verified_by', params.verified_by.toString());
+  if (params.fill_missing_retro) searchParams.set('fill_missing_retro', 'true');
 
   const queryString = searchParams.toString();
   return queryString ? `?${queryString}` : '';
@@ -37,11 +38,17 @@ function buildMapParams(params?: GetMapParams): string {
 /**
  * GET /maps
  */
-export async function getMaps(
+export function getMaps(
+  params: GetMapsParams & { fill_missing_retro: true }
+): Promise<PaginatedResponse<MaybeGhostMap>>;
+export function getMaps(
   params?: GetMapsParams
-): Promise<PaginatedResponse<MapWithMetadata>> {
+): Promise<PaginatedResponse<MapWithMetadata>>;
+export function getMaps(
+  params?: GetMapsParams
+): Promise<PaginatedResponse<MapWithMetadata | MaybeGhostMap>> {
   const queryString = buildMapsParams(params);
-  return apiRequest<PaginatedResponse<MapWithMetadata>>(`${BASE_PATH}${queryString}`);
+  return apiRequest(`${BASE_PATH}${queryString}`);
 }
 
 /**

@@ -11,6 +11,8 @@ import DifficultySelector from '@/components/maps/DifficultySelector.vue';
 import { FORMAT_MAPLIST, FORMAT_NOSTALGIA_PACK, FORMAT_BEST_OF_THE_BEST, FORMAT_DESCRIPTIONS } from '@/constants/formats';
 import { FORMAT_DIFFICULTIES } from '@/constants/difficulties';
 import { useNostalgiaPackData } from '@/composables/useNostalgiaPackData';
+import GhostBtd6Map from '@/components/maps/GhostBtd6Map.vue';
+import type { GhostMap } from '@/services/api/maps/types';
 
 const route = useRoute();
 const router = useRouter();
@@ -62,11 +64,20 @@ function subfilterString(value: number | number[]): string {
 const { data: mapsResponse } = useMaps(
   computed(() => {
     if (formatId.value == null) return undefined;
-    const params: { format_id: number; format_subfilter?: string } = {
+    const params: {
+      format_id: number;
+      format_subfilter?: string;
+      fill_missing_retro?: true;
+      per_page: number;
+    } = {
       format_id: formatId.value,
+      per_page: 150,
     };
     if (selectedDifficulty.value) {
       params.format_subfilter = subfilterString(selectedDifficulty.value.value);
+    }
+    if (formatId.value === FORMAT_NOSTALGIA_PACK) {
+      params.fill_missing_retro = true;
     }
     return params;
   }),
@@ -170,6 +181,9 @@ const filteredMaps = computed(() => {
           v-else-if="formatId === FORMAT_NOSTALGIA_PACK && map.retro_map"
           :src="map.retro_map.preview_url"
         />
+      </template>
+      <template #ghost="{ map }">
+        <GhostBtd6Map :map="(map as GhostMap)" />
       </template>
     </MapGrid>
   </div>

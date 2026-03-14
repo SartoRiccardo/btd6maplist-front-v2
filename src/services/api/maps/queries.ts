@@ -1,7 +1,7 @@
 import { computed, toValue, type MaybeRefOrGetter } from 'vue';
 import { useQuery, type UseQueryOptions } from '@tanstack/vue-query';
 import { getMaps, getMap } from './index';
-import type { MapWithMetadata, GetMapsParams, GetMapParams } from './types';
+import type { MapWithMetadata, MaybeGhostMap, GetMapsParams, GetMapParams } from './types';
 import type { PaginatedResponse } from '@/services/api/common/types';
 
 export const mapQueryKeys = {
@@ -13,14 +13,23 @@ export const mapQueryKeys = {
 /**
  * Query hook to fetch maps with optional filters.
  * Params can be reactive (ref, computed, or getter).
+ * When fill_missing_retro is true, returns MaybeGhostMap[].
  */
+export function useMaps(
+  params: MaybeRefOrGetter<(GetMapsParams & { fill_missing_retro: true }) | undefined>,
+  options?: Omit<UseQueryOptions<PaginatedResponse<MaybeGhostMap>>, 'queryKey' | 'queryFn'>
+): ReturnType<typeof useQuery<PaginatedResponse<MaybeGhostMap>>>;
 export function useMaps(
   params?: MaybeRefOrGetter<GetMapsParams | undefined>,
   options?: Omit<UseQueryOptions<PaginatedResponse<MapWithMetadata>>, 'queryKey' | 'queryFn'>
+): ReturnType<typeof useQuery<PaginatedResponse<MapWithMetadata>>>;
+export function useMaps(
+  params?: MaybeRefOrGetter<GetMapsParams | undefined>,
+  options?: Omit<UseQueryOptions<PaginatedResponse<MapWithMetadata | MaybeGhostMap>>, 'queryKey' | 'queryFn'>
 ) {
   return useQuery({
     queryKey: computed(() => mapQueryKeys.list(toValue(params))),
-    queryFn: () => getMaps(toValue(params)),
+    queryFn: () => getMaps(toValue(params) as GetMapsParams),
     ...options,
   });
 }
