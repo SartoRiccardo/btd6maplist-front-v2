@@ -117,7 +117,7 @@ const mapGroups = useMapGroups(filteredMaps, formatId);
 
 const auth = useAuthStore();
 const showSubmitButton = computed(() =>
-  !isNP.value && formatId.value != null
+  formatId.value != null
   && (!auth.isAuthenticated || auth.hasPermission('create:map_submission', formatId.value))
 );
 const showAddButton = computed(() =>
