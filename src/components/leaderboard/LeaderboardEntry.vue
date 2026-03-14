@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import type { User } from '@/services/api/users/types';
+import Icon from '@/components/common/Icon.vue';
 import UserEntry from '@/components/users/UserEntry.vue';
 
 const props = defineProps<{
   placement: number;
   score: number;
+  suffixIcon: string | undefined;
+  suffixText: string | undefined;
   user: User;
-  suffix?: string;
 }>();
 
 const positionColor = computed(() => {
@@ -35,7 +37,11 @@ const isTopThree = computed(() => props.placement <= 3);
     </div>
 
     <div class="shrink-0 text-right">
-      <span class="text-xl font-bold">{{ score }}{{ suffix }}</span>
+      <span class="text-xl font-bold">
+        {{ score }}
+        <template v-if="suffixText"> {{ suffixText }}</template>
+        <Icon v-if="suffixIcon" :src="suffixIcon" class="ml-2" />
+      </span>
     </div>
   </div>
 </template>

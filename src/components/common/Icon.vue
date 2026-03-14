@@ -13,6 +13,6 @@ withDefaults(defineProps<Props>(), {
   <img
     :alt="alt"
     :src="src"
-    class="inline-block h-[1em] w-[1em] object-cover align-middle scale-150 translate-y-[0.1em]"
+    class="inline-block h-[1em] w-[1em] object-cover align-middle scale-150"
   />
 </template>

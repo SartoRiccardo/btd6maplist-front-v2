@@ -160,8 +160,9 @@ const { data: leaderboard, isLoading } = useLeaderboard(
         :key="entry.user.discord_id"
         :placement="entry.placement"
         :score="entry.score"
+        :suffix-icon="currentValueOption.icon"
+        :suffix-text="currentValueOption.suffix"
         :user="entry.user"
-        :suffix="currentValueOption.suffix ? ` ${currentValueOption.suffix}` : ''"
       />
     </div>
 

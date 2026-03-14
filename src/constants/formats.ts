@@ -29,14 +29,15 @@ export const FORMAT_ICONS: FormatIcon[] = [
 export const FORMATS_WITH_POINTS = [FORMAT_MAPLIST, FORMAT_MAPLIST_ALL_VER, FORMAT_EXPERT_LIST];
 
 export interface LeaderboardValueOption {
+  icon?: string;
   key: string;
   label: string;
-  suffix: string;
+  suffix?: string;
 }
 
 export const LEADERBOARD_VALUES: LeaderboardValueOption[] = [
   { key: 'points', label: 'Points', suffix: 'pts' },
-  { key: 'lccs', label: 'LCCs', suffix: '' },
-  { key: 'no_geraldo', label: 'No Optimal Hero', suffix: '' },
-  { key: 'black_border', label: 'Black Border', suffix: '' },
+  { icon: '/images/medals/medal_lcc.webp', key: 'lccs', label: 'LCCs' },
+  { icon: '/images/medals/medal_nogerry.webp', key: 'no_geraldo', label: 'No Optimal Hero' },
+  { icon: '/images/medals/medal_bb.webp', key: 'black_border', label: 'Black Border' },
 ];
