@@ -17,14 +17,17 @@ function nameToQuery(name: string): string {
  * Manages NP category selection: fetches retro games, derives categories
  * from the selected difficulty's game_id, syncs with URL query param.
  */
-export function useCategorySelector(
+export function useNostalgiaPackData(
   enabled: Ref<boolean>,
   selectedDifficulty: Ref<Difficulty | undefined>,
 ) {
   const route = useRoute();
   const router = useRouter();
 
-  const { data: retroGamesResponse } = useRetroGames({ per_page: 100 }, { enabled });
+  const { data: retroGamesResponse } = useRetroGames(
+    { per_page: 100, include: 'progress' },
+    { enabled },
+  );
 
   const categories = computed(() => {
     if (!retroGamesResponse.value || !selectedDifficulty.value) return null;
@@ -65,10 +68,26 @@ export function useCategorySelector(
     router.replace({ query: { ...route.query, category: query } });
   }
 
+  const progress = computed(() => {
+    if (!retroGamesResponse.value || !selectedDifficulty.value) return null;
+    const gameId = selectedDifficulty.value.value;
+    const matching = retroGamesResponse.value.data.filter((rg) => rg.game_id === gameId);
+    if (!matching.length || matching[0]!.total_maps == null) return null;
+
+    let totalMaps = 0;
+    let mapsRemade = 0;
+    for (const rg of matching) {
+      totalMaps += rg.total_maps ?? 0;
+      mapsRemade += rg.maps_remade ?? 0;
+    }
+    return { totalMaps, mapsRemade };
+  });
+
   return {
     categories,
     selected,
     selectedQuery,
     onCategoryChange,
+    progress,
   };
 }

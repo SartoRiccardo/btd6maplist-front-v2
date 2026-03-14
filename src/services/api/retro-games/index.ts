@@ -11,6 +11,7 @@ export async function getRetroGames(
 
   if (params?.page != null) searchParams.set('page', params.page.toString());
   if (params?.per_page != null) searchParams.set('per_page', params.per_page.toString());
+  if (params?.include != null) searchParams.set('include', params.include);
 
   const queryString = searchParams.toString();
   return apiRequest<PaginatedResponse<RetroGame>>(

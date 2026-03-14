@@ -10,7 +10,7 @@ import MinimapBadge from '@/components/maps/badges/MinimapBadge.vue';
 import DifficultySelector from '@/components/maps/DifficultySelector.vue';
 import { FORMAT_MAPLIST, FORMAT_NOSTALGIA_PACK, FORMAT_BEST_OF_THE_BEST, FORMAT_DESCRIPTIONS } from '@/constants/formats';
 import { FORMAT_DIFFICULTIES } from '@/constants/difficulties';
-import { useCategorySelector } from '@/composables/useCategorySelector';
+import { useNostalgiaPackData } from '@/composables/useNostalgiaPackData';
 
 const route = useRoute();
 const router = useRouter();
@@ -89,7 +89,8 @@ const {
   selected: selectedCategory,
   selectedQuery: selectedCategoryQuery,
   onCategoryChange,
-} = useCategorySelector(isNP, computed(() => selectedDifficulty.value));
+  progress,
+} = useNostalgiaPackData(isNP, computed(() => selectedDifficulty.value));
 
 const filteredMaps = computed(() => {
   const maps = mapsResponse.value?.data;
@@ -128,6 +129,20 @@ const filteredMaps = computed(() => {
       >
         {{ cat.name }}
       </button>
+    </div>
+
+    <!-- Progress Bar (NP) -->
+    <div v-if="progress" class="w-[90%] max-w-md mx-auto my-6">
+      <div class="flex justify-between text-sm mb-1">
+        <span>Remade</span>
+        <span>{{ progress.mapsRemade }} / {{ progress.totalMaps }}</span>
+      </div>
+      <div class="h-4 bg-(--color-secondary) rounded-full overflow-hidden">
+        <div
+          class="h-full bg-(--color-highlight) rounded-full transition-[width] duration-500"
+          :style="{ width: `${progress.totalMaps > 0 ? (progress.mapsRemade / progress.totalMaps) * 100 : 0}%` }"
+        />
+      </div>
     </div>
 
     <!-- Difficulty Description -->
