@@ -106,7 +106,9 @@ const {
 const filteredMaps = computed(() => {
   const maps = mapsResponse.value?.data;
   if (!maps || !selectedCategory.value) return maps;
-  return maps.filter((m) => m.retro_map?.game.category_id === selectedCategory.value!.id);
+  const filtered = maps.filter((m) => m.retro_map?.game.category_id === selectedCategory.value!.id);
+  if (!isNP.value) return filtered;
+  return [...filtered].sort((a, b) => (a.retro_map?.sort_order ?? 0) - (b.retro_map?.sort_order ?? 0));
 });
 </script>
 
