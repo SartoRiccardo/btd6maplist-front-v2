@@ -7,7 +7,7 @@ import { DEFAULT_AVATAR_URL } from '@/constants/user';
 const props = withDefaults(
   defineProps<{
     user: User;
-    label?: string;
+    label?: string | undefined;
     centered?: boolean;
     inline?: boolean;
     textSize?: 'sm' | 'lg';

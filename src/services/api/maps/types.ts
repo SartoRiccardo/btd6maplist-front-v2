@@ -41,12 +41,16 @@ export interface GhostMap extends Omit<MapWithMetadata, 'code' | 'retro_map'> {
 
 export type MaybeGhostMap = MapWithMetadata | GhostMap;
 
-export interface MapCreator extends User {
+export interface MapCreator {
+  user_id: string;
   role: string | null;
+  user: User;
 }
 
-export interface MapVerification extends User {
+export interface MapVerification {
+  user_id: string;
   version: number | null;
+  user: User;
 }
 
 /** Full map detail — returned by GET /maps/{code} */

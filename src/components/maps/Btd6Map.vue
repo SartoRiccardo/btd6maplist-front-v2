@@ -3,13 +3,17 @@ import { computed } from 'vue';
 import type { MapWithMetadata } from '@/services/api/maps/types';
 import { useFireEffect } from '@/composables/useFireEffect';
 
-const props = defineProps<{
-  code?: string | undefined;
-  map?: MapWithMetadata | undefined;
-  btd6Version?: number | undefined;
-  burning?: boolean | undefined;
-  showPlayButton?: boolean | undefined;
-}>();
+const props = withDefaults(
+  defineProps<{
+    code?: string | undefined;
+    map?: MapWithMetadata | undefined;
+    btd6Version?: number | undefined;
+    burning?: boolean | undefined;
+    showPlayButton?: boolean | undefined;
+    showName?: boolean | undefined;
+  }>(),
+  { showName: true }
+);
 
 const previewUrl = computed(
   () => props.map?.map_preview_url
@@ -35,7 +39,7 @@ const { containerRef: fireContainer } = useFireEffect(() => props.burning);
 <template>
   <div class="bg-(--color-secondary) p-[0.4rem] pb-4 rounded-(--radius-panel) shadow-md hover:shadow-lg relative my-6 mx-0.5 transition-all duration-200 group-hover:bg-(--color-active)">
     <p
-      v-if="mapName"
+      v-if="showName && mapName"
       class="absolute top-[-0.7rem] left-[-0.1rem] w-full text-center font-['Luckiest_Guy'] font-border text-base md:text-2xl break-words z-10"
     >
       {{ mapName }}
