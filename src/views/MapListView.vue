@@ -14,6 +14,8 @@ import { useNostalgiaPackData } from '@/composables/useNostalgiaPackData';
 import { useMapGroups } from '@/composables/useMapGroups';
 import GhostBtd6Map from '@/components/maps/GhostBtd6Map.vue';
 import type { GhostMap } from '@/services/api/maps/types';
+import { useAuthStore } from '@/stores/auth';
+import LinkButton from '@/components/ui/LinkButton.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -112,6 +114,15 @@ const filteredMaps = computed(() => {
 });
 
 const mapGroups = useMapGroups(filteredMaps, formatId);
+
+const auth = useAuthStore();
+const showSubmitButton = computed(() =>
+  !isNP.value && formatId.value != null
+  && (!auth.isAuthenticated || auth.hasPermission('create:map_submission', formatId.value))
+);
+const showAddButton = computed(() =>
+  formatId.value != null && auth.hasPermission('create:map', formatId.value)
+);
 </script>
 
 <template>
@@ -163,6 +174,16 @@ const mapGroups = useMapGroups(filteredMaps, formatId);
     <p v-if="currentDescription" class="text-center w-[90%] mx-auto my-8">
       {{ currentDescription }}
     </p>
+
+    <!-- Action Buttons -->
+    <div v-if="showSubmitButton || showAddButton" class="flex justify-center gap-4 my-4">
+      <LinkButton v-if="showSubmitButton" :to="`/map/submit?on=${formatId}`">
+        <i class="bi bi-pencil-fill mr-0.5" /> Submit a Map
+      </LinkButton>
+      <LinkButton v-if="showAddButton" :to="`/map/new?on=${formatId}`">
+        <i class="bi bi-plus-lg mr-0.5" /> Add Map
+      </LinkButton>
+    </div>
 
     <!-- Discord Link -->
     <p v-if="format?.discord_server_url" class="text-center my-4">
