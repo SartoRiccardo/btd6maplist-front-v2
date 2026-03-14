@@ -2,6 +2,7 @@
 import { RouterLink } from 'vue-router';
 import type { MapWithMetadata } from '@/services/api/maps/types';
 import Btd6Map from '@/components/maps/Btd6Map.vue';
+import Btd6MapPlaceholder from '@/components/maps/Btd6MapPlaceholder.vue';
 
 defineProps<{
   maps?: MapWithMetadata[] | undefined;
@@ -30,14 +31,7 @@ defineSlots<{
       </RouterLink>
     </template>
     <template v-else>
-      <div
-        v-for="i in 12"
-        :key="i"
-        class="bg-(--color-secondary) rounded-(--radius-panel) animate-pulse my-6"
-      >
-        <div class="h-5 w-3/4 bg-(--color-primary) rounded mx-auto my-2" />
-        <div class="aspect-3/2 bg-(--color-primary) mx-1.5 mb-1.5 rounded-sm" />
-      </div>
+      <Btd6MapPlaceholder v-for="i in 12" :key="i" />
     </template>
   </div>
 </template>
