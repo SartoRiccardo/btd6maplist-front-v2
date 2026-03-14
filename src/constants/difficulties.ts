@@ -1,4 +1,4 @@
-import { FORMAT_EXPERT_LIST, FORMAT_BEST_OF_THE_BEST } from './formats';
+import { FORMAT_EXPERT_LIST, FORMAT_BEST_OF_THE_BEST, FORMAT_NOSTALGIA_PACK } from './formats';
 
 export interface Difficulty {
   name: string;
@@ -86,7 +86,75 @@ export const BOTB_DIFFICULTIES: Difficulty[] = [
   },
 ];
 
+export const NP_DIFFICULTIES: Difficulty[] = [
+  {
+    name: 'BTD1/2/3',
+    query: 'btd1_2_3',
+    value: 0,
+    image: '/images/list_icons/icon_np_1.png',
+    description:
+      'Travel all the way back to where it began! These maps are remakes and reimaginings of tracks from the original Bloons TD trilogy. Simple layouts, classic vibes, and a healthy dose of nostalgia \u2014 all brought to life with modern decoration.',
+  },
+  {
+    name: 'iOS/PSN/DSi',
+    query: 'btd_ios_psn_dsi',
+    value: 1,
+    image: '/images/list_icons/icon_np_2.png',
+    description:
+      'Faithful recreations from the iOS, PlayStation Network, and DSi versions of Bloons TD. These maps bring back platform-exclusive tracks that many players never got to experience \u2014 now reimagined for BTD6.',
+  },
+  {
+    name: 'BTD4',
+    query: 'bloons_td_4',
+    value: 2,
+    image: '/images/list_icons/icon_np_3.png',
+    description:
+      'Fan-favorite tracks from the BTD4 era, remade with love. These maps capture the spirit of a game that helped define the series, with familiar paths and fresh visuals.',
+  },
+  {
+    name: 'BTD5',
+    query: 'bloons_td_5',
+    value: 3,
+    image: '/images/list_icons/icon_np_4.png',
+    description:
+      'Remade maps from BTD5, capturing the tight track design and fun layouts that made it a fan favorite. Whether you remember them fondly or are discovering them for the first time, these maps deliver.',
+  },
+  {
+    name: 'BTDB1',
+    query: 'bloons_td_battles',
+    value: 4,
+    image: '/images/list_icons/icon_np_5.png',
+    description:
+      'Maps inspired by Bloons TD Battles, built for competitive strategy. These tracks were designed with head-to-head gameplay in mind, and they bring that same intensity to BTD6.',
+  },
+  {
+    name: 'BMC',
+    query: 'bloons_monkey_city',
+    value: 5,
+    image: '/images/list_icons/icon_np_6.png',
+    description:
+      'Maps from Bloons Monkey City, where world-building meets tower defense. These recreations bring back the charm of city-based gameplay with tracks that feel both strategic and nostalgic.',
+  },
+  {
+    name: 'BATTD',
+    query: 'bloons_adventure_time_td',
+    value: 6,
+    image: '/images/list_icons/icon_np_7.png',
+    description:
+      'Ports from Bloons Adventure Time TD, the crossover that brought the Land of Ooo into the Bloons universe. These maps blend whimsical design with solid gameplay.',
+  },
+  {
+    name: 'BTDB2/BTD6',
+    query: 'bloons_td_battles_2',
+    value: 7,
+    image: '/images/list_icons/icon_np_8.png',
+    description:
+      'Scrapped BTD6 or BTD Battles 2 maps that never made it into the final game \u2014 until now. These hidden gems have been rescued and rebuilt for everyone to enjoy.',
+  },
+];
+
 export const FORMAT_DIFFICULTIES: Partial<Record<number, Difficulty[]>> = {
   [FORMAT_EXPERT_LIST]: EXPERT_DIFFICULTIES,
   [FORMAT_BEST_OF_THE_BEST]: BOTB_DIFFICULTIES,
+  [FORMAT_NOSTALGIA_PACK]: NP_DIFFICULTIES,
 };
