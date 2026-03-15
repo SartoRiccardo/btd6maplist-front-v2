@@ -16,6 +16,7 @@ import {
 import { EXPERT_DIFFICULTIES, BOTB_DIFFICULTIES } from '@/constants/difficulties';
 import Btd6Map from '@/components/maps/Btd6Map.vue';
 import MapInfoPanel, { type FormatBadge } from '@/components/maps/MapInfoPanel.vue';
+import StandaloneImage from '@/components/common/StandaloneImage.vue';
 
 const route = useRoute();
 const code = computed(() => route.params['code'] as string);
@@ -41,6 +42,18 @@ function copyCode() {
   clearTimeout(copyTimeout);
   copyTimeout = setTimeout(() => { copied.value = false; }, 2000);
 }
+
+// --- Round 6 Start ---
+const r6Start = computed(() => mapData.value?.r6_start ?? null);
+
+const youtubeEmbedUrl = computed(() => {
+  if (!r6Start.value) return null;
+  const match = r6Start.value.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/);
+  if (!match) return null;
+  return `https://www.youtube.com/embed/${match[1]}`;
+});
+
+const isR6Image = computed(() => r6Start.value != null && !youtubeEmbedUrl.value);
 
 // --- Format badges ---
 const formatBadges = computed<FormatBadge[]>(() => {
@@ -129,6 +142,23 @@ const formatBadges = computed<FormatBadge[]>(() => {
           :map-notes="mapData.map_notes"
           :format-badges="formatBadges"
         />
+      </div>
+    </div>
+
+    <!-- Round 6 Start -->
+    <div v-if="r6Start" class="my-6">
+      <h2 class="text-center font-['Luckiest_Guy'] text-2xl mb-4">Round 6 Start</h2>
+      <div v-if="youtubeEmbedUrl" class="flex justify-center">
+        <iframe
+          :src="youtubeEmbedUrl"
+          class="w-full max-w-2xl aspect-video rounded-(--radius-panel)"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen
+        />
+      </div>
+      <div v-else-if="isR6Image" class="flex justify-center">
+        <StandaloneImage :src="r6Start!" alt="Round 6 Start" class="max-w-2xl" />
       </div>
     </div>
   </div>
