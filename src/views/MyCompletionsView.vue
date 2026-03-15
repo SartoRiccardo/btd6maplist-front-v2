@@ -2,6 +2,7 @@
 import { useAuthStore } from '@/stores/auth';
 import CompletionList from '@/components/completions/CompletionList.vue';
 import LinkButton from '@/components/ui/LinkButton.vue';
+import { formatDate } from '@/utils/dates';
 
 const auth = useAuthStore();
 </script>
@@ -33,6 +34,30 @@ const auth = useAuthStore();
         deleted: 'any',
       }"
       empty-message="No pending or rejected completions."
-    />
+    >
+      <template #default="{ completion }">
+        <RouterLink
+          :to="`/map/${completion.map.code}`"
+          class="no-underline! text-(--color-text)! hover:text-(--color-active)!"
+        >
+          <div class="flex items-center gap-3">
+            <img
+              class="w-16 h-auto aspect-[3/2] bg-(--color-primary) rounded-sm shrink-0"
+              :src="completion.map.map_preview_url"
+              alt=""
+              loading="lazy"
+            />
+            <div>
+              <span class="font-['Luckiest_Guy'] font-border text-base">
+                {{ completion.map.name }}
+              </span>
+              <p class="text-sm text-(--color-text-muted) mb-0">
+                {{ formatDate(completion.submitted_on) }}
+              </p>
+            </div>
+          </div>
+        </RouterLink>
+      </template>
+    </CompletionList>
   </div>
 </template>

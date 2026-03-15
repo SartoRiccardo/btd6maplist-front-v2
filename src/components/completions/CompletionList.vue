@@ -52,7 +52,9 @@ function toggleDetail(id: number) {
   <!-- Loading -->
   <template v-if="isLoading">
     <CompletionRowSkeleton v-for="i in perPage" :key="i">
-      <UserEntrySkeleton />
+      <slot name="skeleton">
+        <UserEntrySkeleton />
+      </slot>
     </CompletionRowSkeleton>
   </template>
 
@@ -66,12 +68,14 @@ function toggleDetail(id: number) {
       v-bind="editUrl ? { editUrl: editUrl(completion.id) } : {}"
       @toggle-detail="toggleDetail(completion.id)"
     >
-      <div v-for="player in completion.players" :key="player.discord_id">
-        <UserEntry
-          :user="player"
-          :label="formatDate(completion.submitted_on)"
-        />
-      </div>
+      <slot :completion="completion">
+        <div v-for="player in completion.players" :key="player.discord_id">
+          <UserEntry
+            :user="player"
+            :label="formatDate(completion.submitted_on)"
+          />
+        </div>
+      </slot>
       <template #detail>
         <CompletionDetailLoader :completion-id="completion.id" />
       </template>
