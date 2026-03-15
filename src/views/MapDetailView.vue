@@ -4,22 +4,13 @@ import { useRoute } from 'vue-router';
 import { useMap } from '@/services/api/maps/queries';
 import { useConfig } from '@/services/api/config/queries';
 import { useFormats } from '@/services/api/formats/queries';
-import { calcMapPoints } from '@/utils/points';
-import {
-  FORMAT_MAPLIST,
-  FORMAT_MAPLIST_ALL_VER,
-  FORMAT_EXPERT_LIST,
-  FORMAT_BEST_OF_THE_BEST,
-  FORMAT_NOSTALGIA_PACK,
-  FORMAT_ICONS,
-} from '@/constants/formats';
-import { EXPERT_DIFFICULTIES, BOTB_DIFFICULTIES } from '@/constants/difficulties';
+import { getMapFormatBadges } from '@/utils/formatBadges';
 import { permissions } from '@/constants/permissions';
 import { useAuthStore } from '@/stores/auth';
 import Btd6Map from '@/components/maps/Btd6Map.vue';
 import LinkButton from '@/components/ui/LinkButton.vue';
 import DiscordLoginButton from '@/components/navbar/DiscordLoginButton.vue';
-import MapInfoPanel, { type FormatBadge } from '@/components/maps/MapInfoPanel.vue';
+import MapInfoPanel from '@/components/maps/MapInfoPanel.vue';
 import StandaloneImage from '@/components/common/StandaloneImage.vue';
 import CompletionList from '@/components/completions/CompletionList.vue';
 import CompletionRow from '@/components/completions/CompletionRow.vue';
@@ -69,45 +60,13 @@ const youtubeEmbedUrl = computed(() => {
 const isR6Image = computed(() => r6Start.value != null && !youtubeEmbedUrl.value);
 
 // --- Format badges ---
-const formatBadges = computed<FormatBadge[]>(() => {
+const formatBadges = computed(() => {
   const map = mapData.value;
   if (!map) return [];
-  const visible = visibleFormatIds.value;
-  const badges: FormatBadge[] = [];
-
-  if (map.placement_curver != null && config.value && visible.includes(FORMAT_MAPLIST)) {
-    const fmt = FORMAT_ICONS.find((f) => f.id === FORMAT_MAPLIST)!;
-    const pts = calcMapPoints(map.placement_curver, config.value);
-    badges.push({ icon: fmt.image, label: `#${map.placement_curver} — ${pts}pt`, slug: fmt.slug });
-  }
-
-  if (map.placement_allver != null && config.value && visible.includes(FORMAT_MAPLIST_ALL_VER)) {
-    const fmt = FORMAT_ICONS.find((f) => f.id === FORMAT_MAPLIST_ALL_VER)!;
-    const pts = calcMapPoints(map.placement_allver, config.value);
-    badges.push({ icon: fmt.image, label: `#${map.placement_allver} — ${pts}pt`, slug: fmt.slug });
-  }
-
-  if (map.difficulty != null && visible.includes(FORMAT_EXPERT_LIST)) {
-    const diff = EXPERT_DIFFICULTIES.find((d) => d.value === map.difficulty);
-    const fmt = FORMAT_ICONS.find((f) => f.id === FORMAT_EXPERT_LIST)!;
-    if (diff) badges.push({ icon: diff.image, label: `${diff.name} Expert`, slug: fmt.slug });
-  }
-
-  if (map.botb_difficulty != null && visible.includes(FORMAT_BEST_OF_THE_BEST)) {
-    const diff = BOTB_DIFFICULTIES.find((d) => {
-      const v = d.value;
-      return Array.isArray(v) ? v.includes(map.botb_difficulty!) : v === map.botb_difficulty;
-    });
-    const fmt = FORMAT_ICONS.find((f) => f.id === FORMAT_BEST_OF_THE_BEST)!;
-    if (diff) badges.push({ icon: diff.image, label: 'Best of the Best', slug: fmt.slug });
-  }
-
-  if (map.retro_map && visible.includes(FORMAT_NOSTALGIA_PACK)) {
-    const fmt = FORMAT_ICONS.find((f) => f.id === FORMAT_NOSTALGIA_PACK)!;
-    badges.push({ icon: map.retro_map.preview_url, label: map.retro_map.name, slug: fmt.slug, squareImage: true });
-  }
-
-  return badges;
+  return getMapFormatBadges(map, {
+    config: config.value,
+    visibleFormatIds: visibleFormatIds.value,
+  });
 });
 
 // --- Current LCC ---

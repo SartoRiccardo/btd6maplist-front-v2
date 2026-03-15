@@ -10,13 +10,7 @@ import Badge from '@/components/common/Badge.vue';
 import Icon from '@/components/common/Icon.vue';
 import { heroId } from '@/utils/heroes';
 import MarkdownContent from '@/components/common/MarkdownContent.vue';
-
-export interface FormatBadge {
-  icon: string;
-  label: string;
-  slug?: string | null | undefined;
-  squareImage?: boolean | undefined;
-}
+import type { FormatBadge } from '@/utils/formatBadges';
 
 const props = defineProps<{
   code: string;
