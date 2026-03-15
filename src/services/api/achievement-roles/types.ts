@@ -1,5 +1,7 @@
 export interface AchievementRole {
   id: string;
   name: string;
-  // Add other achievement role properties as needed
+  tooltip_description: string;
+  clr_border: number;
+  clr_inner: number;
 }

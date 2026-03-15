@@ -1,3 +1,4 @@
+import { computed, toValue, type MaybeRefOrGetter } from 'vue';
 import { useQuery, useMutation, useQueryClient, type UseQueryOptions } from '@tanstack/vue-query';
 import { getUser, updateUser, updateCurrentUser, getMe } from './index';
 import type { User, UpdateUserRequest, GetUserParams } from './types';
@@ -17,13 +18,13 @@ export const userQueryKeys = {
  * @param options - Additional TanStack Query options
  */
 export function useUser(
-  id: string,
-  params?: GetUserParams,
+  id: MaybeRefOrGetter<string>,
+  params?: MaybeRefOrGetter<GetUserParams | undefined>,
   options?: Omit<UseQueryOptions<User>, 'queryKey' | 'queryFn'>
 ) {
   return useQuery({
-    queryKey: userQueryKeys.detail(id, params),
-    queryFn: () => getUser(id, params),
+    queryKey: computed(() => userQueryKeys.detail(toValue(id), toValue(params))),
+    queryFn: () => getUser(toValue(id), toValue(params)),
     ...options,
   });
 }

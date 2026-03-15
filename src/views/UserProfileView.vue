@@ -5,14 +5,20 @@ import CompletionList from '@/components/completions/CompletionList.vue';
 import MapGrid from '@/components/maps/MapGrid.vue';
 import Pagination from '@/components/ui/Pagination.vue';
 import { useMaps } from '@/services/api/maps/queries';
+import { useUser } from '@/services/api/users/queries';
 import { useConfig } from '@/services/api/config/queries';
 import { useFormats } from '@/services/api/formats/queries';
 import { formatDate } from '@/utils/dates';
 import { getMapFormatBadges } from '@/utils/formatBadges';
 import Badge from '@/components/common/Badge.vue';
+import ProfileHeader from '@/components/users/ProfileHeader.vue';
+import ProfileHeaderSkeleton from '@/components/users/ProfileHeaderSkeleton.vue';
 
 const route = useRoute();
 const userId = computed(() => route.params['id'] as string);
+const { data: user, isLoading: userLoading } = useUser(userId, {
+  include: ['achievement_roles', 'flair', 'medals'],
+});
 const { data: config } = useConfig();
 const { data: formatsResponse } = useFormats();
 const visibleFormatIds = computed(() =>
@@ -41,6 +47,10 @@ watch(() => mapsResponse.value?.meta, (meta) => {
 
 <template>
   <div>
+    <!-- Profile Header -->
+    <ProfileHeaderSkeleton v-if="userLoading" />
+    <ProfileHeader v-else-if="user" :user="user" />
+
     <!-- Completions -->
     <div class="my-6">
       <h2 class="font-['Luckiest_Guy'] text-2xl text-center mb-4">Completions</h2>
