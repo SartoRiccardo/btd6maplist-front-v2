@@ -35,9 +35,10 @@ const showEdit = computed(() =>
 );
 
 const isDeleted = computed(() => props.completion.deleted_on != null);
-const isPending = computed(() => !isDeleted.value && props.completion.accepted_by == null);
+const isPending = computed(() => props.completion.accepted_by == null);
 
 const statusPill = computed(() => {
+  if (isDeleted.value && isPending.value) return { label: 'Rejected', class: 'bg-(--color-deleted)' };
   if (isDeleted.value) return { label: 'Deleted', class: 'bg-(--color-deleted)' };
   if (isPending.value) return { label: 'Pending', class: 'bg-(--color-pending)' };
   return null;
