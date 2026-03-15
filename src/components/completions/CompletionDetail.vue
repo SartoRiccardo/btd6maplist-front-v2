@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import type { CompletionDetail } from '@/services/api/completions/types';
 import type { User } from '@/services/api/users/types';
 import UserEntry from '@/components/users/UserEntry.vue';
+import ImageLightbox from '@/components/common/ImageLightbox.vue';
 
 const props = defineProps<{
   completion: CompletionDetail;
@@ -13,6 +14,8 @@ const acceptedByUser = computed<User | null>(() => {
   if (ab != null && typeof ab === 'object') return ab;
   return null;
 });
+
+const lightbox = ref<InstanceType<typeof ImageLightbox>>();
 
 function youtubeEmbedUrl(url: string): string | null {
   const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/);
@@ -42,7 +45,8 @@ function youtubeEmbedUrl(url: string): string | null {
           :key="i"
           :src="src"
           alt="Submission proof"
-          class="w-full rounded-(--radius-panel) object-cover"
+          class="w-full rounded-(--radius-panel) object-cover cursor-zoom-in hover:opacity-80 transition-opacity"
+          @click="lightbox?.show(src)"
         />
       </div>
     </div>
@@ -66,5 +70,6 @@ function youtubeEmbedUrl(url: string): string | null {
         </template>
       </div>
     </div>
+    <ImageLightbox ref="lightbox" />
   </div>
 </template>
