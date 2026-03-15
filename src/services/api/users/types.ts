@@ -11,6 +11,19 @@ export interface UserMedals {
 /** Permission map: key is permission name, value is array of format IDs (null = global) */
 export type Permissions = Record<string, (number | null)[]>;
 
+export interface RankEntry {
+  score: number;
+  placement: number | null;
+}
+
+export interface UserFormatRanks {
+  format_id: number;
+  points: RankEntry | null;
+  lccs: RankEntry;
+  no_geraldo: RankEntry;
+  black_border: RankEntry;
+}
+
 export interface User {
   discord_id: string;
   name: string;
@@ -25,6 +38,8 @@ export interface User {
   achievement_roles?: AchievementRole[];
   // Only included when 'permissions' is in include parameter
   permissions?: Permissions;
+  // Only included when 'ranks' is in include parameter
+  ranks?: UserFormatRanks[];
 }
 
 export interface UpdateUserRequest {
@@ -32,7 +47,7 @@ export interface UpdateUserRequest {
   nk_oak?: string | null; // optional - Ninja Kiwi OpenAPI Key
 }
 
-export type UserIncludeParams = Array<'flair' | 'medals' | 'achievement_roles' | 'permissions'>;
+export type UserIncludeParams = Array<'flair' | 'medals' | 'achievement_roles' | 'permissions' | 'ranks'>;
 
 export interface GetUserParams {
   include?: UserIncludeParams;

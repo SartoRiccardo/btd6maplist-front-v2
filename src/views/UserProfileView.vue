@@ -17,7 +17,7 @@ import ProfileHeaderSkeleton from '@/components/users/ProfileHeaderSkeleton.vue'
 const route = useRoute();
 const userId = computed(() => route.params['id'] as string);
 const { data: user, isLoading: userLoading } = useUser(userId, {
-  include: ['achievement_roles', 'flair', 'medals'],
+  include: ['achievement_roles', 'flair', 'medals', 'ranks'],
 });
 const { data: config } = useConfig();
 const { data: formatsResponse } = useFormats();
