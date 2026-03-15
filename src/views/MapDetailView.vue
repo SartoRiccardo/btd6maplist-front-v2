@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useMap } from '@/services/api/maps/queries';
 import { useConfig } from '@/services/api/config/queries';
@@ -19,7 +19,9 @@ import MapInfoPanel, { type FormatBadge } from '@/components/maps/MapInfoPanel.v
 import StandaloneImage from '@/components/common/StandaloneImage.vue';
 import { useCompletions } from '@/services/api/completions/queries';
 import CompletionRow from '@/components/completions/CompletionRow.vue';
+import CompletionRowSkeleton from '@/components/completions/CompletionRowSkeleton.vue';
 import UserEntry from '@/components/users/UserEntry.vue';
+import UserEntrySkeleton from '@/components/users/UserEntrySkeleton.vue';
 import Pagination from '@/components/ui/Pagination.vue';
 import { formatDate } from '@/utils/dates';
 
@@ -61,20 +63,26 @@ const youtubeEmbedUrl = computed(() => {
 const isR6Image = computed(() => r6Start.value != null && !youtubeEmbedUrl.value);
 
 // --- Completions ---
+const COMPLETIONS_PER_PAGE = 25;
 const completionsPage = ref(1);
 
-const { data: completionsResponse } = useCompletions(
+const { data: completionsResponse, isLoading: completionsLoading } = useCompletions(
   computed(() => ({
     map_code: code.value,
     deleted: 'exclude' as const,
     pending: 'exclude' as const,
     page: completionsPage.value,
+    per_page: COMPLETIONS_PER_PAGE,
     include: 'players.flair',
   })),
 );
 
 const completions = computed(() => completionsResponse.value?.data ?? []);
-const completionsMeta = computed(() => completionsResponse.value?.meta);
+
+const cachedCompletionsMeta = ref(completionsResponse.value?.meta);
+watch(() => completionsResponse.value?.meta, (meta) => {
+  if (meta) cachedCompletionsMeta.value = meta;
+});
 
 // --- Format badges ---
 const formatBadges = computed<FormatBadge[]>(() => {
@@ -182,12 +190,20 @@ const formatBadges = computed<FormatBadge[]>(() => {
         <StandaloneImage :src="r6Start!" alt="Round 6 Start" class="max-w-2xl" />
       </div>
     </div>
-    
+
     <!-- Completions -->
     <div class="my-6">
       <h2 class="text-center font-['Luckiest_Guy'] text-2xl mb-4">Completions</h2>
 
-      <template v-if="completions.length > 0">
+      <!-- Loading -->
+      <template v-if="completionsLoading">
+        <CompletionRowSkeleton v-for="i in COMPLETIONS_PER_PAGE" :key="i">
+          <UserEntrySkeleton />
+        </CompletionRowSkeleton>
+      </template>
+
+      <!-- Loaded -->
+      <template v-else-if="completions.length > 0">
         <CompletionRow
           v-for="completion in completions"
           :key="completion.id"
@@ -201,17 +217,19 @@ const formatBadges = computed<FormatBadge[]>(() => {
           </div>
         </CompletionRow>
 
-        <Pagination
-          v-if="completionsMeta"
-          :current-page="completionsMeta.current_page"
-          :last-page="completionsMeta.last_page"
-          @update:current-page="completionsPage = $event"
-        />
       </template>
 
       <p v-else class="text-center text-(--color-text-muted)">
         No completions yet.
       </p>
+
+      <Pagination
+        v-if="cachedCompletionsMeta"
+        :current-page="cachedCompletionsMeta.current_page"
+        :last-page="cachedCompletionsMeta.last_page"
+        :disabled="completionsLoading"
+        @update:current-page="completionsPage = $event"
+      />
     </div>
   </div>
 </template>
