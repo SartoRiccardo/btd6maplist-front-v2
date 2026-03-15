@@ -17,9 +17,11 @@ const props = withDefaults(defineProps<{
   perPage?: number;
   editUrl?: (completionId: number) => string;
   emptyMessage?: string;
+  showFilters?: boolean;
 }>(), {
   perPage: 25,
   emptyMessage: 'No completions yet.',
+  showFilters: true,
 });
 
 const page = ref(1);
@@ -61,7 +63,7 @@ function toggleDetail(id: number) {
 </script>
 
 <template>
-  <div class="flex justify-end gap-1 mb-2">
+  <div v-if="showFilters" class="flex justify-end gap-1 mb-2">
     <Button :active="filterBB === 'only'" title="Black Border" @click="toggleBB">
       <img src="/images/medals/medal_bb.webp" class="w-[24px] h-[24px]" />
     </Button>

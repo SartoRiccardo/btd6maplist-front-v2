@@ -198,6 +198,7 @@ const showSubmitCompletion = computed(() =>
           pending: 'any',
         }"
         :edit-url="canEditCompletion ? (id) => `/completions/${id}/edit` : undefined"
+        :show-filters="false"
         empty-message="You haven't completed this map yet."
       />
     </div>
@@ -211,6 +212,11 @@ const showSubmitCompletion = computed(() =>
     <!-- Completions -->
     <div class="my-6">
       <h2 class="text-center font-['Luckiest_Guy'] text-2xl mb-4">Completions</h2>
+      <div v-if="canCreateCompletion" class="flex justify-center mb-4">
+        <LinkButton :to="`/map/${code}/insert-completion`">
+          <i class="bi bi-plus-lg mr-0.5" /> Insert Completion
+        </LinkButton>
+      </div>
       <CompletionList
         :params="{
           map_code: code,
@@ -219,11 +225,6 @@ const showSubmitCompletion = computed(() =>
         }"
         :edit-url="canEditCompletion ? (id) => `/completions/${id}/edit` : undefined"
       />
-      <div v-if="canCreateCompletion" class="flex justify-center mt-4">
-        <LinkButton :to="`/map/${code}/insert-completion`">
-          <i class="bi bi-plus-lg mr-0.5" /> Insert Completion
-        </LinkButton>
-      </div>
     </div>
   </div>
 </template>
