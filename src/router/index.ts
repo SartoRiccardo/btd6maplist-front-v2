@@ -1,4 +1,5 @@
 import { type RouteRecordRaw, createRouter, createWebHistory } from 'vue-router';
+import { requireAuth } from './guards';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -40,11 +41,13 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/views/MyCompletionsView.vue'),
     name: 'MyCompletions',
     path: '/my-submissions/completions',
+    beforeEnter: requireAuth,
   },
   {
     component: () => import('@/views/MyMapsView.vue'),
     name: 'MyMaps',
     path: '/my-submissions/maps',
+    beforeEnter: requireAuth,
   },
   {
     component: () => import('@/views/UserProfileView.vue'),

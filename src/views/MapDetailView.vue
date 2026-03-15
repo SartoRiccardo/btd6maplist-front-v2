@@ -106,6 +106,7 @@ const formatBadges = computed<FormatBadge[]>(() => {
 // --- Admin actions ---
 const canEditMap = computed(() => auth.hasPermission(permissions.map.edit));
 const canEditCompletion = computed(() => auth.hasPermission(permissions.completion.edit));
+const canCreateCompletion = computed(() => auth.hasPermission(permissions.completion.create));
 const showSubmitCompletion = computed(() =>
   auth.hasPermission(permissions.completionSubmission.create)
 );
@@ -218,6 +219,11 @@ const showSubmitCompletion = computed(() =>
         }"
         :edit-url="canEditCompletion ? (id) => `/completions/${id}/edit` : undefined"
       />
+      <div v-if="canCreateCompletion" class="flex justify-center mt-4">
+        <LinkButton :to="`/map/${code}/insert-completion`">
+          <i class="bi bi-plus-lg mr-0.5" /> Insert Completion
+        </LinkButton>
+      </div>
     </div>
   </div>
 </template>
