@@ -1,13 +1,15 @@
 import { computed, toValue, type MaybeRefOrGetter } from 'vue';
 import { useQuery, useMutation, useQueryClient, type UseQueryOptions } from '@tanstack/vue-query';
-import { getUser, updateUser, updateCurrentUser, getMe } from './index';
+import { getUser, updateUser, updateCurrentUser, getMe, banUser, unbanUser } from './index';
 import type { User, UpdateUserRequest, GetUserParams } from './types';
 
 // Query Keys
 export const userQueryKeys = {
   all: ['users'] as const,
-  detail: (id: string, params?: GetUserParams) => ['users', id, params] as const,
-  me: (params?: GetUserParams) => ['users', '@me', params] as const,
+  detail: (id: string, params?: GetUserParams) =>
+    params ? ['users', id, params] as const : ['users', id] as const,
+  me: (params?: GetUserParams) =>
+    params ? ['users', '@me', params] as const : ['users', '@me'] as const,
 } as const;
 
 /**
@@ -80,6 +82,23 @@ export function useUpdateCurrentUser() {
     onSuccess: () => {
       // Invalidate the @me query to trigger refetch
       queryClient.invalidateQueries({ queryKey: userQueryKeys.me() });
+    },
+  });
+}
+
+/**
+ * Mutation hook to ban or unban a user
+ */
+export function useBanUser() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, ban }: { id: string; ban: boolean }) =>
+      ban ? banUser(id) : unbanUser(id),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: userQueryKeys.detail(variables.id),
+      });
     },
   });
 }

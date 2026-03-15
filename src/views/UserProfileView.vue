@@ -5,21 +5,35 @@ import CompletionList from '@/components/completions/CompletionList.vue';
 import MapGrid from '@/components/maps/MapGrid.vue';
 import Pagination from '@/components/ui/Pagination.vue';
 import { useMaps } from '@/services/api/maps/queries';
-import { useUser } from '@/services/api/users/queries';
+import { useUser, useBanUser } from '@/services/api/users/queries';
 import { useConfig } from '@/services/api/config/queries';
 import { useFormats } from '@/services/api/formats/queries';
 import { formatDate } from '@/utils/dates';
 import { getMapFormatBadges } from '@/utils/formatBadges';
+import { permissions } from '@/constants/permissions';
+import { useAuthStore } from '@/stores/auth';
 import Badge from '@/components/common/Badge.vue';
+import Button from '@/components/ui/Button.vue';
 import ProfileHeader from '@/components/users/ProfileHeader.vue';
 import ProfileHeaderSkeleton from '@/components/users/ProfileHeaderSkeleton.vue';
 import RankCard from '@/components/users/RankCard.vue';
 
 const route = useRoute();
+const auth = useAuthStore();
 const userId = computed(() => route.params['id'] as string);
-const { data: user, isLoading: userLoading } = useUser(userId, {
+const { data: user, isLoading: userLoading, isFetching: userFetching } = useUser(userId, {
   include: ['achievement_roles', 'flair', 'medals', 'ranks'],
 });
+
+const canBan = computed(() =>
+  auth.hasPermission(permissions.user.ban) && auth.user?.discord_id !== userId.value
+);
+const banMutation = useBanUser();
+
+function toggleBan() {
+  if (!user.value) return;
+  banMutation.mutate({ id: userId.value, ban: !user.value.is_banned });
+}
 const { data: config } = useConfig();
 const { data: formatsResponse } = useFormats();
 const visibleFormatIds = computed(() =>
@@ -51,6 +65,18 @@ watch(() => mapsResponse.value?.meta, (meta) => {
     <!-- Profile Header -->
     <ProfileHeaderSkeleton v-if="userLoading" />
     <ProfileHeader v-else-if="user" :user="user" />
+
+    <!-- Ban/Unban -->
+    <div v-if="canBan && user" class="flex justify-end mt-3">
+      <Button
+        @click="toggleBan"
+        :disabled="banMutation.isPending.value || userFetching"
+        class="text-sm"
+      >
+        <i :class="user.is_banned ? 'bi bi-arrow-clockwise' : 'bi bi-ban'" class="mr-1" />
+        {{ user.is_banned ? 'Unban User' : 'Ban User' }}
+      </Button>
+    </div>
 
     <!-- Ranks -->
     <div v-if="user?.ranks?.length" class="my-6">

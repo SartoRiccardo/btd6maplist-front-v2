@@ -73,3 +73,17 @@ export async function updateUser(
 export async function updateCurrentUser(data: UpdateUserRequest): Promise<User> {
   return updateUser('@me', data);
 }
+
+/**
+ * PUT /users/{id}/ban
+ */
+export async function banUser(id: string): Promise<void> {
+  return apiRequest(`${BASE_PATH}/${id}/ban`, { method: 'PUT' });
+}
+
+/**
+ * PUT /users/{id}/unban
+ */
+export async function unbanUser(id: string): Promise<void> {
+  return apiRequest(`${BASE_PATH}/${id}/unban`, { method: 'PUT' });
+}
