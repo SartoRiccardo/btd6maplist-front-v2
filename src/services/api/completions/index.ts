@@ -10,7 +10,9 @@ function buildCompletionParams(params?: GetCompletionsParams): string {
   const searchParams = new URLSearchParams();
 
   if (params.timestamp != null) searchParams.set('timestamp', params.timestamp.toString());
-  if (params.format_id != null) searchParams.set('format_id', params.format_id.toString());
+  if (params.format_id != null) {
+    searchParams.set('format_id', Array.isArray(params.format_id) ? params.format_id.join(',') : params.format_id.toString());
+  }
   if (params.page != null) searchParams.set('page', params.page.toString());
   if (params.per_page != null) searchParams.set('per_page', params.per_page.toString());
   if (params.player_id != null) searchParams.set('player_id', params.player_id.toString());

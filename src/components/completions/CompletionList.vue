@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
 import { useCompletions } from '@/services/api/completions/queries';
+import { useFormats } from '@/services/api/formats/queries';
 import type { GetCompletionsParams } from '@/services/api/completions/types';
 import type { FilterOption } from '@/services/api/common/types';
 import CompletionRow from '@/components/completions/CompletionRow.vue';
@@ -24,6 +25,13 @@ const props = withDefaults(defineProps<{
   showFilters: true,
 });
 
+const { data: formatsResponse } = useFormats();
+const visibleFormatIds = computed(() =>
+  formatsResponse.value?.data
+    .filter((f) => !f.hidden)
+    .map((f) => f.id) ?? []
+);
+
 const page = ref(1);
 const filterBB = ref<FilterOption>('any');
 const filterNoGeraldo = ref<FilterOption>('any');
@@ -35,6 +43,7 @@ function toggleLCC() { filterLCC.value = filterLCC.value === 'any' ? 'only' : 'a
 
 const { data: response, isLoading } = useCompletions(
   computed(() => ({
+    format_id: visibleFormatIds.value,
     ...props.params,
     page: page.value,
     per_page: props.perPage,
@@ -43,6 +52,7 @@ const { data: response, isLoading } = useCompletions(
     no_geraldo: filterNoGeraldo.value,
     lcc: filterLCC.value,
   })),
+  { enabled: computed(() => formatsResponse.value != null) },
 );
 
 const completions = computed(() => response.value?.data ?? []);

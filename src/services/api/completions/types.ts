@@ -44,7 +44,7 @@ export interface GetCompletionParams {
 
 export interface GetCompletionsParams {
   timestamp?: number;
-  format_id?: number;
+  format_id?: number | number[];
   page?: number;
   per_page?: number;
   player_id?: string;
