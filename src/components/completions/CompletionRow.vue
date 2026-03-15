@@ -97,7 +97,7 @@ const formatInfo = computed(() =>
         </div>
 
         <!-- Format ruleset -->
-        <div v-if="formatInfo" class="flex items-center gap-1.5 ml-auto">
+        <div v-if="formatInfo" class="flex-1 flex items-center gap-1.5">
           <Badge :src="formatInfo.image" :alt="formatInfo.name" class="translate-y-0 scale-[125%] mr-1" />
           <span class="text-sm">{{ formatInfo.name }} ruleset</span>
         </div>
