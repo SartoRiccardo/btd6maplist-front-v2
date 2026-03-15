@@ -18,6 +18,18 @@ const routes: RouteRecordRaw[] = [
     path: '/maps/:slug',
   },
   {
+    component: () => import('@/views/FormatRulesView.vue'),
+    name: 'MapSubmissionRules',
+    path: '/maps/:slug/map-rules',
+    props: { kind: 'map' },
+  },
+  {
+    component: () => import('@/views/FormatRulesView.vue'),
+    name: 'CompletionSubmissionRules',
+    path: '/maps/:slug/completion-rules',
+    props: { kind: 'completion' },
+  },
+  {
     component: () => import('@/views/MapDetailView.vue'),
     name: 'MapDetail',
     path: '/map/:code',
