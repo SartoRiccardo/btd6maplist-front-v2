@@ -17,6 +17,11 @@ import { EXPERT_DIFFICULTIES, BOTB_DIFFICULTIES } from '@/constants/difficulties
 import Btd6Map from '@/components/maps/Btd6Map.vue';
 import MapInfoPanel, { type FormatBadge } from '@/components/maps/MapInfoPanel.vue';
 import StandaloneImage from '@/components/common/StandaloneImage.vue';
+import { useCompletions } from '@/services/api/completions/queries';
+import CompletionRow from '@/components/completions/CompletionRow.vue';
+import UserEntry from '@/components/users/UserEntry.vue';
+import Pagination from '@/components/ui/Pagination.vue';
+import { formatDate } from '@/utils/dates';
 
 const route = useRoute();
 const code = computed(() => route.params['code'] as string);
@@ -54,6 +59,22 @@ const youtubeEmbedUrl = computed(() => {
 });
 
 const isR6Image = computed(() => r6Start.value != null && !youtubeEmbedUrl.value);
+
+// --- Completions ---
+const completionsPage = ref(1);
+
+const { data: completionsResponse } = useCompletions(
+  computed(() => ({
+    map_code: code.value,
+    deleted: 'exclude' as const,
+    pending: 'exclude' as const,
+    page: completionsPage.value,
+    include: 'players.flair',
+  })),
+);
+
+const completions = computed(() => completionsResponse.value?.data ?? []);
+const completionsMeta = computed(() => completionsResponse.value?.meta);
 
 // --- Format badges ---
 const formatBadges = computed<FormatBadge[]>(() => {
@@ -160,6 +181,37 @@ const formatBadges = computed<FormatBadge[]>(() => {
       <div v-else-if="isR6Image" class="flex justify-center">
         <StandaloneImage :src="r6Start!" alt="Round 6 Start" class="max-w-2xl" />
       </div>
+    </div>
+    
+    <!-- Completions -->
+    <div class="my-6">
+      <h2 class="text-center font-['Luckiest_Guy'] text-2xl mb-4">Completions</h2>
+
+      <template v-if="completions.length > 0">
+        <CompletionRow
+          v-for="completion in completions"
+          :key="completion.id"
+          :completion="completion"
+        >
+          <div v-for="player in completion.players" :key="player.discord_id">
+            <UserEntry
+              :user="player"
+              :label="formatDate(completion.submitted_on)"
+            />
+          </div>
+        </CompletionRow>
+
+        <Pagination
+          v-if="completionsMeta"
+          :current-page="completionsMeta.current_page"
+          :last-page="completionsMeta.last_page"
+          @update:current-page="completionsPage = $event"
+        />
+      </template>
+
+      <p v-else class="text-center text-(--color-text-muted)">
+        No completions yet.
+      </p>
     </div>
   </div>
 </template>
