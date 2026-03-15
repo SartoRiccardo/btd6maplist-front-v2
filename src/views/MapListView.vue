@@ -17,6 +17,7 @@ import IconSelector from '@/components/ui/IconSelector.vue';
 import GhostBtd6Map from '@/components/maps/GhostBtd6Map.vue';
 import Button from '@/components/ui/Button.vue';
 import LinkButton from '@/components/ui/LinkButton.vue';
+import DiscordLoginButton from '@/components/navbar/DiscordLoginButton.vue';
 
 // --- Services & stores ---
 const route = useRoute();
@@ -122,7 +123,7 @@ const isBurning = computed(() =>
 
 const showSubmitButton = computed(() =>
   formatId.value != null
-  && (!auth.isAuthenticated || auth.hasPermission('create:map_submission', formatId.value))
+  && auth.hasPermission('create:map_submission', formatId.value)
 );
 
 const showAddButton = computed(() =>
@@ -198,6 +199,9 @@ const showAddButton = computed(() =>
       <LinkButton v-if="showAddButton" :to="`/map/new?on=${formatId}`">
         <i class="bi bi-plus-lg mr-0.5" /> Add Map
       </LinkButton>
+    </div>
+    <div v-else-if="formatId != null && !auth.isAuthenticated && format?.map_submission_status !== 'closed'" class="flex justify-center my-4">
+      <DiscordLoginButton text="Log in to submit maps" />
     </div>
 
     <!-- Discord Link -->

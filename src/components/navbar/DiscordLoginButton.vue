@@ -2,6 +2,12 @@
 import { useDiscordAuth } from '@/composables/useDiscordAuth';
 import { useAuthStore } from '@/stores/auth';
 
+const props = withDefaults(defineProps<{
+  text?: string;
+}>(), {
+  text: 'Login',
+});
+
 const emit = defineEmits<{
   success: [];
 }>();
@@ -32,7 +38,7 @@ async function handleDiscordLogin() {
   >
     <i class="bi bi-discord text-xl scale-150 mr-1 ml-1 translate-y-[-0.1rem]"></i>
     <span class="text-[1.6rem] font-['Oswald'] font-bold uppercase">
-      {{ loginLoading ? 'Loading...' : 'Login' }}
+      {{ loginLoading ? 'Loading...' : props.text }}
     </span>
   </button>
 </template>
