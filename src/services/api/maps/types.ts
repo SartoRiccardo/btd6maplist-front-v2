@@ -76,7 +76,7 @@ export interface GetMapsParams {
   page?: number;
   per_page?: number;
   deleted?: FilterOption;
-  created_by?: number;
+  created_by?: number | string;
   verified_by?: number;
   include?: string;
   medal_formats?: number;
