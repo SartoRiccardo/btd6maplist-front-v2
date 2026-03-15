@@ -11,6 +11,7 @@
     "lint:fix": "eslint . --max-warnings=0 --fix"
   },
   "dependencies": {
+    "@floating-ui/vue": "^1.1.11",
     "@tanstack/vue-query": "^5.92.9",
     "@vueuse/core": "^14.2.1",
     "bootstrap-icons": "^1.13.1",

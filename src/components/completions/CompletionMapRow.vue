@@ -5,6 +5,7 @@ import type { Completion } from '@/services/api/completions/types';
 import UserEntry from '@/components/users/UserEntry.vue';
 import { fromNow } from '@/utils/dates';
 import { useFormats } from '@/services/api/formats/queries';
+import Tooltip from '@/components/ui/Tooltip.vue';
 
 const props = defineProps<{
   completion: Completion;
@@ -51,26 +52,27 @@ const hideNoGeraldo = computed(() => {
 
       <!-- Medals -->
       <div class="flex gap-2 shrink-0">
-        <img
-          :src="completion.black_border
-            ? '/images/medals/medal_bb.webp'
-            : '/images/medals/medal_win.webp'"
-          :title="completion.black_border ? 'CHIMPS (Black Border)' : 'CHIMPS completion'"
-          class="w-[45px] h-[45px]"
-        />
-        <img
-          v-if="!hideNoGeraldo"
-          src="/images/medals/medal_nogerry.webp"
-          title="No Optimal Hero"
-          class="w-[45px] h-[45px]"
-          :class="{ 'medal-blocked': !completion.no_geraldo }"
-        />
-        <img
-          v-if="completion.is_current_lcc"
-          src="/images/medals/medal_lcc.webp"
-          title="Current LCC"
-          class="w-[45px] h-[45px]"
-        />
+        <Tooltip :text="completion.black_border ? 'CHIMPS (Black Border)' : 'CHIMPS completion'">
+          <img
+            :src="completion.black_border
+              ? '/images/medals/medal_bb.webp'
+              : '/images/medals/medal_win.webp'"
+            class="w-[45px] h-[45px]"
+          />
+        </Tooltip>
+        <Tooltip v-if="!hideNoGeraldo" text="No Optimal Hero">
+          <img
+            src="/images/medals/medal_nogerry.webp"
+            class="w-[45px] h-[45px]"
+            :class="{ 'medal-blocked': !completion.no_geraldo }"
+          />
+        </Tooltip>
+        <Tooltip v-if="completion.is_current_lcc" text="Current LCC">
+          <img
+            src="/images/medals/medal_lcc.webp"
+            class="w-[45px] h-[45px]"
+          />
+        </Tooltip>
       </div>
     </div>
   </div>

@@ -6,6 +6,7 @@ import { useFormats } from '@/services/api/formats/queries';
 import { useAuthStore } from '@/stores/auth';
 import Badge from '@/components/common/Badge.vue';
 import Button from '@/components/ui/Button.vue';
+import Tooltip from '@/components/ui/Tooltip.vue';
 
 const props = defineProps<{
   completion: Completion;
@@ -67,25 +68,28 @@ const statusPill = computed(() => {
         <slot name="medals">
           <div class="flex items-center gap-2">
             <div class="flex items-center gap-2">
-              <img
-                :src="completion.black_border
-                  ? '/images/medals/medal_bb.webp'
-                  : '/images/medals/medal_win.webp'"
-                :title="completion.black_border ? 'Black Border' : 'CHIMPS'"
-                class="w-[40px] h-[40px]"
-              />
-              <img
-                src="/images/medals/medal_nogerry.webp"
-                title="No Optimal Hero"
-                class="w-[40px] h-[40px]"
-                :class="hideNoGeraldo ? 'opacity-0' : { 'medal-blocked': !completion.no_geraldo }"
-              />
-              <img
-                src="/images/medals/medal_lcc.webp"
-                title="Current LCC"
-                class="w-[40px] h-[40px]"
-                :class="completion.is_current_lcc ? '' : 'opacity-0'"
-              />
+              <Tooltip :text="completion.black_border ? 'Black Border' : 'CHIMPS'">
+                <img
+                  :src="completion.black_border
+                    ? '/images/medals/medal_bb.webp'
+                    : '/images/medals/medal_win.webp'"
+                  class="w-[40px] h-[40px]"
+                />
+              </Tooltip>
+              <Tooltip text="No Optimal Hero" :disabled="hideNoGeraldo">
+                <img
+                  src="/images/medals/medal_nogerry.webp"
+                  class="w-[40px] h-[40px]"
+                  :class="hideNoGeraldo ? 'opacity-0' : { 'medal-blocked': !completion.no_geraldo }"
+                />
+              </Tooltip>
+              <Tooltip text="Current LCC" :disabled="!completion.is_current_lcc">
+                <img
+                  src="/images/medals/medal_lcc.webp"
+                  class="w-[40px] h-[40px]"
+                  :class="completion.is_current_lcc ? '' : 'opacity-0'"
+                />
+              </Tooltip>
             </div>
             <div v-if="formatInfo" class="flex items-center gap-1.5">
               <Badge :src="formatInfo.image" :alt="formatInfo.name" class="translate-y-0 scale-[125%] mr-1" />
@@ -126,25 +130,28 @@ const statusPill = computed(() => {
         <slot name="medals">
           <!-- Medals -->
           <div class="flex items-center gap-2">
-            <img
-              :src="completion.black_border
-                ? '/images/medals/medal_bb.webp'
-                : '/images/medals/medal_win.webp'"
-              :title="completion.black_border ? 'Black Border' : 'CHIMPS'"
-              class="w-[40px] h-[40px]"
-            />
-            <img
-              src="/images/medals/medal_nogerry.webp"
-              title="No Optimal Hero"
-              class="w-[40px] h-[40px]"
-              :class="hideNoGeraldo ? 'opacity-0' : { 'medal-blocked': !completion.no_geraldo }"
-            />
-            <img
-              src="/images/medals/medal_lcc.webp"
-              title="Current LCC"
-              class="w-[40px] h-[40px]"
-              :class="completion.is_current_lcc ? '' : 'opacity-0'"
-            />
+            <Tooltip :text="completion.black_border ? 'Black Border' : 'CHIMPS'">
+              <img
+                :src="completion.black_border
+                  ? '/images/medals/medal_bb.webp'
+                  : '/images/medals/medal_win.webp'"
+                class="w-[40px] h-[40px]"
+              />
+            </Tooltip>
+            <Tooltip text="No Optimal Hero">
+              <img
+                src="/images/medals/medal_nogerry.webp"
+                class="w-[40px] h-[40px]"
+                :class="hideNoGeraldo ? 'opacity-0 pointer-events-none' : { 'medal-blocked': !completion.no_geraldo }"
+              />
+            </Tooltip>
+            <Tooltip text="Current LCC">
+              <img
+                src="/images/medals/medal_lcc.webp"
+                class="w-[40px] h-[40px]"
+                :class="completion.is_current_lcc ? '' : 'opacity-0 pointer-events-none'"
+              />
+            </Tooltip>
           </div>
 
           <!-- Format ruleset -->

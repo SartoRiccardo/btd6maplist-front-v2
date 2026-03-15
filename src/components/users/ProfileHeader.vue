@@ -2,6 +2,7 @@
 import type { User } from '@/services/api/users/types';
 import { DEFAULT_AVATAR_URL, DEFAULT_BANNER_URL } from '@/constants/user';
 import { intToHex } from '@/utils/colors';
+import Tooltip from '@/components/ui/Tooltip.vue';
 
 defineProps<{ user: User }>();
 
@@ -34,15 +35,18 @@ const medalTypes = [
         </h1>
 
         <div v-if="user.achievement_roles?.length" class="flex gap-2 flex-wrap">
-          <div
+          <Tooltip
             v-for="role in user.achievement_roles"
             :key="role.id"
-            class="px-2 py-0.5 rounded-[0.3rem] border-2 border-solid font-border text-sm"
-            :style="{ backgroundColor: intToHex(role.clr_inner), borderColor: intToHex(role.clr_border) }"
-            :title="role.tooltip_description"
+            :text="role.tooltip_description"
           >
-            {{ role.name }}
-          </div>
+            <div
+              class="px-2 py-0.5 rounded-[0.3rem] border-2 border-solid font-border text-sm"
+              :style="{ backgroundColor: intToHex(role.clr_inner), borderColor: intToHex(role.clr_border) }"
+            >
+              {{ role.name }}
+            </div>
+          </Tooltip>
         </div>
       </div>
     </div>
@@ -53,12 +57,14 @@ const medalTypes = [
       class="flex justify-center gap-3 pt-2"
     >
       <template v-for="medal in medalTypes" :key="medal.key">
-        <div v-if="(user.medals?.[medal.key] ?? 0) > 0" class="relative" :title="medal.tooltip">
-          <img :src="medal.image" alt="" class="w-[60px] h-[60px]" />
-          <p class="absolute bottom-[-0.5rem] right-[-0.2rem] mb-0 font-['Luckiest_Guy'] font-border text-xl">
-            {{ user.medals![medal.key] }}
-          </p>
-        </div>
+        <Tooltip v-if="(user.medals?.[medal.key] ?? 0) > 0" :text="medal.tooltip">
+          <div class="relative">
+            <img :src="medal.image" alt="" class="w-[60px] h-[60px]" />
+            <p class="absolute bottom-[-0.5rem] right-[-0.2rem] mb-0 font-['Luckiest_Guy'] font-border text-xl">
+              {{ user.medals![medal.key] }}
+            </p>
+          </div>
+        </Tooltip>
       </template>
     </div>
   </div>
