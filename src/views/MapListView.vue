@@ -9,6 +9,7 @@ import { useNostalgiaPackData } from '@/composables/useNostalgiaPackData';
 import { useMapGroups } from '@/composables/useMapGroups';
 import { FORMAT_MAPLIST, FORMAT_NOSTALGIA_PACK, FORMAT_BEST_OF_THE_BEST, FORMAT_DESCRIPTIONS } from '@/constants/formats';
 import { FORMAT_DIFFICULTIES } from '@/constants/difficulties';
+import { permissions } from '@/constants/permissions';
 import type { GhostMap, MapWithMetadata } from '@/services/api/maps/types';
 import MapGrid from '@/components/maps/MapGrid.vue';
 import PlacementBadge from '@/components/maps/badges/PlacementBadge.vue';
@@ -123,11 +124,11 @@ const isBurning = computed(() =>
 
 const showSubmitButton = computed(() =>
   formatId.value != null
-  && auth.hasPermission('create:map_submission', formatId.value)
+  && auth.hasPermission(permissions.mapSubmission.create, formatId.value)
 );
 
 const showAddButton = computed(() =>
-  formatId.value != null && auth.hasPermission('create:map', formatId.value)
+  formatId.value != null && auth.hasPermission(permissions.map.create, formatId.value)
 );
 </script>
 

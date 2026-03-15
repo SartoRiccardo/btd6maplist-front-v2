@@ -14,7 +14,11 @@ import {
   FORMAT_ICONS,
 } from '@/constants/formats';
 import { EXPERT_DIFFICULTIES, BOTB_DIFFICULTIES } from '@/constants/difficulties';
+import { permissions } from '@/constants/permissions';
+import { useAuthStore } from '@/stores/auth';
 import Btd6Map from '@/components/maps/Btd6Map.vue';
+import LinkButton from '@/components/ui/LinkButton.vue';
+import DiscordLoginButton from '@/components/navbar/DiscordLoginButton.vue';
 import MapInfoPanel, { type FormatBadge } from '@/components/maps/MapInfoPanel.vue';
 import StandaloneImage from '@/components/common/StandaloneImage.vue';
 import { useCompletions } from '@/services/api/completions/queries';
@@ -27,6 +31,7 @@ import Pagination from '@/components/ui/Pagination.vue';
 import { formatDate } from '@/utils/dates';
 
 const route = useRoute();
+const auth = useAuthStore();
 const code = computed(() => route.params['code'] as string);
 
 const { data: mapData } = useMap(code, { include: 'creators.flair,verifiers.flair' });
@@ -136,6 +141,11 @@ const formatBadges = computed<FormatBadge[]>(() => {
 
   return badges;
 });
+
+// --- Submit completion ---
+const showSubmitCompletion = computed(() =>
+  auth.hasPermission(permissions.completionSubmission.create)
+);
 </script>
 
 <template>
@@ -199,6 +209,17 @@ const formatBadges = computed<FormatBadge[]>(() => {
       </div>
       <div v-else-if="isR6Image" class="flex justify-center">
         <StandaloneImage :src="r6Start!" alt="Round 6 Start" class="max-w-2xl" />
+      </div>
+    </div>
+
+    <!-- My Completions -->
+    <div class="my-6">
+      <h2 class="text-center font-['Luckiest_Guy'] text-2xl mb-4">My Completions</h2>
+      <div class="flex justify-center">
+        <LinkButton v-if="showSubmitCompletion" :to="`/map/${code}/submit`">
+          <i class="bi bi-pencil-fill mr-0.5" /> Submit Completion
+        </LinkButton>
+        <DiscordLoginButton v-else-if="!auth.isAuthenticated" text="Log in to submit completions" />
       </div>
     </div>
 
