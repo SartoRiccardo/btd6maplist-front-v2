@@ -8,6 +8,7 @@ import Button from '@/components/ui/Button.vue';
 const props = defineProps<{
   completion: Completion;
   expanded?: boolean;
+  editUrl?: string;
 }>();
 
 const emit = defineEmits<{
@@ -60,10 +61,15 @@ const formatInfo = computed(() =>
       </div>
       <div v-else />
 
-      <!-- Show more -->
-      <Button @click="emit('toggleDetail')">
-        <i class="bi bi-search" />
-      </Button>
+      <!-- Actions -->
+      <div class="flex gap-1">
+        <RouterLink v-if="editUrl" :to="editUrl">
+          <Button><i class="bi bi-pencil-fill" /></Button>
+        </RouterLink>
+        <Button @click="emit('toggleDetail')">
+          <i class="bi bi-search" />
+        </Button>
+      </div>
     </div>
 
     <!-- Small screens: two rows -->
@@ -72,9 +78,14 @@ const formatInfo = computed(() =>
         <div class="flex-1 min-w-0">
           <slot />
         </div>
-        <Button class="shrink-0" @click="emit('toggleDetail')">
-          <i class="bi bi-search" />
-        </Button>
+        <div class="flex gap-1 shrink-0">
+          <RouterLink v-if="editUrl" :to="editUrl">
+            <Button><i class="bi bi-pencil-fill" /></Button>
+          </RouterLink>
+          <Button @click="emit('toggleDetail')">
+            <i class="bi bi-search" />
+          </Button>
+        </div>
       </div>
 
       <div class="flex items-center gap-2 mt-2">

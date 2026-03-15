@@ -142,7 +142,9 @@ const formatBadges = computed<FormatBadge[]>(() => {
   return badges;
 });
 
-// --- Submit completion ---
+// --- Admin actions ---
+const canEditMap = computed(() => auth.hasPermission(permissions.map.edit));
+const canEditCompletion = computed(() => auth.hasPermission(permissions.completion.edit));
 const showSubmitCompletion = computed(() =>
   auth.hasPermission(permissions.completionSubmission.create)
 );
@@ -174,6 +176,12 @@ const showSubmitCompletion = computed(() =>
         <i v-else class="bi bi-check2 text-(--color-highlight)" />
       </button>
     </p>
+
+    <div v-if="canEditMap" class="flex justify-center mb-2">
+      <LinkButton :to="`/map/${code}/edit`">
+        <i class="bi bi-pencil-fill mr-0.5" /> Edit Map
+      </LinkButton>
+    </div>
 
     <!-- Two-column layout -->
     <div class="flex flex-col md:flex-row gap-6 my-4">
@@ -217,7 +225,7 @@ const showSubmitCompletion = computed(() =>
       <h2 class="text-center font-['Luckiest_Guy'] text-2xl mb-4">My Completions</h2>
       <div class="flex justify-center">
         <LinkButton v-if="showSubmitCompletion" :to="`/map/${code}/submit`">
-          <i class="bi bi-pencil-fill mr-0.5" /> Submit Completion
+          <i class="bi bi-trophy-fill mr-0.5" /> Submit Completion
         </LinkButton>
         <DiscordLoginButton v-else-if="!auth.isAuthenticated" text="Log in to submit completions" />
       </div>
@@ -241,6 +249,7 @@ const showSubmitCompletion = computed(() =>
           :key="completion.id"
           :completion="completion"
           :expanded="expandedCompletionIds.has(completion.id)"
+          :edit-url="canEditCompletion ? `/completions/${completion.id}/edit` : undefined"
           @toggle-detail="toggleCompletionDetail(completion.id)"
         >
           <div v-for="player in completion.players" :key="player.discord_id">
