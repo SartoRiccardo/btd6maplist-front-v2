@@ -4,12 +4,15 @@ import type { MapWithMetadata, MaybeGhostMap } from '@/services/api/maps/types';
 import Btd6Map from '@/components/maps/Btd6Map.vue';
 import Btd6MapPlaceholder from '@/components/maps/Btd6MapPlaceholder.vue';
 
-defineProps<{
+withDefaults(defineProps<{
   maps?: MaybeGhostMap[] | undefined;
   btd6Version?: number | undefined;
   burning?: ((map: MapWithMetadata) => boolean) | undefined;
   border?: ((map: MapWithMetadata) => 'none' | 'black' | 'gold') | undefined;
-}>();
+  skeletonCount?: number;
+}>(), {
+  skeletonCount: 12,
+});
 
 defineSlots<{
   badge?: (props: { map: MapWithMetadata }) => unknown;
@@ -42,7 +45,7 @@ defineSlots<{
       </template>
     </template>
     <template v-else>
-      <Btd6MapPlaceholder v-for="i in 12" :key="i" />
+      <Btd6MapPlaceholder v-for="i in skeletonCount" :key="i" />
     </template>
   </div>
 </template>

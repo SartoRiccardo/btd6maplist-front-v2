@@ -11,12 +11,13 @@ const route = useRoute();
 const userId = computed(() => route.params['id'] as string);
 
 // --- Created Maps ---
+const mapsPerPage = 12;
 const mapsPage = ref(1);
 const { data: mapsResponse, isLoading: mapsLoading } = useMaps(
   computed(() => ({
     created_by: userId.value,
     page: mapsPage.value,
-    per_page: 12,
+    per_page: mapsPerPage,
   })),
 );
 
@@ -69,7 +70,7 @@ watch(() => mapsResponse.value?.meta, (meta) => {
     <!-- Created Maps -->
     <div class="my-6">
       <h2 class="font-['Luckiest_Guy'] text-2xl text-center mb-4">Created Maps</h2>
-      <MapGrid :maps="mapsLoading ? undefined : createdMaps" />
+      <MapGrid :maps="mapsLoading ? undefined : createdMaps" :skeleton-count="mapsPerPage" />
       <p v-if="!mapsLoading && createdMaps?.length === 0" class="text-center text-(--color-text-muted)">
         No created maps.
       </p>
