@@ -11,8 +11,9 @@ const props = withDefaults(
     burning?: boolean | undefined;
     showPlayButton?: boolean | undefined;
     showName?: boolean | undefined;
+    border?: 'none' | 'black' | 'gold';
   }>(),
-  { showName: true }
+  { showName: true, border: 'none' }
 );
 
 const previewUrl = computed(
@@ -37,7 +38,14 @@ const { containerRef: fireContainer } = useFireEffect(() => props.burning);
 </script>
 
 <template>
-  <div class="bg-(--color-secondary) p-[0.4rem] pb-4 rounded-(--radius-panel) shadow-md hover:shadow-lg relative my-6 mx-0.5 transition-all duration-200 group-hover:bg-(--color-active)">
+  <div
+    class="p-[0.4rem] pb-4 rounded-(--radius-panel) shadow-md hover:shadow-lg relative my-6 mx-0.5 transition-all duration-200"
+    :class="[
+      border === 'black' ? 'btd6map-black-border' :
+      border === 'gold' ? 'btd6map-gold-border' :
+      'bg-(--color-secondary) group-hover:bg-(--color-active)'
+    ]"
+  >
     <p
       v-if="showName && mapName"
       class="absolute top-[-0.7rem] left-[-0.1rem] w-full text-center font-['Luckiest_Guy'] font-border text-base md:text-2xl break-words z-10"
@@ -83,3 +91,14 @@ const { containerRef: fireContainer } = useFireEffect(() => props.burning);
     </template>
   </div>
 </template>
+
+<style scoped>
+.btd6map-black-border {
+  background-color: #080808;
+  box-shadow: 0 0 0.4rem 0 #d3d3d3;
+}
+.btd6map-gold-border {
+  background-color: #ddbc00;
+  box-shadow: 0 0 0.5rem 0 #e65100;
+}
+</style>

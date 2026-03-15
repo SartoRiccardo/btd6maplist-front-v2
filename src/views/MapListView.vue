@@ -138,6 +138,15 @@ const showAddButton = computed(() =>
 );
 
 const hideNoGeraldo = computed(() => format.value?.is_no_geraldo_enabled === false);
+
+const mapBorder = computed(() =>
+  auth.isAuthenticated
+    ? (map: MapWithMetadata) => {
+        if (!map.medals?.no_geraldo && !hideNoGeraldo.value) return 'none' as const;
+        return map.medals?.black_border ? 'black' as const : map.medals?.completed ? 'gold' as const : 'none' as const;
+      }
+    : undefined
+);
 </script>
 
 <template>
@@ -228,7 +237,7 @@ const hideNoGeraldo = computed(() => format.value?.is_no_geraldo_enabled === fal
         <h2 v-if="group.subcategoryName" class="text-center mt-8 mb-2 font-['Luckiest_Guy'] text-2xl">
           {{ group.subcategoryName }}
         </h2>
-        <MapGrid :maps="group.maps" :btd6-version="btd6Version" :burning="isBurning">
+        <MapGrid :maps="group.maps" :btd6-version="btd6Version" :burning="isBurning" :border="mapBorder">
           <template #badge="{ map }">
             <PlacementBadge
               v-if="formatId === FORMAT_MAPLIST && map.placement_curver != null && config"

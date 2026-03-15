@@ -8,6 +8,7 @@ defineProps<{
   maps?: MaybeGhostMap[] | undefined;
   btd6Version?: number | undefined;
   burning?: ((map: MapWithMetadata) => boolean) | undefined;
+  border?: ((map: MapWithMetadata) => 'none' | 'black' | 'gold') | undefined;
 }>();
 
 defineSlots<{
@@ -29,7 +30,7 @@ defineSlots<{
           :to="`/map/${map.code}`"
           class="group no-underline! text-(--color-text)!"
         >
-          <Btd6Map :map="map" :btd6-version="btd6Version" :burning="burning?.(map)">
+          <Btd6Map :map="map" :btd6-version="btd6Version" :burning="burning?.(map)" :border="border?.(map)">
             <template v-if="$slots['badge']" #badge>
               <slot name="badge" :map="map" />
             </template>
