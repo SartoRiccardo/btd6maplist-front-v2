@@ -7,6 +7,11 @@ import Button from '@/components/ui/Button.vue';
 
 const props = defineProps<{
   completion: Completion;
+  expanded?: boolean;
+}>();
+
+const emit = defineEmits<{
+  toggleDetail: [];
 }>();
 
 const hideNoGeraldo = computed(() => FORMATS_WITHOUT_GERALDO.includes(props.completion.format_id));
@@ -56,7 +61,7 @@ const formatInfo = computed(() =>
       <div v-else />
 
       <!-- Show more -->
-      <Button @click="console.log('show more', completion.id)">
+      <Button @click="emit('toggleDetail')">
         <i class="bi bi-search" />
       </Button>
     </div>
@@ -67,7 +72,7 @@ const formatInfo = computed(() =>
         <div class="flex-1 min-w-0">
           <slot />
         </div>
-        <Button class="shrink-0" @click="console.log('show more', completion.id)">
+        <Button class="shrink-0" @click="emit('toggleDetail')">
           <i class="bi bi-search" />
         </Button>
       </div>
@@ -102,6 +107,11 @@ const formatInfo = computed(() =>
           <span class="text-sm">{{ formatInfo.name }} ruleset</span>
         </div>
       </div>
+    </div>
+
+    <!-- Expanded detail -->
+    <div v-if="expanded" class="border-t border-(--color-primary) mt-2 pt-2">
+      <slot name="detail" />
     </div>
   </div>
 </template>

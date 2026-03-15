@@ -1,4 +1,4 @@
-import type { Completion, GetCompletionsParams } from './types';
+import type { Completion, CompletionDetail, GetCompletionParams, GetCompletionsParams } from './types';
 import type { PaginatedResponse } from '@/services/api/common/types';
 import { apiRequest } from '../client';
 
@@ -38,4 +38,20 @@ export async function getCompletions(
 ): Promise<PaginatedResponse<Completion>> {
   const queryString = buildCompletionParams(params);
   return apiRequest<PaginatedResponse<Completion>>(`${BASE_PATH}${queryString}`);
+}
+
+/**
+ * GET /completions/{id}
+ *
+ * Fetch a single completion by ID.
+ */
+export async function getCompletion(
+  id: number,
+  params?: GetCompletionParams
+): Promise<CompletionDetail> {
+  const searchParams = new URLSearchParams();
+  if (params?.timestamp != null) searchParams.set('timestamp', params.timestamp.toString());
+  if (params?.include != null) searchParams.set('include', params.include);
+  const queryString = searchParams.toString();
+  return apiRequest<CompletionDetail>(`${BASE_PATH}/${id}${queryString ? `?${queryString}` : ''}`);
 }

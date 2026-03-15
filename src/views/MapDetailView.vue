@@ -20,6 +20,7 @@ import StandaloneImage from '@/components/common/StandaloneImage.vue';
 import { useCompletions } from '@/services/api/completions/queries';
 import CompletionRow from '@/components/completions/CompletionRow.vue';
 import CompletionRowSkeleton from '@/components/completions/CompletionRowSkeleton.vue';
+import CompletionDetailLoader from '@/components/completions/CompletionDetailLoader.vue';
 import UserEntry from '@/components/users/UserEntry.vue';
 import UserEntrySkeleton from '@/components/users/UserEntrySkeleton.vue';
 import Pagination from '@/components/ui/Pagination.vue';
@@ -83,6 +84,16 @@ const cachedCompletionsMeta = ref(completionsResponse.value?.meta);
 watch(() => completionsResponse.value?.meta, (meta) => {
   if (meta) cachedCompletionsMeta.value = meta;
 });
+
+// --- Expanded completion details ---
+const expandedCompletionIds = ref(new Set<number>());
+
+function toggleCompletionDetail(id: number) {
+  const next = new Set(expandedCompletionIds.value);
+  if (next.has(id)) next.delete(id);
+  else next.add(id);
+  expandedCompletionIds.value = next;
+}
 
 // --- Format badges ---
 const formatBadges = computed<FormatBadge[]>(() => {
@@ -208,6 +219,8 @@ const formatBadges = computed<FormatBadge[]>(() => {
           v-for="completion in completions"
           :key="completion.id"
           :completion="completion"
+          :expanded="expandedCompletionIds.has(completion.id)"
+          @toggle-detail="toggleCompletionDetail(completion.id)"
         >
           <div v-for="player in completion.players" :key="player.discord_id">
             <UserEntry
@@ -215,6 +228,9 @@ const formatBadges = computed<FormatBadge[]>(() => {
               :label="formatDate(completion.submitted_on)"
             />
           </div>
+          <template #detail>
+            <CompletionDetailLoader :completion-id="completion.id" />
+          </template>
         </CompletionRow>
 
       </template>

@@ -28,6 +28,20 @@ export interface CompletionWithMapMetadata extends Omit<Completion, 'map'> {
   map: MapWithMetadata;
 }
 
+/** Show response — accepted_by can be a full User when ?include=accepted_by.flair */
+export interface CompletionDetail extends Omit<Completion, 'accepted_by'> {
+  accepted_by: string | User | null;
+}
+
+export interface CompletionDetailWithMapMetadata extends Omit<CompletionDetail, 'map'> {
+  map: MapWithMetadata;
+}
+
+export interface GetCompletionParams {
+  timestamp?: number;
+  include?: string;
+}
+
 export interface GetCompletionsParams {
   timestamp?: number;
   format_id?: number;
