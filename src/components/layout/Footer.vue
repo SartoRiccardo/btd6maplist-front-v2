@@ -9,7 +9,9 @@ const copyrightYears = currentYear > 2024 ? `2024 - ${currentYear}` : '2024';
   <footer class="text-center text-xs px-3 mt-auto pt-12">
     <hr class="w-[70%] mx-auto border-(--color-secondary) mb-4" />
     <p class="mb-2">
-      <RouterLink to="/rules">Submission Rules</RouterLink>
+      <RouterLink to="/maps/maplist/map-rules">Map Submission Rules</RouterLink>
+      {{ " | " }}
+      <RouterLink to="/maps/maplist/completion-rules">Completion Submission Rules</RouterLink>
       {{ " | " }}
       <a href="https://ko-fi.com/sarto" target="_blank">
         <i class="bi bi-cup-hot-fill" />&nbsp;Donate

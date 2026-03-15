@@ -105,6 +105,16 @@ const hasOpenSubmissions = computed(() => {
   });
 });
 
+const completionRulesSlug = computed(() => {
+  const formats = formatsResponse.value?.data;
+  if (!formats) return null;
+  for (const id of mapFormatIds.value) {
+    const fmt = formats.find((f) => f.id === id);
+    if (fmt?.slug) return fmt.slug;
+  }
+  return null;
+});
+
 // --- Admin actions ---
 const canEditMap = computed(() => auth.hasPermission(permissions.map.edit));
 const canEditCompletion = computed(() => auth.hasPermission(permissions.completion.edit));
@@ -187,7 +197,10 @@ const showSubmitCompletion = computed(() =>
     <!-- My Completions -->
     <div v-if="auth.isAuthenticated && auth.user" class="my-6">
       <h2 class="text-center font-['Luckiest_Guy'] text-2xl mb-4">My Completions</h2>
-      <div v-if="showSubmitCompletion" class="flex justify-center mb-4">
+      <div v-if="showSubmitCompletion" class="flex flex-col items-center gap-2 mb-4">
+        <RouterLink v-if="completionRulesSlug" :to="`/maps/${completionRulesSlug}/completion-rules`" class="text-sm text-(--color-highlight)">
+          Completion Submission Rules
+        </RouterLink>
         <LinkButton :to="`/map/${code}/submit`">
           <i class="bi bi-trophy-fill mr-0.5" /> Submit Completion
         </LinkButton>
