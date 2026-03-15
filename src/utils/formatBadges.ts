@@ -18,6 +18,16 @@ export interface FormatBadge {
   squareImage?: boolean | undefined;
 }
 
+export function getFormatsMapIsIn(map: MapWithMetadata): number[] {
+  const ids: number[] = [];
+  if (map.placement_curver != null) ids.push(FORMAT_MAPLIST);
+  if (map.placement_allver != null) ids.push(FORMAT_MAPLIST_ALL_VER);
+  if (map.difficulty != null) ids.push(FORMAT_EXPERT_LIST);
+  if (map.botb_difficulty != null) ids.push(FORMAT_BEST_OF_THE_BEST);
+  if (map.retro_map != null) ids.push(FORMAT_NOSTALGIA_PACK);
+  return ids;
+}
+
 export function getMapFormatBadges(
   map: MapWithMetadata,
   options?: {

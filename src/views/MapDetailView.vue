@@ -4,7 +4,7 @@ import { useRoute } from 'vue-router';
 import { useMap } from '@/services/api/maps/queries';
 import { useConfig } from '@/services/api/config/queries';
 import { useFormats } from '@/services/api/formats/queries';
-import { getMapFormatBadges } from '@/utils/formatBadges';
+import { getMapFormatBadges, getFormatsMapIsIn } from '@/utils/formatBadges';
 import { permissions } from '@/constants/permissions';
 import { useAuthStore } from '@/stores/auth';
 import Btd6Map from '@/components/maps/Btd6Map.vue';
@@ -91,12 +91,26 @@ const currentLcc = computed(() => {
 
 const lccExpanded = ref(false);
 
+// --- Submission open? ---
+const mapFormatIds = computed(() =>
+  mapData.value ? getFormatsMapIsIn(mapData.value) : []
+);
+
+const hasOpenSubmissions = computed(() => {
+  const formats = formatsResponse.value?.data;
+  if (!formats) return false;
+  return mapFormatIds.value.some((id) => {
+    const format = formats.find((f) => f.id === id);
+    return format != null && format.map_submission_status !== 'closed';
+  });
+});
+
 // --- Admin actions ---
 const canEditMap = computed(() => auth.hasPermission(permissions.map.edit));
 const canEditCompletion = computed(() => auth.hasPermission(permissions.completion.edit));
 const canCreateCompletion = computed(() => auth.hasPermission(permissions.completion.create));
 const showSubmitCompletion = computed(() =>
-  auth.hasPermission(permissions.completionSubmission.create)
+  auth.hasPermission(permissions.completionSubmission.create) && hasOpenSubmissions.value
 );
 </script>
 
