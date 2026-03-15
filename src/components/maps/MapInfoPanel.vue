@@ -3,15 +3,25 @@ import { computed } from 'vue';
 import type { MapCreator, MapVerification } from '@/services/api/maps/types';
 import type { User } from '@/services/api/users/types';
 import { useNKMapCreator } from '@/composables/useNKMapCreator';
+import LinkButton from '@/components/ui/LinkButton.vue';
 import UserEntry from '@/components/users/UserEntry.vue';
 import UserEntrySkeleton from '@/components/users/UserEntrySkeleton.vue';
+import Badge from '@/components/common/Badge.vue';
 import Icon from '@/components/common/Icon.vue';
+
+export interface FormatBadge {
+  icon: string;
+  label: string;
+  slug?: string | null | undefined;
+  squareImage?: boolean | undefined;
+}
 
 const props = defineProps<{
   code: string;
   creators: MapCreator[];
   verifications: MapVerification[];
   optimalHeros: string[] | null;
+  formatBadges: FormatBadge[];
 }>();
 
 const noCreators = computed(() => props.creators.length === 0);
@@ -34,6 +44,28 @@ const nkSyntheticUser = computed<User | null>(() => {
 
 <template>
   <div class="bg-(--color-secondary) rounded-(--radius-panel) p-4 shadow-md h-full">
+    <!-- Format Badges -->
+    <div v-if="formatBadges.length > 0" class="flex flex-wrap gap-2 mb-4">
+      <LinkButton
+        v-for="badge in formatBadges"
+        :key="badge.label"
+        :to="badge.slug ? `/maps/${badge.slug}` : ''"
+      >
+        <span class="flex items-center gap-2">
+          <img
+            v-if="badge.squareImage"
+            :src="badge.icon"
+            alt=""
+            class="h-8 w-8 rounded-sm object-cover"
+          />
+          <Badge v-else :src="badge.icon" alt="" class="translate-y-0 scale-[125%]" />
+          <span class="font-['Luckiest_Guy'] font-border text-sm">
+            {{ badge.label }}
+          </span>
+        </span>
+      </LinkButton>
+    </div>
+
     <!-- Creators & Verifiers -->
     <div class="flex flex-col sm:flex-row gap-4 mb-4">
       <div class="flex-1">

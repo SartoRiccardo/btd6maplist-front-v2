@@ -15,7 +15,7 @@ import {
 } from '@/constants/formats';
 import { EXPERT_DIFFICULTIES, BOTB_DIFFICULTIES } from '@/constants/difficulties';
 import Btd6Map from '@/components/maps/Btd6Map.vue';
-import MapInfoPanel from '@/components/maps/MapInfoPanel.vue';
+import MapInfoPanel, { type FormatBadge } from '@/components/maps/MapInfoPanel.vue';
 
 const route = useRoute();
 const code = computed(() => route.params['code'] as string);
@@ -42,42 +42,46 @@ function copyCode() {
   copyTimeout = setTimeout(() => { copied.value = false; }, 2000);
 }
 
-// --- Format badge helpers ---
-const maplistPlacement = computed(() => {
-  if (!mapData.value || !config.value) return null;
-  if (mapData.value.placement_curver == null) return null;
-  if (!visibleFormatIds.value.includes(FORMAT_MAPLIST)) return null;
-  const p = mapData.value.placement_curver;
-  return { placement: p, points: calcMapPoints(p, config.value), icon: FORMAT_ICONS.find((f) => f.id === FORMAT_MAPLIST)! };
-});
+// --- Format badges ---
+const formatBadges = computed<FormatBadge[]>(() => {
+  const map = mapData.value;
+  if (!map) return [];
+  const visible = visibleFormatIds.value;
+  const badges: FormatBadge[] = [];
 
-const allverPlacement = computed(() => {
-  if (!mapData.value || !config.value) return null;
-  if (mapData.value.placement_allver == null) return null;
-  if (!visibleFormatIds.value.includes(FORMAT_MAPLIST_ALL_VER)) return null;
-  const p = mapData.value.placement_allver;
-  return { placement: p, points: calcMapPoints(p, config.value), icon: FORMAT_ICONS.find((f) => f.id === FORMAT_MAPLIST_ALL_VER)! };
-});
+  if (map.placement_curver != null && config.value && visible.includes(FORMAT_MAPLIST)) {
+    const fmt = FORMAT_ICONS.find((f) => f.id === FORMAT_MAPLIST)!;
+    const pts = calcMapPoints(map.placement_curver, config.value);
+    badges.push({ icon: fmt.image, label: `#${map.placement_curver} — ${pts}pt`, slug: fmt.slug });
+  }
 
-const expertDifficulty = computed(() => {
-  if (!mapData.value || mapData.value.difficulty == null) return null;
-  if (!visibleFormatIds.value.includes(FORMAT_EXPERT_LIST)) return null;
-  return EXPERT_DIFFICULTIES.find((d) => d.value === mapData.value!.difficulty) ?? null;
-});
+  if (map.placement_allver != null && config.value && visible.includes(FORMAT_MAPLIST_ALL_VER)) {
+    const fmt = FORMAT_ICONS.find((f) => f.id === FORMAT_MAPLIST_ALL_VER)!;
+    const pts = calcMapPoints(map.placement_allver, config.value);
+    badges.push({ icon: fmt.image, label: `#${map.placement_allver} — ${pts}pt`, slug: fmt.slug });
+  }
 
-const botbDifficulty = computed(() => {
-  if (!mapData.value || mapData.value.botb_difficulty == null) return null;
-  if (!visibleFormatIds.value.includes(FORMAT_BEST_OF_THE_BEST)) return null;
-  return BOTB_DIFFICULTIES.find((d) => {
-    const v = d.value;
-    return Array.isArray(v) ? v.includes(mapData.value!.botb_difficulty!) : v === mapData.value!.botb_difficulty;
-  }) ?? null;
-});
+  if (map.difficulty != null && visible.includes(FORMAT_EXPERT_LIST)) {
+    const diff = EXPERT_DIFFICULTIES.find((d) => d.value === map.difficulty);
+    const fmt = FORMAT_ICONS.find((f) => f.id === FORMAT_EXPERT_LIST)!;
+    if (diff) badges.push({ icon: diff.image, label: `${diff.name} Expert`, slug: fmt.slug });
+  }
 
-const nostalgiaInfo = computed(() => {
-  if (!mapData.value || !mapData.value.retro_map) return null;
-  if (!visibleFormatIds.value.includes(FORMAT_NOSTALGIA_PACK)) return null;
-  return mapData.value.retro_map;
+  if (map.botb_difficulty != null && visible.includes(FORMAT_BEST_OF_THE_BEST)) {
+    const diff = BOTB_DIFFICULTIES.find((d) => {
+      const v = d.value;
+      return Array.isArray(v) ? v.includes(map.botb_difficulty!) : v === map.botb_difficulty;
+    });
+    const fmt = FORMAT_ICONS.find((f) => f.id === FORMAT_BEST_OF_THE_BEST)!;
+    if (diff) badges.push({ icon: diff.image, label: 'Best of the Best', slug: fmt.slug });
+  }
+
+  if (map.retro_map && visible.includes(FORMAT_NOSTALGIA_PACK)) {
+    const fmt = FORMAT_ICONS.find((f) => f.id === FORMAT_NOSTALGIA_PACK)!;
+    badges.push({ icon: map.retro_map.preview_url, label: map.retro_map.name, slug: fmt.slug, squareImage: true });
+  }
+
+  return badges;
 });
 </script>
 
@@ -112,73 +116,7 @@ const nostalgiaInfo = computed(() => {
     <div class="flex flex-col md:flex-row gap-6 my-4">
       <!-- Left: Map preview -->
       <div class="w-full md:w-5/12">
-        <Btd6Map :map="mapData" :code="mapData.code" :show-name="false" :btd6-version="config?.current_btd6_ver" show-play-button class="mb-0 mt-0">
-          <template #badge>
-            <!-- Maplist placement badge -->
-            <div
-              v-if="maplistPlacement"
-              class="absolute top-[7%] left-[-4%] bg-(--color-contrast) shadow-[0_0_0.5rem_black] rounded-full
-                     flex items-center gap-1 px-2 py-1 z-10"
-            >
-              <img :src="maplistPlacement.icon.image" alt="" class="h-6 w-6" />
-              <span class="font-['Luckiest_Guy'] font-border text-sm">
-                #{{ maplistPlacement.placement }} — {{ maplistPlacement.points }}pt
-              </span>
-            </div>
-
-            <!-- All Versions placement badge -->
-            <div
-              v-if="allverPlacement"
-              class="absolute left-[-4%] bg-(--color-contrast) shadow-[0_0_0.5rem_black] rounded-full
-                     flex items-center gap-1 px-2 py-1 z-10"
-              :class="maplistPlacement ? 'top-[28%]' : 'top-[7%]'"
-            >
-              <img :src="allverPlacement.icon.image" alt="" class="h-6 w-6" />
-              <span class="font-['Luckiest_Guy'] font-border text-sm">
-                #{{ allverPlacement.placement }} — {{ allverPlacement.points }}pt
-              </span>
-            </div>
-
-            <!-- Expert List badge -->
-            <div
-              v-if="expertDifficulty"
-              class="absolute left-[-4%] bg-(--color-contrast) shadow-[0_0_0.5rem_black] rounded
-                     flex items-center gap-1 px-2 py-1 z-10"
-              :class="maplistPlacement || allverPlacement ? 'top-[49%]' : 'top-[7%]'"
-            >
-              <img :src="expertDifficulty.image" alt="" class="h-6 w-6" />
-              <span class="font-['Luckiest_Guy'] font-border text-sm">
-                {{ expertDifficulty.name }} Expert
-              </span>
-            </div>
-
-            <!-- BotB badge -->
-            <div
-              v-if="botbDifficulty"
-              class="absolute left-[-4%] bg-(--color-contrast) shadow-[0_0_0.5rem_black] rounded
-                     flex items-center gap-1 px-2 py-1 z-10"
-              :class="maplistPlacement || allverPlacement || expertDifficulty ? 'top-[70%]' : 'top-[7%]'"
-            >
-              <img :src="botbDifficulty.image" alt="" class="h-6 w-6" />
-              <span class="font-['Luckiest_Guy'] font-border text-sm">
-                Best of the Best
-              </span>
-            </div>
-
-            <!-- Nostalgia Pack badge -->
-            <div
-              v-if="nostalgiaInfo"
-              class="absolute left-[-4%] bg-(--color-contrast) shadow-[0_0_0.5rem_black] rounded
-                     flex items-center gap-1 px-2 py-1 z-10"
-              :class="maplistPlacement || allverPlacement || expertDifficulty || botbDifficulty ? 'top-[70%]' : 'top-[7%]'"
-            >
-              <img :src="nostalgiaInfo.preview_url" alt="" class="h-8 w-8 rounded-sm" />
-              <span class="font-['Luckiest_Guy'] font-border text-sm">
-                {{ nostalgiaInfo.name }}
-              </span>
-            </div>
-          </template>
-        </Btd6Map>
+        <Btd6Map :map="mapData" :code="mapData.code" :show-name="false" :btd6-version="config?.current_btd6_ver" show-play-button class="mb-0 mt-0" />
       </div>
 
       <!-- Right: Info panel -->
@@ -188,6 +126,7 @@ const nostalgiaInfo = computed(() => {
           :creators="mapData.creators"
           :verifications="mapData.verifications"
           :optimal-heros="mapData.optimal_heros"
+          :format-badges="formatBadges"
         />
       </div>
     </div>
