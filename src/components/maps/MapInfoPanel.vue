@@ -33,7 +33,7 @@ const nkSyntheticUser = computed<User | null>(() => {
     discord_id: '',
     name: nkCreatorName.value,
     is_banned: false,
-    platform_roles: [],
+    roles: [],
     avatar_url: nkCreatorAvatar.value,
   };
 });

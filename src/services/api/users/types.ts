@@ -15,7 +15,7 @@ export interface User {
   discord_id: string;
   name: string;
   is_banned: boolean;
-  platform_roles: PlatformRole[];
+  roles: PlatformRole[];
   // Only included when 'flair' is in include parameter
   avatar_url?: string | null;
   banner_url?: string | null;

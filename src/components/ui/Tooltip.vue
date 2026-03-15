@@ -66,9 +66,7 @@ const arrowPlacementSide = computed(() =>
     @click.prevent="toggle"
   >
     <slot />
-  </div>
-
-  <Teleport to="body">
+    <Teleport to="body">
     <Transition
       enter-active-class="transition-opacity duration-150"
       leave-active-class="transition-opacity duration-100"
@@ -94,5 +92,6 @@ const arrowPlacementSide = computed(() =>
         />
       </div>
     </Transition>
-  </Teleport>
+    </Teleport>
+  </div>
 </template>
