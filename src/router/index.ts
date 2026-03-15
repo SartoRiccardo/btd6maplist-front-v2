@@ -33,11 +33,6 @@ const routes: RouteRecordRaw[] = [
     path: '/maps/:id/submit-map',
   },
   {
-    component: () => import('@/views/ProfileView.vue'),
-    name: 'Profile',
-    path: '/profile',
-  },
-  {
     component: () => import('@/views/MyCompletionsView.vue'),
     name: 'MyCompletions',
     path: '/my-submissions/completions',
