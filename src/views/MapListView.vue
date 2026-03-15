@@ -7,7 +7,7 @@ import { useConfig } from '@/services/api/config/queries';
 import { useAuthStore } from '@/stores/auth';
 import { useNostalgiaPackData } from '@/composables/useNostalgiaPackData';
 import { useMapGroups } from '@/composables/useMapGroups';
-import { FORMAT_MAPLIST, FORMAT_NOSTALGIA_PACK, FORMAT_BEST_OF_THE_BEST, FORMAT_DESCRIPTIONS, FORMATS_WITHOUT_GERALDO } from '@/constants/formats';
+import { FORMAT_MAPLIST, FORMAT_NOSTALGIA_PACK, FORMAT_BEST_OF_THE_BEST, FORMAT_DESCRIPTIONS } from '@/constants/formats';
 import { FORMAT_DIFFICULTIES } from '@/constants/difficulties';
 import { permissions } from '@/constants/permissions';
 import type { GhostMap, MapWithMetadata } from '@/services/api/maps/types';
@@ -137,9 +137,7 @@ const showAddButton = computed(() =>
   formatId.value != null && auth.hasPermission(permissions.map.create, formatId.value)
 );
 
-const hideNoGeraldo = computed(() =>
-  formatId.value != null && FORMATS_WITHOUT_GERALDO.includes(formatId.value)
-);
+const hideNoGeraldo = computed(() => format.value?.is_no_geraldo_enabled === false);
 </script>
 
 <template>

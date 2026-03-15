@@ -12,6 +12,7 @@ export interface Format {
   hidden: boolean;
   run_submission_status: 'closed' | 'open' | 'lcc_only';
   map_submission_status: 'closed' | 'open' | 'open_chimps';
+  is_no_geraldo_enabled: boolean;
   proposed_difficulties: string[] | null;
   preview_map1: Map | null;
   preview_map2: Map | null;

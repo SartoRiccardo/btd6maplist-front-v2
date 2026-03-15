@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import type { Completion } from '@/services/api/completions/types';
-import { FORMAT_ICONS, FORMATS_WITHOUT_GERALDO } from '@/constants/formats';
+import { FORMAT_ICONS } from '@/constants/formats';
+import { useFormats } from '@/services/api/formats/queries';
 import Badge from '@/components/common/Badge.vue';
 import Button from '@/components/ui/Button.vue';
 
@@ -15,7 +16,12 @@ const emit = defineEmits<{
   toggleDetail: [];
 }>();
 
-const hideNoGeraldo = computed(() => FORMATS_WITHOUT_GERALDO.includes(props.completion.format_id));
+const { data: formats } = useFormats();
+
+const hideNoGeraldo = computed(() => {
+  const fmt = formats.value?.data.find((f) => f.id === props.completion.format_id);
+  return fmt?.is_no_geraldo_enabled === false;
+});
 
 const formatInfo = computed(() =>
   FORMAT_ICONS.find((f) => f.id === props.completion.format_id)
