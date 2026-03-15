@@ -14,6 +14,7 @@ import { permissions } from '@/constants/permissions';
 import { useAuthStore } from '@/stores/auth';
 import Badge from '@/components/common/Badge.vue';
 import Button from '@/components/ui/Button.vue';
+import LinkButton from '@/components/ui/LinkButton.vue';
 import ProfileHeader from '@/components/users/ProfileHeader.vue';
 import ProfileHeaderSkeleton from '@/components/users/ProfileHeaderSkeleton.vue';
 import RankCard from '@/components/users/RankCard.vue';
@@ -34,6 +35,11 @@ function toggleBan() {
   if (!user.value) return;
   banMutation.mutate({ id: userId.value, ban: !user.value.is_banned });
 }
+
+const isOwnProfile = computed(() => auth.user?.discord_id === userId.value);
+const canEditProfile = computed(() =>
+  isOwnProfile.value && auth.hasPermission(permissions.user.editSelf)
+);
 const { data: config } = useConfig();
 const { data: formatsResponse } = useFormats();
 const visibleFormatIds = computed(() =>
@@ -66,9 +72,13 @@ watch(() => mapsResponse.value?.meta, (meta) => {
     <ProfileHeaderSkeleton v-if="userLoading" />
     <ProfileHeader v-else-if="user" :user="user" />
 
-    <!-- Ban/Unban -->
-    <div v-if="canBan && user" class="flex justify-end mt-3">
+    <!-- Profile actions -->
+    <div v-if="(canBan || canEditProfile) && user" class="flex justify-end gap-2 mt-3">
+      <LinkButton v-if="canEditProfile" to="/profile/edit" class="text-sm">
+        <i class="bi bi-pencil-fill mr-1" /> Edit Profile
+      </LinkButton>
       <Button
+        v-if="canBan"
         @click="toggleBan"
         :disabled="banMutation.isPending.value || userFetching"
         class="text-sm"
