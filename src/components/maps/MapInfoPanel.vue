@@ -8,6 +8,7 @@ import UserEntry from '@/components/users/UserEntry.vue';
 import UserEntrySkeleton from '@/components/users/UserEntrySkeleton.vue';
 import Badge from '@/components/common/Badge.vue';
 import Icon from '@/components/common/Icon.vue';
+import MarkdownContent from '@/components/common/MarkdownContent.vue';
 
 export interface FormatBadge {
   icon: string;
@@ -21,6 +22,7 @@ const props = defineProps<{
   creators: MapCreator[];
   verifications: MapVerification[];
   optimalHeros: string[] | null;
+  mapNotes: string | null;
   formatBadges: FormatBadge[];
 }>();
 
@@ -117,6 +119,12 @@ const nkSyntheticUser = computed<User | null>(() => {
         :alt="hero"
         class="mx-2.5 scale-[250%] -translate-1"
       />
+    </div>
+
+    <!-- Map Notes -->
+    <div v-if="mapNotes" class="pt-4">
+      <h3 class="font-['Luckiest_Guy'] text-xl mb-2">Map Notes</h3>
+      <MarkdownContent :text="mapNotes" />
     </div>
   </div>
 </template>

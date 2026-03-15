@@ -126,6 +126,7 @@ const formatBadges = computed<FormatBadge[]>(() => {
           :creators="mapData.creators"
           :verifications="mapData.verifications"
           :optimal-heros="mapData.optimal_heros"
+          :map-notes="mapData.map_notes"
           :format-badges="formatBadges"
         />
       </div>
