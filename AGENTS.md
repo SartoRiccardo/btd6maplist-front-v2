@@ -19,7 +19,6 @@
 
 - Avoid magic numbers for format IDs — use constants from `src/constants/formats.ts`
 - Difficulty definitions are hardcoded in `src/constants/difficulties.ts`, not fetched from API
-- `exactOptionalPropertyTypes` is enabled — optional props need explicit `| undefined` (e.g. `btd6Version?: number | undefined`)
 - Permissions are checked via `useAuthStore().hasPermission(perm, formatId)` — returns false if banned
 
 ## Type Check
