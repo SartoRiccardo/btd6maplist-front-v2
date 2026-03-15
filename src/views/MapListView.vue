@@ -7,7 +7,7 @@ import { useConfig } from '@/services/api/config/queries';
 import { useAuthStore } from '@/stores/auth';
 import { useNostalgiaPackData } from '@/composables/useNostalgiaPackData';
 import { useMapGroups } from '@/composables/useMapGroups';
-import { FORMAT_MAPLIST, FORMAT_NOSTALGIA_PACK, FORMAT_BEST_OF_THE_BEST, FORMAT_DESCRIPTIONS } from '@/constants/formats';
+import { FORMAT_MAPLIST, FORMAT_NOSTALGIA_PACK, FORMAT_BEST_OF_THE_BEST, FORMAT_DESCRIPTIONS, FORMATS_WITHOUT_GERALDO } from '@/constants/formats';
 import { FORMAT_DIFFICULTIES } from '@/constants/difficulties';
 import { permissions } from '@/constants/permissions';
 import type { GhostMap, MapWithMetadata } from '@/services/api/maps/types';
@@ -82,6 +82,8 @@ const { data: mapsResponse } = useMaps(
       format_subfilter?: string;
       fill_missing_retro?: true;
       per_page: number;
+      include?: string;
+      medal_formats?: number;
     } = {
       format_id: formatId.value,
       per_page: 150,
@@ -91,6 +93,10 @@ const { data: mapsResponse } = useMaps(
     }
     if (isNP.value) {
       params.fill_missing_retro = true;
+    }
+    if (auth.isAuthenticated) {
+      params.include = 'medals';
+      params.medal_formats = formatId.value;
     }
     return params;
   }),
@@ -129,6 +135,10 @@ const showSubmitButton = computed(() =>
 
 const showAddButton = computed(() =>
   formatId.value != null && auth.hasPermission(permissions.map.create, formatId.value)
+);
+
+const hideNoGeraldo = computed(() =>
+  formatId.value != null && FORMATS_WITHOUT_GERALDO.includes(formatId.value)
 );
 </script>
 
@@ -232,6 +242,31 @@ const showAddButton = computed(() =>
               :src="map.retro_map.preview_url"
             />
           </template>
+          <template v-if="auth.isAuthenticated" #bottom="{ map }">
+            <div v-if="map.medals" class="absolute bottom-[-1rem] left-0 w-full flex justify-center gap-2 z-10">
+              <img
+                :src="map.medals.black_border
+                  ? '/images/medals/medal_bb.webp'
+                  : '/images/medals/medal_win.webp'"
+                :title="map.medals.black_border ? 'Black Border' : 'CHIMPS'"
+                class="w-[40px] h-[40px] md:w-[60px] md:h-[60px]"
+                :class="{ 'medal-blocked': !map.medals.completed }"
+              />
+              <img
+                v-if="!hideNoGeraldo"
+                src="/images/medals/medal_nogerry.webp"
+                title="No Optimal Hero"
+                class="w-[40px] h-[40px] md:w-[60px] md:h-[60px]"
+                :class="{ 'medal-blocked': !map.medals.no_geraldo }"
+              />
+              <img
+                v-if="map.medals.current_lcc"
+                src="/images/medals/medal_lcc.webp"
+                title="Current LCC"
+                class="w-[40px] h-[40px] md:w-[60px] md:h-[60px]"
+              />
+            </div>
+          </template>
           <template #ghost="{ map }">
             <GhostBtd6Map :map="(map as GhostMap)" />
           </template>
@@ -241,3 +276,9 @@ const showAddButton = computed(() =>
     <MapGrid v-else :btd6-version="btd6Version" />
   </div>
 </template>
+
+<style scoped>
+.medal-blocked {
+  filter: brightness(0%) drop-shadow(1px 1px 0 white) drop-shadow(-1px -1px 0 white);
+}
+</style>

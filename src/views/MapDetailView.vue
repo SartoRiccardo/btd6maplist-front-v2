@@ -249,7 +249,7 @@ const showSubmitCompletion = computed(() =>
           :key="completion.id"
           :completion="completion"
           :expanded="expandedCompletionIds.has(completion.id)"
-          :edit-url="canEditCompletion ? `/completions/${completion.id}/edit` : undefined"
+          v-bind="canEditCompletion ? { editUrl: `/completions/${completion.id}/edit` } : {}"
           @toggle-detail="toggleCompletionDetail(completion.id)"
         >
           <div v-for="player in completion.players" :key="player.discord_id">

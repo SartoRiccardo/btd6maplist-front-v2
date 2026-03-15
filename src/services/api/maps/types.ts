@@ -20,6 +20,13 @@ export interface RetroMap {
   game: RetroGame;
 }
 
+export interface MapMedals {
+  completed: boolean;
+  black_border: boolean;
+  no_geraldo: boolean;
+  current_lcc: boolean;
+}
+
 /** Extended map fields — present on /maps index and /maps/{code} show */
 export interface MapWithMetadata extends Map {
   placement_curver: number | null;
@@ -31,6 +38,7 @@ export interface MapWithMetadata extends Map {
   deleted_on: string | null;
   retro_map: RetroMap | null;
   is_verified: boolean;
+  medals?: MapMedals;
 }
 
 /** A backfilled retro map that hasn't been remade yet */
@@ -70,6 +78,8 @@ export interface GetMapsParams {
   deleted?: FilterOption;
   created_by?: number;
   verified_by?: number;
+  include?: string;
+  medal_formats?: number;
 }
 
 export interface GetMapParams {

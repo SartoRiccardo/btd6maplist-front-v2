@@ -12,6 +12,7 @@ defineProps<{
 
 defineSlots<{
   badge?: (props: { map: MapWithMetadata }) => unknown;
+  bottom?: (props: { map: MapWithMetadata }) => unknown;
   ghost?: (props: { map: MaybeGhostMap }) => unknown;
 }>();
 </script>
@@ -31,6 +32,9 @@ defineSlots<{
           <Btd6Map :map="map" :btd6-version="btd6Version" :burning="burning?.(map)">
             <template v-if="$slots['badge']" #badge>
               <slot name="badge" :map="map" />
+            </template>
+            <template v-if="$slots['bottom']" #bottom>
+              <slot name="bottom" :map="map" />
             </template>
           </Btd6Map>
         </RouterLink>

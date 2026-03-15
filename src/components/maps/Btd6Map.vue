@@ -55,6 +55,8 @@ const { containerRef: fireContainer } = useFireEffect(() => props.burning);
       loading="lazy"
     />
 
+    <slot name="bottom" />
+
     <!-- Play button -->
     <div v-if="showPlayButton && playUrl" class="flex justify-center mt-3">
       <a

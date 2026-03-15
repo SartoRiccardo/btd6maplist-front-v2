@@ -18,6 +18,8 @@ function buildMapsParams(params?: GetMapsParams): string {
   if (params.created_by != null) searchParams.set('created_by', params.created_by.toString());
   if (params.verified_by != null) searchParams.set('verified_by', params.verified_by.toString());
   if (params.fill_missing_retro) searchParams.set('fill_missing_retro', 'true');
+  if (params.include != null) searchParams.set('include', params.include);
+  if (params.medal_formats != null) searchParams.set('medal_formats', params.medal_formats.toString());
 
   const queryString = searchParams.toString();
   return queryString ? `?${queryString}` : '';
