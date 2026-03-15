@@ -56,41 +56,44 @@ const statusPill = computed(() => {
     </span>
 
     <!-- Large screens: grid with fixed columns for medals/format/button -->
-    <div class="hidden md:grid items-center gap-2" style="grid-template-columns: 1fr 9rem 10rem auto">
+    <div class="hidden md:grid items-center gap-2" style="grid-template-columns: 1fr 19rem auto">
       <!-- Slot -->
       <div class="min-w-0">
         <slot />
       </div>
 
       <!-- Medals -->
-      <div class="flex items-center gap-2">
-        <img
-          :src="completion.black_border
-            ? '/images/medals/medal_bb.webp'
-            : '/images/medals/medal_win.webp'"
-          :title="completion.black_border ? 'Black Border' : 'CHIMPS'"
-          class="w-[40px] h-[40px]"
-        />
-        <img
-          src="/images/medals/medal_nogerry.webp"
-          title="No Optimal Hero"
-          class="w-[40px] h-[40px]"
-          :class="hideNoGeraldo ? 'opacity-0' : { 'medal-blocked': !completion.no_geraldo }"
-        />
-        <img
-          src="/images/medals/medal_lcc.webp"
-          title="Current LCC"
-          class="w-[40px] h-[40px]"
-          :class="completion.is_current_lcc ? '' : 'opacity-0'"
-        />
+      <div>
+        <slot name="medals">
+          <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2">
+              <img
+                :src="completion.black_border
+                  ? '/images/medals/medal_bb.webp'
+                  : '/images/medals/medal_win.webp'"
+                :title="completion.black_border ? 'Black Border' : 'CHIMPS'"
+                class="w-[40px] h-[40px]"
+              />
+              <img
+                src="/images/medals/medal_nogerry.webp"
+                title="No Optimal Hero"
+                class="w-[40px] h-[40px]"
+                :class="hideNoGeraldo ? 'opacity-0' : { 'medal-blocked': !completion.no_geraldo }"
+              />
+              <img
+                src="/images/medals/medal_lcc.webp"
+                title="Current LCC"
+                class="w-[40px] h-[40px]"
+                :class="completion.is_current_lcc ? '' : 'opacity-0'"
+              />
+            </div>
+            <div v-if="formatInfo" class="flex items-center gap-1.5">
+              <Badge :src="formatInfo.image" :alt="formatInfo.name" class="translate-y-0 scale-[125%] mr-1" />
+              <span class="text-sm">{{ formatInfo.name }} ruleset</span>
+            </div>
+          </div>
+        </slot>
       </div>
-
-      <!-- Format ruleset -->
-      <div v-if="formatInfo" class="flex items-center gap-1.5">
-        <Badge :src="formatInfo.image" :alt="formatInfo.name" class="translate-y-0 scale-[125%] mr-1" />
-        <span class="text-sm">{{ formatInfo.name }} ruleset</span>
-      </div>
-      <div v-else />
 
       <!-- Actions -->
       <div class="flex gap-1">
@@ -120,34 +123,36 @@ const statusPill = computed(() => {
       </div>
 
       <div class="flex items-center gap-2 mt-2">
-        <!-- Medals -->
-        <div class="flex items-center gap-2">
-          <img
-            :src="completion.black_border
-              ? '/images/medals/medal_bb.webp'
-              : '/images/medals/medal_win.webp'"
-            :title="completion.black_border ? 'Black Border' : 'CHIMPS'"
-            class="w-[40px] h-[40px]"
-          />
-          <img
-            src="/images/medals/medal_nogerry.webp"
-            title="No Optimal Hero"
-            class="w-[40px] h-[40px]"
-            :class="hideNoGeraldo ? 'opacity-0' : { 'medal-blocked': !completion.no_geraldo }"
-          />
-          <img
-            src="/images/medals/medal_lcc.webp"
-            title="Current LCC"
-            class="w-[40px] h-[40px]"
-            :class="completion.is_current_lcc ? '' : 'opacity-0'"
-          />
-        </div>
+        <slot name="medals">
+          <!-- Medals -->
+          <div class="flex items-center gap-2">
+            <img
+              :src="completion.black_border
+                ? '/images/medals/medal_bb.webp'
+                : '/images/medals/medal_win.webp'"
+              :title="completion.black_border ? 'Black Border' : 'CHIMPS'"
+              class="w-[40px] h-[40px]"
+            />
+            <img
+              src="/images/medals/medal_nogerry.webp"
+              title="No Optimal Hero"
+              class="w-[40px] h-[40px]"
+              :class="hideNoGeraldo ? 'opacity-0' : { 'medal-blocked': !completion.no_geraldo }"
+            />
+            <img
+              src="/images/medals/medal_lcc.webp"
+              title="Current LCC"
+              class="w-[40px] h-[40px]"
+              :class="completion.is_current_lcc ? '' : 'opacity-0'"
+            />
+          </div>
 
-        <!-- Format ruleset -->
-        <div v-if="formatInfo" class="flex-1 flex items-center gap-1.5">
-          <Badge :src="formatInfo.image" :alt="formatInfo.name" class="translate-y-0 scale-[125%] mr-1" />
-          <span class="text-sm">{{ formatInfo.name }} ruleset</span>
-        </div>
+          <!-- Format ruleset -->
+          <div v-if="formatInfo" class="flex-1 flex items-center gap-1.5">
+            <Badge :src="formatInfo.image" :alt="formatInfo.name" class="translate-y-0 scale-[125%] mr-1" />
+            <span class="text-sm">{{ formatInfo.name }} ruleset</span>
+          </div>
+        </slot>
       </div>
     </div>
 

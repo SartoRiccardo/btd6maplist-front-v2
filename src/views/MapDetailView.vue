@@ -22,6 +22,13 @@ import DiscordLoginButton from '@/components/navbar/DiscordLoginButton.vue';
 import MapInfoPanel, { type FormatBadge } from '@/components/maps/MapInfoPanel.vue';
 import StandaloneImage from '@/components/common/StandaloneImage.vue';
 import CompletionList from '@/components/completions/CompletionList.vue';
+import CompletionRow from '@/components/completions/CompletionRow.vue';
+import CompletionRowSkeleton from '@/components/completions/CompletionRowSkeleton.vue';
+import CompletionDetailLoader from '@/components/completions/CompletionDetailLoader.vue';
+import UserEntry from '@/components/users/UserEntry.vue';
+import UserEntrySkeleton from '@/components/users/UserEntrySkeleton.vue';
+import { useCompletions } from '@/services/api/completions/queries';
+import { formatDate } from '@/utils/dates';
 
 const route = useRoute();
 const auth = useAuthStore();
@@ -102,6 +109,28 @@ const formatBadges = computed<FormatBadge[]>(() => {
 
   return badges;
 });
+
+// --- Current LCC ---
+const { data: lccResponse, isLoading: lccLoading } = useCompletions(
+  computed(() => ({
+    map_code: code.value,
+    lcc: 'only' as const,
+    deleted: 'exclude' as const,
+    pending: 'exclude' as const,
+    per_page: 50,
+    include: 'players.flair',
+  })),
+);
+
+const currentLcc = computed(() => {
+  const completions = lccResponse.value?.data;
+  if (!completions?.length) return null;
+  return completions.reduce((best, c) =>
+    (c.lcc?.leftover ?? 0) > (best.lcc?.leftover ?? 0) ? c : best
+  );
+});
+
+const lccExpanded = ref(false);
 
 // --- Admin actions ---
 const canEditMap = computed(() => auth.hasPermission(permissions.map.edit));
@@ -207,6 +236,40 @@ const showSubmitCompletion = computed(() =>
       <div class="flex justify-center">
         <DiscordLoginButton text="Log in to submit completions" />
       </div>
+    </div>
+
+    <!-- Current LCC -->
+    <div class="my-6">
+      <h2 class="text-center font-['Luckiest_Guy'] text-2xl mb-4">Current LCC</h2>
+      <CompletionRowSkeleton v-if="lccLoading">
+        <UserEntrySkeleton />
+      </CompletionRowSkeleton>
+      <CompletionRow
+        v-else-if="currentLcc"
+        :completion="currentLcc"
+        :expanded="lccExpanded"
+        v-bind="canEditCompletion ? { editUrl: `/completions/${currentLcc.id}/edit` } : {}"
+        @toggle-detail="lccExpanded = !lccExpanded"
+      >
+        <div v-for="player in currentLcc.players" :key="player.discord_id">
+          <UserEntry
+            :user="player"
+            :label="formatDate(currentLcc.submitted_on)"
+          />
+        </div>
+        <template #medals>
+          <div class="flex items-center justify-end gap-2 pr-5">
+            <img src="/images/medals/medal_lcc.webp" title="Current LCC" class="w-[40px] h-[40px]" />
+            <span class="font-bold font-border text-lg">${{ currentLcc.lcc?.leftover.toLocaleString() }}</span>
+          </div>
+        </template>
+        <template #detail>
+          <CompletionDetailLoader :completion-id="currentLcc.id" />
+        </template>
+      </CompletionRow>
+      <p v-else class="text-center text-(--color-text-muted)">
+        No LCC recorded yet.
+      </p>
     </div>
 
     <!-- Completions -->
