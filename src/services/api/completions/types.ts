@@ -47,7 +47,7 @@ export interface GetCompletionsParams {
   format_id?: number;
   page?: number;
   per_page?: number;
-  player_id?: number;
+  player_id?: string;
   map_code?: string;
   deleted?: FilterOption;
   pending?: FilterOption;

@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import type { Completion } from '@/services/api/completions/types';
 import { FORMAT_ICONS } from '@/constants/formats';
 import { useFormats } from '@/services/api/formats/queries';
+import { useAuthStore } from '@/stores/auth';
 import Badge from '@/components/common/Badge.vue';
 import Button from '@/components/ui/Button.vue';
 
@@ -16,6 +17,7 @@ const emit = defineEmits<{
   toggleDetail: [];
 }>();
 
+const auth = useAuthStore();
 const { data: formats } = useFormats();
 
 const hideNoGeraldo = computed(() => {
@@ -26,10 +28,32 @@ const hideNoGeraldo = computed(() => {
 const formatInfo = computed(() =>
   FORMAT_ICONS.find((f) => f.id === props.completion.format_id)
 );
+
+const showEdit = computed(() =>
+  props.editUrl != null
+  && !props.completion.players.some((p) => p.discord_id === auth.user?.discord_id)
+);
+
+const isDeleted = computed(() => props.completion.deleted_on != null);
+const isPending = computed(() => !isDeleted.value && props.completion.accepted_by == null);
+
+const statusPill = computed(() => {
+  if (isDeleted.value) return { label: 'Deleted', class: 'bg-(--color-deleted)' };
+  if (isPending.value) return { label: 'Pending', class: 'bg-(--color-pending)' };
+  return null;
+});
 </script>
 
 <template>
-  <div class="bg-(--color-secondary) rounded-(--radius-panel) my-2 py-2 px-3">
+  <div class="bg-(--color-secondary) rounded-(--radius-panel) my-2 py-2 px-3 relative">
+    <span
+      v-if="statusPill"
+      class="absolute top-[-0.5rem] left-[-0.5rem] text-xs font-bold px-2 py-0.5 rounded text-white z-10 opacity-100!"
+      :class="statusPill.class"
+    >
+      {{ statusPill.label }}
+    </span>
+
     <!-- Large screens: grid with fixed columns for medals/format/button -->
     <div class="hidden md:grid items-center gap-2" style="grid-template-columns: 1fr 9rem 10rem auto">
       <!-- Slot -->
@@ -69,7 +93,7 @@ const formatInfo = computed(() =>
 
       <!-- Actions -->
       <div class="flex gap-1">
-        <RouterLink v-if="editUrl" :to="editUrl">
+        <RouterLink v-if="showEdit" :to="editUrl!">
           <Button><i class="bi bi-pencil-fill" /></Button>
         </RouterLink>
         <Button @click="emit('toggleDetail')">
@@ -85,7 +109,7 @@ const formatInfo = computed(() =>
           <slot />
         </div>
         <div class="flex gap-1 shrink-0">
-          <RouterLink v-if="editUrl" :to="editUrl">
+          <RouterLink v-if="showEdit" :to="editUrl!">
             <Button><i class="bi bi-pencil-fill" /></Button>
           </RouterLink>
           <Button @click="emit('toggleDetail')">

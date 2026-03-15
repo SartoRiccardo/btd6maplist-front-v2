@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { useMap } from '@/services/api/maps/queries';
 import { useConfig } from '@/services/api/config/queries';
@@ -21,14 +21,7 @@ import LinkButton from '@/components/ui/LinkButton.vue';
 import DiscordLoginButton from '@/components/navbar/DiscordLoginButton.vue';
 import MapInfoPanel, { type FormatBadge } from '@/components/maps/MapInfoPanel.vue';
 import StandaloneImage from '@/components/common/StandaloneImage.vue';
-import { useCompletions } from '@/services/api/completions/queries';
-import CompletionRow from '@/components/completions/CompletionRow.vue';
-import CompletionRowSkeleton from '@/components/completions/CompletionRowSkeleton.vue';
-import CompletionDetailLoader from '@/components/completions/CompletionDetailLoader.vue';
-import UserEntry from '@/components/users/UserEntry.vue';
-import UserEntrySkeleton from '@/components/users/UserEntrySkeleton.vue';
-import Pagination from '@/components/ui/Pagination.vue';
-import { formatDate } from '@/utils/dates';
+import CompletionList from '@/components/completions/CompletionList.vue';
 
 const route = useRoute();
 const auth = useAuthStore();
@@ -67,38 +60,6 @@ const youtubeEmbedUrl = computed(() => {
 });
 
 const isR6Image = computed(() => r6Start.value != null && !youtubeEmbedUrl.value);
-
-// --- Completions ---
-const COMPLETIONS_PER_PAGE = 25;
-const completionsPage = ref(1);
-
-const { data: completionsResponse, isLoading: completionsLoading } = useCompletions(
-  computed(() => ({
-    map_code: code.value,
-    deleted: 'exclude' as const,
-    pending: 'exclude' as const,
-    page: completionsPage.value,
-    per_page: COMPLETIONS_PER_PAGE,
-    include: 'players.flair',
-  })),
-);
-
-const completions = computed(() => completionsResponse.value?.data ?? []);
-
-const cachedCompletionsMeta = ref(completionsResponse.value?.meta);
-watch(() => completionsResponse.value?.meta, (meta) => {
-  if (meta) cachedCompletionsMeta.value = meta;
-});
-
-// --- Expanded completion details ---
-const expandedCompletionIds = ref(new Set<number>());
-
-function toggleCompletionDetail(id: number) {
-  const next = new Set(expandedCompletionIds.value);
-  if (next.has(id)) next.delete(id);
-  else next.add(id);
-  expandedCompletionIds.value = next;
-}
 
 // --- Format badges ---
 const formatBadges = computed<FormatBadge[]>(() => {
@@ -221,60 +182,41 @@ const showSubmitCompletion = computed(() =>
     </div>
 
     <!-- My Completions -->
-    <div class="my-6">
+    <div v-if="auth.isAuthenticated && auth.user" class="my-6">
       <h2 class="text-center font-['Luckiest_Guy'] text-2xl mb-4">My Completions</h2>
-      <div class="flex justify-center">
-        <LinkButton v-if="showSubmitCompletion" :to="`/map/${code}/submit`">
+      <div v-if="showSubmitCompletion" class="flex justify-center mb-4">
+        <LinkButton :to="`/map/${code}/submit`">
           <i class="bi bi-trophy-fill mr-0.5" /> Submit Completion
         </LinkButton>
-        <DiscordLoginButton v-else-if="!auth.isAuthenticated" text="Log in to submit completions" />
+      </div>
+      <CompletionList
+        :params="{
+          map_code: code,
+          player_id: auth.user.discord_id,
+          deleted: 'any',
+          pending: 'any',
+        }"
+        :edit-url="canEditCompletion ? (id) => `/completions/${id}/edit` : undefined"
+        empty-message="You haven't completed this map yet."
+      />
+    </div>
+    <div v-else-if="!auth.isAuthenticated" class="my-6">
+      <h2 class="text-center font-['Luckiest_Guy'] text-2xl mb-4">My Completions</h2>
+      <div class="flex justify-center">
+        <DiscordLoginButton text="Log in to submit completions" />
       </div>
     </div>
 
     <!-- Completions -->
     <div class="my-6">
       <h2 class="text-center font-['Luckiest_Guy'] text-2xl mb-4">Completions</h2>
-
-      <!-- Loading -->
-      <template v-if="completionsLoading">
-        <CompletionRowSkeleton v-for="i in COMPLETIONS_PER_PAGE" :key="i">
-          <UserEntrySkeleton />
-        </CompletionRowSkeleton>
-      </template>
-
-      <!-- Loaded -->
-      <template v-else-if="completions.length > 0">
-        <CompletionRow
-          v-for="completion in completions"
-          :key="completion.id"
-          :completion="completion"
-          :expanded="expandedCompletionIds.has(completion.id)"
-          v-bind="canEditCompletion ? { editUrl: `/completions/${completion.id}/edit` } : {}"
-          @toggle-detail="toggleCompletionDetail(completion.id)"
-        >
-          <div v-for="player in completion.players" :key="player.discord_id">
-            <UserEntry
-              :user="player"
-              :label="formatDate(completion.submitted_on)"
-            />
-          </div>
-          <template #detail>
-            <CompletionDetailLoader :completion-id="completion.id" />
-          </template>
-        </CompletionRow>
-
-      </template>
-
-      <p v-else class="text-center text-(--color-text-muted)">
-        No completions yet.
-      </p>
-
-      <Pagination
-        v-if="cachedCompletionsMeta"
-        :current-page="cachedCompletionsMeta.current_page"
-        :last-page="cachedCompletionsMeta.last_page"
-        :disabled="completionsLoading"
-        @update:current-page="completionsPage = $event"
+      <CompletionList
+        :params="{
+          map_code: code,
+          deleted: 'exclude',
+          pending: 'exclude',
+        }"
+        :edit-url="canEditCompletion ? (id) => `/completions/${id}/edit` : undefined"
       />
     </div>
   </div>
