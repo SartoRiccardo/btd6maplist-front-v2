@@ -55,7 +55,7 @@ watch(() => mapsResponse.value?.meta, (meta) => {
     <!-- Ranks -->
     <div v-if="user?.ranks?.length" class="my-6">
       <h2 class="font-['Luckiest_Guy'] text-2xl text-center mb-4">Ranks</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         <RankCard
           v-for="rank in user.ranks.filter((r) => visibleFormatIds.includes(r.format_id))"
           :key="rank.format_id"
