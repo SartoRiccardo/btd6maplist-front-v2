@@ -12,6 +12,7 @@ import {
 import Button from '@/components/ui/Button.vue';
 import IconSelector from '@/components/ui/IconSelector.vue';
 import LeaderboardEntry from '@/components/leaderboard/LeaderboardEntry.vue';
+import LeaderboardEntrySkeleton from '@/components/leaderboard/LeaderboardEntrySkeleton.vue';
 import Pagination from '@/components/ui/Pagination.vue';
 
 const route = useRoute();
@@ -98,6 +99,8 @@ function onPageChange(page: number) {
 }
 
 // --- Leaderboard query ---
+const ENTRIES_PER_PAGE = 50;
+
 const { data: leaderboard, isLoading } = useLeaderboard(
   computed(() => {
     if (!selectedFormatId.value) return undefined;
@@ -105,12 +108,17 @@ const { data: leaderboard, isLoading } = useLeaderboard(
       format_id: Number(selectedFormatId.value),
       include: 'user.flair',
       page: currentPage.value,
-      per_page: 50,
+      per_page: ENTRIES_PER_PAGE,
       value: selectedValue.value as LeaderboardValue,
     };
   }),
   { enabled: computed(() => Boolean(selectedFormatId.value)) },
 );
+
+const cachedLeaderboardMeta = ref(leaderboard.value?.meta);
+watch(() => leaderboard.value?.meta, (meta) => {
+  if (meta) cachedLeaderboardMeta.value = meta;
+});
 </script>
 
 <template>
@@ -140,36 +148,42 @@ const { data: leaderboard, isLoading } = useLeaderboard(
 
     <!-- Pagination top -->
     <Pagination
-      :current-page="currentPage"
-      :last-page="leaderboard?.meta.last_page ?? 1"
+      v-if="cachedLeaderboardMeta"
+      :current-page="cachedLeaderboardMeta.current_page"
+      :last-page="cachedLeaderboardMeta.last_page"
+      :disabled="isLoading"
       @update:current-page="onPageChange"
     />
 
     <!-- Leaderboard entries -->
-    <div v-if="isLoading" class="text-center my-8 text-(--color-text-muted)">
-      Loading...
-    </div>
+    <template v-if="isLoading">
+      <LeaderboardEntrySkeleton v-for="i in ENTRIES_PER_PAGE" :key="i" :placement="i" />
+    </template>
 
-    <div v-else-if="!leaderboard?.data.length" class="text-center my-8 text-(--color-text-muted) text-lg">
+    <template v-else-if="leaderboard && leaderboard.data.length > 0">
+      <div class="my-4">
+        <LeaderboardEntry
+          v-for="entry in leaderboard.data"
+          :key="entry.user.discord_id"
+          :placement="entry.placement"
+          :score="entry.score"
+          :suffix-icon="currentValueOption.icon"
+          :suffix-text="currentValueOption.suffix"
+          :user="entry.user"
+        />
+      </div>
+    </template>
+
+    <p v-else class="text-center my-8 text-(--color-text-muted) text-lg">
       Nobody's here...
-    </div>
-
-    <div v-else class="my-4">
-      <LeaderboardEntry
-        v-for="entry in leaderboard.data"
-        :key="entry.user.discord_id"
-        :placement="entry.placement"
-        :score="entry.score"
-        :suffix-icon="currentValueOption.icon"
-        :suffix-text="currentValueOption.suffix"
-        :user="entry.user"
-      />
-    </div>
+    </p>
 
     <!-- Pagination bottom -->
     <Pagination
-      :current-page="currentPage"
-      :last-page="leaderboard?.meta.last_page ?? 1"
+      v-if="cachedLeaderboardMeta"
+      :current-page="cachedLeaderboardMeta.current_page"
+      :last-page="cachedLeaderboardMeta.last_page"
+      :disabled="isLoading"
       @update:current-page="onPageChange"
     />
   </div>
