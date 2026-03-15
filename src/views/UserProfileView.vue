@@ -13,6 +13,7 @@ import { getMapFormatBadges } from '@/utils/formatBadges';
 import Badge from '@/components/common/Badge.vue';
 import ProfileHeader from '@/components/users/ProfileHeader.vue';
 import ProfileHeaderSkeleton from '@/components/users/ProfileHeaderSkeleton.vue';
+import RankCard from '@/components/users/RankCard.vue';
 
 const route = useRoute();
 const userId = computed(() => route.params['id'] as string);
@@ -50,6 +51,18 @@ watch(() => mapsResponse.value?.meta, (meta) => {
     <!-- Profile Header -->
     <ProfileHeaderSkeleton v-if="userLoading" />
     <ProfileHeader v-else-if="user" :user="user" />
+
+    <!-- Ranks -->
+    <div v-if="user?.ranks?.length" class="my-6">
+      <h2 class="font-['Luckiest_Guy'] text-2xl text-center mb-4">Ranks</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <RankCard
+          v-for="rank in user.ranks.filter((r) => visibleFormatIds.includes(r.format_id))"
+          :key="rank.format_id"
+          :ranks="rank"
+        />
+      </div>
+    </div>
 
     <!-- Completions -->
     <div class="my-6">
