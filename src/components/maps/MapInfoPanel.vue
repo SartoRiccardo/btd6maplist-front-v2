@@ -8,6 +8,7 @@ import UserEntry from '@/components/users/UserEntry.vue';
 import UserEntrySkeleton from '@/components/users/UserEntrySkeleton.vue';
 import Badge from '@/components/common/Badge.vue';
 import Icon from '@/components/common/Icon.vue';
+import { heroId } from '@/utils/heroes';
 import MarkdownContent from '@/components/common/MarkdownContent.vue';
 
 export interface FormatBadge {
@@ -115,7 +116,7 @@ const nkSyntheticUser = computed<User | null>(() => {
       <Icon
         v-for="hero in optimalHeros"
         :key="hero"
-        :src="`/images/heros/hero_${hero.toLowerCase().replace(/ /g, '_')}.webp`"
+        :src="`/images/heros/hero_${heroId(hero)}.webp`"
         :alt="hero"
         class="mx-2.5 scale-[250%] -translate-1"
       />
