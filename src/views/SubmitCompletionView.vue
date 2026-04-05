@@ -18,6 +18,7 @@ import DiscordLoginButton from '@/components/navbar/DiscordLoginButton.vue';
 import SubmitCompletionForm, {
   type CompletionFormModel,
 } from '@/components/completions/SubmitCompletionForm.vue';
+import SubmitCompletionFormSkeleton from '@/components/completions/SubmitCompletionFormSkeleton.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -157,9 +158,9 @@ async function handleSubmit() {
     </h1>
 
     <!-- Loading -->
-    <p v-if="isLoading" class="text-center text-(--color-text-muted)">
-      Loading...
-    </p>
+    <Panel v-if="isLoading">
+      <SubmitCompletionFormSkeleton />
+    </Panel>
 
     <!-- Not authenticated -->
     <Panel v-else-if="!auth.isAuthenticated" class="flex flex-col items-center gap-4">
