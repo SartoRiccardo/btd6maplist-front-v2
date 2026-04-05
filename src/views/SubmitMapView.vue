@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
 import { useFormats } from '@/services/api/formats/queries';
+import { useCreateMapSubmission } from '@/services/api/map-submissions/queries';
 import { useNKMapValidation } from '@/composables/useNKMapValidation';
 import { getFormatsMapIsIn } from '@/utils/formatBadges';
 import { permissions } from '@/constants/permissions';
-import type { FormFieldError } from '@/services/api/formErrors';
+import { ApiError } from '@/services/api/client';
+import { parseApiErrors, type FormFieldError } from '@/services/api/formErrors';
 import Panel from '@/components/ui/Panel.vue';
 import Button from '@/components/ui/Button.vue';
 import DiscordLoginButton from '@/components/navbar/DiscordLoginButton.vue';
@@ -15,6 +17,7 @@ import SubmitMapForm, {
 } from '@/components/maps/SubmitMapForm.vue';
 
 const route = useRoute();
+const router = useRouter();
 const auth = useAuthStore();
 
 // --- Query params ---
@@ -68,7 +71,7 @@ const isDataReady = computed(
 
 const formModel = ref<MapSubmissionFormModel>({
   format_id: null,
-  proposed_difficulty: null,
+  proposed: null,
   proof_image: null,
   subm_notes: '',
 });
@@ -86,9 +89,9 @@ watch(eligibleFormats, (fmts) => {
   }
 }, { immediate: true });
 
-// Reset proposed_difficulty when format changes
+// Reset proposed when format changes
 watch(() => formModel.value.format_id, () => {
-  formModel.value = { ...formModel.value, proposed_difficulty: null };
+  formModel.value = { ...formModel.value, proposed: null };
 });
 
 const selectedFormat = computed(() =>
@@ -101,11 +104,14 @@ const proposedDifficulties = computed(
 
 // --- Submission ---
 
+const submitMutation = useCreateMapSubmission();
 const formRef = ref<InstanceType<typeof SubmitMapForm> | null>(null);
 const apiErrors = ref<FormFieldError[]>([]);
 const activeErrors = ref<FormFieldError[]>([]);
 const submitError = ref<string | null>(null);
-const busy = ref(false);
+const busy = computed(() =>
+  submitMutation.isPending.value || nkLoading.value || maplistLoading.value || auth.isLoading,
+);
 
 async function handleSubmit() {
   if (!formRef.value) return;
@@ -115,17 +121,28 @@ async function handleSubmit() {
 
   if (activeErrors.value.length > 0) return;
 
-  // TODO: wire up actual submission API
-  // Payload would include:
-  // - code: codeInput.value
-  // - format_id: formModel.value.format_id
-  // - proposed_difficulty: formModel.value.proposed_difficulty
-  // - proof_image: formModel.value.proof_image
-  // - subm_notes: formModel.value.subm_notes
-  // - remake_of: remakeOf.value
-  // - nkMap data: nkMap.value
-  void remakeOf.value;
-  void nkMap.value;
+  const model = formModel.value;
+
+  try {
+    await submitMutation.mutateAsync({
+      code: codeInput.value.trim().toUpperCase(),
+      format_id: model.format_id!,
+      proposed: model.proposed ?? 0,
+      completion_proof: model.proof_image!,
+      subm_notes: model.subm_notes || undefined,
+    });
+    router.push('/my-submissions/maps');
+  } catch (error: unknown) {
+    if (error instanceof ApiError) {
+      apiErrors.value = parseApiErrors(error);
+      await formRef.value.clearTouched();
+      if (apiErrors.value.length === 0) {
+        submitError.value = 'Something went wrong. Please try again.';
+      }
+    } else {
+      submitError.value = 'Something went wrong. Please try again.';
+    }
+  }
 }
 </script>
 

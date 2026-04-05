@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
+import { useFilter } from 'reka-ui';
 import { useTouchedProvider } from '@/composables/useTouchedFields';
 import { useEmitOnChange } from '@/composables/useEmitOnChange';
 import type { FormFieldError } from '@/services/api/formErrors';
@@ -7,10 +8,16 @@ import type { Format } from '@/services/api/formats/types';
 import { FORMAT_ICONS } from '@/constants/formats';
 import Button from '@/components/ui/Button.vue';
 import ImageDrop from '@/components/ui/ImageDrop.vue';
+import AsyncSelect from '@/components/ui/AsyncSelect.vue';
+
+interface ProposedOption {
+  index: number;
+  label: string;
+}
 
 export interface MapSubmissionFormModel {
   format_id: number | null;
-  proposed_difficulty: string | null;
+  proposed: number | null;
   proof_image: File | null;
   subm_notes: string;
 }
@@ -47,6 +54,29 @@ function update(partial: Partial<MapSubmissionFormModel>) {
 
 function formatIcon(formatId: number): string | undefined {
   return FORMAT_ICONS.find((f) => f.id === formatId)?.image;
+}
+
+// --- Proposed category ---
+
+const proposedOptions = computed<ProposedOption[]>(() =>
+  props.proposedDifficulties.map((label, index) => ({ index, label })),
+);
+
+const selectedProposed = computed<ProposedOption | null>(() =>
+  props.modelValue.proposed != null
+    ? proposedOptions.value.find((o) => o.index === props.modelValue.proposed) ?? null
+    : null,
+);
+
+const { contains } = useFilter({ sensitivity: 'base' });
+
+function searchProposed(query: string): Promise<ProposedOption[]> {
+  const filtered = proposedOptions.value.filter((o) => contains(o.label, query));
+  return Promise.resolve(filtered);
+}
+
+function onProposedSelect(option: ProposedOption | null) {
+  update({ proposed: option?.index ?? null });
 }
 
 // --- Validation ---
@@ -147,19 +177,17 @@ function fieldError(field: string): string | undefined {
 
     <!-- Proposed Category -->
     <div v-if="proposedDifficulties.length > 0">
-      <label for="proposed-difficulty" class="block font-bold mb-1">Proposed Category</label>
-      <select
-        id="proposed-difficulty"
-        :value="modelValue.proposed_difficulty ?? ''"
+      <label class="block font-bold mb-1">Proposed Category</label>
+      <AsyncSelect
+        :model-value="selectedProposed"
+        :search-fn="searchProposed"
+        :display-value="(o: ProposedOption) => o.label"
         :disabled="disabled"
-        class="w-full px-3 py-2 rounded-(--radius-btn) bg-(--color-primary) text-(--color-text) border border-(--color-contrast) focus:outline-none focus:border-(--color-active)"
-        @change="update({ proposed_difficulty: ($event.target as HTMLSelectElement).value || null })"
-      >
-        <option value="" disabled>Select a category</option>
-        <option v-for="diff in proposedDifficulties" :key="diff" :value="diff">
-          {{ diff }}
-        </option>
-      </select>
+        :min-chars="0"
+        :debounce="0"
+        placeholder="Search categories..."
+        @update:model-value="onProposedSelect"
+      />
     </div>
 
     <!-- Notes -->
