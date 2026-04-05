@@ -1,8 +1,11 @@
 const BASE_URL = 'https://data.ninjakiwi.com';
 
 export interface NKCustomMap {
-  creator: string;
+  id: string;
   name: string;
+  creator: string;
+  mapURL: string;
+  gameVersion: string;
 }
 
 export interface NKUser {
@@ -14,6 +17,7 @@ export async function getCustomMap(code: string): Promise<NKCustomMap | null> {
   const response = await fetch(`${BASE_URL}/btd6/maps/map/${code}`);
   if (!response.ok) return null;
   const result = await response.json();
+  if (!result?.success) return null;
   return result?.body ?? null;
 }
 

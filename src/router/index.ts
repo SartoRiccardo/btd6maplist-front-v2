@@ -42,7 +42,8 @@ const routes: RouteRecordRaw[] = [
   {
     component: () => import('@/views/SubmitMapView.vue'),
     name: 'SubmitMap',
-    path: '/maps/:id/submit-map',
+    path: '/map/submit',
+    beforeEnter: requireAuth,
   },
   {
     component: () => import('@/views/MyCompletionsView.vue'),

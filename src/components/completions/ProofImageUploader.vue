@@ -7,8 +7,9 @@ withDefaults(
   defineProps<{
     modelValue: File[];
     disabled?: boolean;
+    maxFiles?: number;
   }>(),
-  { disabled: false },
+  { disabled: false, maxFiles: 4 },
 );
 
 const emit = defineEmits<{
@@ -50,7 +51,7 @@ onBeforeUnmount(() => {
     <DropZone
       :model-value="modelValue"
       accept="image/jpeg,image/png,image/gif,image/webp"
-      :max-files="4"
+      :max-files="maxFiles"
       :max-size-bytes="10 * 1024 * 1024"
       :disabled="disabled"
       @update:model-value="emit('update:modelValue', $event)"
