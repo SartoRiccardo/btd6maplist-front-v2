@@ -10,6 +10,7 @@ import { ApiError } from '@/services/api/client';
 import { parseApiErrors, type FormFieldError } from '@/services/api/formErrors';
 import { getFormatsMapIsIn } from '@/utils/formatBadges';
 import { permissions } from '@/constants/permissions';
+import { FORMAT_EXPERT_LIST } from '@/constants/formats';
 import Panel from '@/components/ui/Panel.vue';
 import Button from '@/components/ui/Button.vue';
 import LinkButton from '@/components/ui/LinkButton.vue';
@@ -44,9 +45,21 @@ const canSubmit = computed(() =>
   auth.hasPermission(permissions.completionSubmission.create),
 );
 
-const videoRequired = computed(() =>
-  auth.hasPermission(permissions.completionSubmission.requireRecording),
-);
+const videoRequired = computed(() => {
+  const model = formModel.value;
+
+  if (auth.hasPermission(permissions.completionSubmission.requireRecording)) return true;
+  if (model.black_border) return true;
+  if (model.lcc_enabled) return true;
+  if (model.no_geraldo) {
+    if (model.format_id !== FORMAT_EXPERT_LIST) return true;
+    // Expert List: only required for difficulty > 2
+    const difficulty = mapData.value?.difficulty ?? null;
+    if (difficulty != null && difficulty > 2) return true;
+  }
+
+  return false;
+});
 
 // --- Form state ---
 

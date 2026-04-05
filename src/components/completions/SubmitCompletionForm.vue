@@ -140,6 +140,19 @@ function fieldError(field: string): string | undefined {
       </p>
     </div>
 
+    <!-- Proof Videos -->
+    <UrlListInput
+      :model-value="modelValue.proof_videos"
+      :disabled="disabled"
+      :required="videoRequired"
+      label="Proof Videos"
+      :max="10"
+      @update:model-value="update({ proof_videos: $event })"
+    />
+    <p v-if="fieldError('proof_videos')" class="text-red-400 text-sm -mt-4">
+      {{ fieldError('proof_videos') }}
+    </p>
+
     <!-- List Ruleset Picker -->
     <div v-if="eligibleFormats.length > 1">
       <label class="block font-bold mb-1">List Ruleset</label>
@@ -178,32 +191,6 @@ function fieldError(field: string): string | undefined {
       <p v-if="fieldError('format_id')" class="text-red-400 text-sm mt-1">
         {{ fieldError('format_id') }}
       </p>
-    </div>
-
-    <!-- Submission Notes -->
-    <div>
-      <label for="subm-notes" class="block font-bold mb-1">
-        Notes
-        <span class="text-(--color-text-muted) font-normal">(optional)</span>
-      </label>
-      <textarea
-        id="subm-notes"
-        :value="modelValue.subm_notes"
-        :disabled="disabled"
-        maxlength="5000"
-        rows="4"
-        class="w-full px-3 py-2 rounded-(--radius-btn) bg-(--color-primary) text-(--color-text) border border-(--color-contrast) focus:outline-none focus:border-(--color-active) resize-y"
-        :class="{ 'border-red-500!': fieldError('subm_notes') }"
-        @input="update({ subm_notes: ($event.target as HTMLTextAreaElement).value })"
-      />
-      <div class="flex justify-between mt-1">
-        <p v-if="fieldError('subm_notes')" class="text-red-400 text-sm">
-          {{ fieldError('subm_notes') }}
-        </p>
-        <span class="text-(--color-text-muted) text-xs ml-auto">
-          {{ modelValue.subm_notes.length }} / 5000
-        </span>
-      </div>
     </div>
 
     <!-- Run Modifiers -->
@@ -256,17 +243,30 @@ function fieldError(field: string): string | undefined {
       </div>
     </div>
 
-    <!-- Proof Videos -->
-    <UrlListInput
-      :model-value="modelValue.proof_videos"
-      :disabled="disabled"
-      :required="videoRequired"
-      label="Proof Videos"
-      :max="10"
-      @update:model-value="update({ proof_videos: $event })"
-    />
-    <p v-if="fieldError('proof_videos')" class="text-red-400 text-sm -mt-4">
-      {{ fieldError('proof_videos') }}
-    </p>
+    <!-- Submission Notes -->
+    <div>
+      <label for="subm-notes" class="block font-bold mb-1">
+        Notes
+        <span class="text-(--color-text-muted) font-normal">(optional)</span>
+      </label>
+      <textarea
+        id="subm-notes"
+        :value="modelValue.subm_notes"
+        :disabled="disabled"
+        maxlength="5000"
+        rows="4"
+        class="w-full px-3 py-2 rounded-(--radius-btn) bg-(--color-primary) text-(--color-text) border border-(--color-contrast) focus:outline-none focus:border-(--color-active) resize-y"
+        :class="{ 'border-red-500!': fieldError('subm_notes') }"
+        @input="update({ subm_notes: ($event.target as HTMLTextAreaElement).value })"
+      />
+      <div class="flex justify-between mt-1">
+        <p v-if="fieldError('subm_notes')" class="text-red-400 text-sm">
+          {{ fieldError('subm_notes') }}
+        </p>
+        <span class="text-(--color-text-muted) text-xs ml-auto">
+          {{ modelValue.subm_notes.length }} / 5000
+        </span>
+      </div>
+    </div>
   </div>
 </template>

@@ -39,7 +39,8 @@ function addUrl() {
   <div>
     <label v-if="label" class="block font-bold mb-1">
       {{ label }}
-      <span v-if="!required" class="text-(--color-text-muted) font-normal">(optional)</span>
+      <span v-if="required" class="text-(--color-highlight) font-normal">(required)</span>
+      <span v-else class="text-(--color-text-muted) font-normal">(optional)</span>
     </label>
 
     <div class="flex flex-col gap-2">
