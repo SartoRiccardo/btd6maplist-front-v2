@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import { useFilter } from 'reka-ui';
-import { useTouchedProvider } from '@/composables/useTouchedFields';
-import { useEmitOnChange } from '@/composables/useEmitOnChange';
-import type { FormFieldError } from '@/services/api/formErrors';
-import type { Format } from '@/services/api/formats/types';
-import { FORMAT_ICONS } from '@/constants/formats';
-import Button from '@/components/ui/Button.vue';
-import ImageDrop from '@/components/ui/ImageDrop.vue';
-import AsyncSelect from '@/components/ui/AsyncSelect.vue';
+import { computed, ref } from "vue";
+import { useFilter } from "reka-ui";
+import { useTouchedProvider } from "@/composables/useTouchedFields";
+import { useEmitOnChange } from "@/composables/useEmitOnChange";
+import type { FormFieldError } from "@/services/api/formErrors";
+import type { Format } from "@/services/api/formats/types";
+import { FORMAT_ICONS } from "@/constants/formats";
+import Button from "@/components/ui/Button.vue";
+import ImageDrop from "@/components/ui/ImageDrop.vue";
+import AsyncSelect from "@/components/ui/AsyncSelect.vue";
 
 interface ProposedOption {
   index: number;
@@ -28,18 +28,20 @@ const props = withDefaults(
     disabled?: boolean;
     externalErrors?: FormFieldError[];
     eligibleFormats: Format[];
+    disabledFormatIds?: number[];
     proposedDifficulties: string[];
   }>(),
   {
     disabled: false,
     externalErrors: () => [],
+    disabledFormatIds: () => [],
     proposedDifficulties: () => [],
   },
 );
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', value: MapSubmissionFormModel): void;
-  (e: 'errors', value: FormFieldError[]): void;
+  (e: "update:modelValue", value: MapSubmissionFormModel): void;
+  (e: "errors", value: FormFieldError[]): void;
 }>();
 
 const { touchAll, clearTouched, isTouched, touch } = useTouchedProvider();
@@ -49,7 +51,7 @@ const imageError = ref<string | null>(null);
 
 function update(partial: Partial<MapSubmissionFormModel>) {
   for (const key of Object.keys(partial)) touch(key);
-  emit('update:modelValue', { ...props.modelValue, ...partial });
+  emit("update:modelValue", { ...props.modelValue, ...partial });
 }
 
 function formatIcon(formatId: number): string | undefined {
@@ -64,14 +66,18 @@ const proposedOptions = computed<ProposedOption[]>(() =>
 
 const selectedProposed = computed<ProposedOption | null>(() =>
   props.modelValue.proposed != null
-    ? proposedOptions.value.find((o) => o.index === props.modelValue.proposed) ?? null
+    ? (proposedOptions.value.find(
+        (o) => o.index === props.modelValue.proposed,
+      ) ?? null)
     : null,
 );
 
-const { contains } = useFilter({ sensitivity: 'base' });
+const { contains } = useFilter({ sensitivity: "base" });
 
 function searchProposed(query: string): Promise<ProposedOption[]> {
-  const filtered = proposedOptions.value.filter((o) => contains(o.label, query));
+  const filtered = proposedOptions.value.filter((o) =>
+    contains(o.label, query),
+  );
   return Promise.resolve(filtered);
 }
 
@@ -85,15 +91,27 @@ const ownErrors = computed<FormFieldError[]>(() => {
   const errors: FormFieldError[] = [];
 
   if (props.eligibleFormats.length > 1 && props.modelValue.format_id == null) {
-    errors.push({ path: 'format_id', message: 'Please select a list.', source: 'validation' });
+    errors.push({
+      path: "format_id",
+      message: "Please select a list.",
+      source: "validation",
+    });
   }
 
   if (props.modelValue.proof_image == null) {
-    errors.push({ path: 'proof_image', message: 'A proof image is required.', source: 'validation' });
+    errors.push({
+      path: "proof_image",
+      message: "A proof image is required.",
+      source: "validation",
+    });
   }
 
   if (props.modelValue.subm_notes.length > 5000) {
-    errors.push({ path: 'subm_notes', message: 'Notes must be 5000 characters or less.', source: 'validation' });
+    errors.push({
+      path: "subm_notes",
+      message: "Notes must be 5000 characters or less.",
+      source: "validation",
+    });
   }
 
   return errors;
@@ -102,15 +120,15 @@ const ownErrors = computed<FormFieldError[]>(() => {
 const activeErrors = computed<FormFieldError[]>(() => {
   const validation = ownErrors.value.filter((e) => isTouched(e.path));
   const externalValidation = (props.externalErrors ?? []).filter(
-    (e) => e.source === 'validation' && isTouched(e.path),
+    (e) => e.source === "validation" && isTouched(e.path),
   );
   const externalApi = (props.externalErrors ?? []).filter(
-    (e) => e.source === 'api' && !isTouched(e.path),
+    (e) => e.source === "api" && !isTouched(e.path),
   );
   return [...validation, ...externalValidation, ...externalApi];
 });
 
-useEmitOnChange(activeErrors, (errors) => emit('errors', errors));
+useEmitOnChange(activeErrors, (errors) => emit("errors", errors));
 
 function fieldError(field: string): string | undefined {
   return activeErrors.value.find((e) => e.path === field)?.message;
@@ -129,7 +147,7 @@ function fieldError(field: string): string | undefined {
         @error="imageError = $event"
       />
       <p v-if="fieldError('proof_image')" class="text-red-400 text-sm mt-1">
-        {{ fieldError('proof_image') }}
+        {{ fieldError("proof_image") }}
       </p>
       <p v-else-if="imageError" class="text-red-400 text-sm mt-1">
         {{ imageError }}
@@ -137,27 +155,17 @@ function fieldError(field: string): string | undefined {
     </div>
 
     <!-- List Picker -->
-    <div v-if="eligibleFormats.length > 1">
+    <div>
       <label class="block font-bold mb-1">Submit to</label>
-      <p class="text-(--color-text-muted) text-sm mb-2">
-        Select which list to submit this map to.
-        Check the
-        <template v-for="(fmt, i) in eligibleFormats" :key="fmt.id">
-          <template v-if="i > 0">{{ i === eligibleFormats.length - 1 ? ' or ' : ', ' }}</template>
-          <RouterLink
-            :to="`/maps/${fmt.slug}/map-rules`"
-            class="text-(--color-highlight) hover:text-(--color-active)"
-          >{{ fmt.name }}</RouterLink>
-        </template>
-        map submission rules for details.
-      </p>
       <div class="flex flex-wrap gap-2">
         <Button
           v-for="fmt in eligibleFormats"
           :key="fmt.id"
           :active="modelValue.format_id === fmt.id"
-          :disabled="disabled"
-          @click="update({ format_id: fmt.id })"
+          :disabled="disabled || disabledFormatIds.includes(fmt.id)"
+          @click="
+            !disabledFormatIds.includes(fmt.id) && update({ format_id: fmt.id })
+          "
         >
           <span class="flex items-center gap-2">
             <img
@@ -167,11 +175,16 @@ function fieldError(field: string): string | undefined {
               class="w-5 h-5"
             />
             {{ fmt.name }}
+            <span
+              v-if="disabledFormatIds.includes(fmt.id)"
+              class="text-xs opacity-60"
+              >(already in list)</span
+            >
           </span>
         </Button>
       </div>
       <p v-if="fieldError('format_id')" class="text-red-400 text-sm mt-1">
-        {{ fieldError('format_id') }}
+        {{ fieldError("format_id") }}
       </p>
     </div>
 
@@ -204,11 +217,13 @@ function fieldError(field: string): string | undefined {
         rows="4"
         class="w-full px-3 py-2 rounded-(--radius-btn) bg-(--color-primary) text-(--color-text) border border-(--color-contrast) focus:outline-none focus:border-(--color-active) resize-y"
         :class="{ 'border-red-500!': fieldError('subm_notes') }"
-        @input="update({ subm_notes: ($event.target as HTMLTextAreaElement).value })"
+        @input="
+          update({ subm_notes: ($event.target as HTMLTextAreaElement).value })
+        "
       />
       <div class="flex justify-between mt-1">
         <p v-if="fieldError('subm_notes')" class="text-red-400 text-sm">
-          {{ fieldError('subm_notes') }}
+          {{ fieldError("subm_notes") }}
         </p>
         <span class="text-(--color-text-muted) text-xs ml-auto">
           {{ modelValue.subm_notes.length }} / 5000
