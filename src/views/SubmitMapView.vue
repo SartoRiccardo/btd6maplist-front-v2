@@ -205,15 +205,29 @@ async function handleSubmit() {
           <p v-else-if="nkError" class="text-red-400">
             {{ nkError }}
           </p>
-          <template v-else-if="nkMap">
-            <p class="text-green-400">
-              <i class="bi bi-check-circle-fill mr-1" />{{ nkMap.name }}
+          <p
+            v-else-if="nkMap && maplistLoading"
+            class="text-(--color-text-muted)"
+          >
+            <i class="bi bi-arrow-repeat animate-spin inline-block" />
+            Checking list status...
+          </p>
+        </div>
+
+        <!-- Map Preview -->
+        <div v-if="nkMap" class="flex justify-center mt-8">
+          <div class="relative w-full max-w-xs">
+            <p
+              class="absolute top-[-0.7rem] left-[-0.1rem] w-full text-center font-['Luckiest_Guy'] font-border text-base md:text-2xl break-words z-10"
+            >
+              {{ nkMap.name }}
             </p>
-            <p v-if="maplistLoading" class="text-(--color-text-muted) mt-1">
-              <i class="bi bi-arrow-repeat animate-spin inline-block" />
-              Checking list status...
-            </p>
-          </template>
+            <img
+              class="w-full h-auto aspect-[3/2] bg-(--color-primary) block rounded-sm"
+              :src="nkMap.mapURL"
+              alt=""
+            />
+          </div>
         </div>
       </Panel>
 
