@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useFilter } from "reka-ui";
 import { useTouchedProvider } from "@/composables/useTouchedFields";
 import { useEmitOnChange } from "@/composables/useEmitOnChange";
@@ -76,6 +76,13 @@ const proposedOptions = computed<ProposedOption[]>(() =>
 );
 
 const selectedProposed = ref<ProposedOption | null>(null);
+
+watch(
+  () => props.modelValue.proposed,
+  (val) => {
+    if (val == null) selectedProposed.value = null;
+  },
+);
 
 const { contains } = useFilter({ sensitivity: "base" });
 
@@ -222,6 +229,7 @@ function fieldError(field: string): string | undefined {
     <div v-if="showProposedCategory">
       <label class="block font-bold mb-1">Proposed Category</label>
       <AsyncSelect
+        :key="modelValue.format_id ?? 'none'"
         :model-value="selectedProposed"
         :search-fn="searchProposed"
         :display-value="(o: ProposedOption) => o.label"
