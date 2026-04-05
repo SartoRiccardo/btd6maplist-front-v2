@@ -1,4 +1,4 @@
-import type { Completion, CompletionDetail, GetCompletionParams, GetCompletionsParams } from './types';
+import type { Completion, CompletionDetail, GetCompletionParams, GetCompletionsParams, SubmitCompletionRequest, SubmitCompletionResponse } from './types';
 import type { PaginatedResponse } from '@/services/api/common/types';
 import { apiRequest } from '../client';
 
@@ -56,4 +56,38 @@ export async function getCompletion(
   if (params?.include != null) searchParams.set('include', params.include);
   const queryString = searchParams.toString();
   return apiRequest<CompletionDetail>(`${BASE_PATH}/${id}${queryString ? `?${queryString}` : ''}`);
+}
+
+/**
+ * POST /completions/submit
+ *
+ * Submit a completion for review.
+ * Requires Discord OAuth and create:completion_submission permission.
+ */
+export async function submitCompletion(
+  data: SubmitCompletionRequest
+): Promise<SubmitCompletionResponse> {
+  const formData = new FormData();
+  formData.append('map', data.map);
+  formData.append('format_id', data.format_id.toString());
+  for (const player of data.players) {
+    formData.append('players', player);
+  }
+  for (const image of data.proof_images) {
+    formData.append('proof_images', image);
+  }
+  if (data.black_border != null) formData.append('black_border', String(data.black_border));
+  if (data.no_geraldo != null) formData.append('no_geraldo', String(data.no_geraldo));
+  if (data.subm_notes != null) formData.append('subm_notes', data.subm_notes);
+  if (data.proof_videos) {
+    for (const video of data.proof_videos) {
+      formData.append('proof_videos', video);
+    }
+  }
+  if (data.lcc != null) formData.append('lcc', JSON.stringify(data.lcc));
+
+  return apiRequest<SubmitCompletionResponse>(`${BASE_PATH}/submit`, {
+    method: 'POST',
+    body: formData,
+  });
 }

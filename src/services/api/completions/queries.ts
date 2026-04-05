@@ -1,7 +1,7 @@
 import { computed, toValue, type MaybeRefOrGetter } from 'vue';
-import { useQuery, type UseQueryOptions } from '@tanstack/vue-query';
-import { getCompletion, getCompletions } from './index';
-import type { Completion, CompletionDetail, GetCompletionParams, GetCompletionsParams } from './types';
+import { useQuery, useMutation, useQueryClient, type UseQueryOptions } from '@tanstack/vue-query';
+import { getCompletion, getCompletions, submitCompletion } from './index';
+import type { Completion, CompletionDetail, GetCompletionParams, GetCompletionsParams, SubmitCompletionRequest } from './types';
 import type { PaginatedResponse } from '@/services/api/common/types';
 
 export const completionQueryKeys = {
@@ -37,5 +37,19 @@ export function useCompletion(
     queryKey: computed(() => completionQueryKeys.detail(toValue(id), toValue(params))),
     queryFn: () => getCompletion(toValue(id), toValue(params)),
     ...options,
+  });
+}
+
+/**
+ * Mutation hook to submit a completion for review.
+ */
+export function useSubmitCompletion() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: SubmitCompletionRequest) => submitCompletion(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: completionQueryKeys.all });
+    },
   });
 }

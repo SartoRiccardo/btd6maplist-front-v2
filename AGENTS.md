@@ -14,6 +14,8 @@
 - Format-specific logic should go in composables (e.g. `useNostalgiaPackData`), not inline in views
 - CSS custom properties for theming: `--color-primary`, `--color-secondary`, `--color-highlight`, `--color-active`, `--color-contrast`, `--color-text`, `--radius-panel`, `--radius-btn`
 - `.font-border` is a global utility for BTD6-style text outline (black text-shadow)
+- No dedicated input components — forms use raw `<input>` elements styled with Tailwind
+- `<Panel>` (`src/components/ui/Panel.vue`) wraps content in the standard card style (`bg-(--color-secondary) rounded-(--radius-panel) p-6`)
 
 ## Conventions
 

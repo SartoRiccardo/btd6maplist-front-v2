@@ -42,6 +42,22 @@ export interface GetCompletionParams {
   include?: string;
 }
 
+export interface SubmitCompletionRequest {
+  map: string;
+  format_id: number;
+  players: string[];
+  proof_images: File[];
+  black_border?: boolean;
+  no_geraldo?: boolean;
+  subm_notes?: string;
+  proof_videos?: string[];
+  lcc?: { leftover: number };
+}
+
+export interface SubmitCompletionResponse {
+  id: number;
+}
+
 export interface GetCompletionsParams {
   timestamp?: number;
   format_id?: number | number[];
