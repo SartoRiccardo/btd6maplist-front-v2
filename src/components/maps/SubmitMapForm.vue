@@ -59,6 +59,12 @@ function formatIcon(formatId: number): string | undefined {
   return FORMAT_ICONS.find((f) => f.id === formatId)?.image;
 }
 
+const selectedFormat = computed(
+  () =>
+    props.eligibleFormats.find((f) => f.id === props.modelValue.format_id) ??
+    null,
+);
+
 const isNostalgiaPack = computed(
   () => props.modelValue.format_id === FORMAT_NOSTALGIA_PACK,
 );
@@ -200,6 +206,15 @@ function fieldError(field: string): string | undefined {
       </div>
       <p v-if="fieldError('format_id')" class="text-red-400 text-sm mt-1">
         {{ fieldError("format_id") }}
+      </p>
+      <p v-if="selectedFormat" class="text-(--color-text-muted) text-sm mt-2">
+        Make sure to check{{ selectedFormat.name.toLowerCase().startsWith('the') ? '' : ' the' }}
+        <RouterLink
+          :to="`/maps/${selectedFormat.slug}/map-rules`"
+          class="text-(--color-highlight) hover:text-(--color-active)"
+          >{{ selectedFormat.name }} map submission rules</RouterLink
+        >
+        before submitting.
       </p>
     </div>
 
