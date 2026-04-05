@@ -57,6 +57,12 @@ const routes: RouteRecordRaw[] = [
     beforeEnter: requireAuth,
   },
   {
+    component: () => import('@/views/UserProfileEditView.vue'),
+    name: 'UserProfileEdit',
+    path: '/profile/edit',
+    beforeEnter: requireAuth,
+  },
+  {
     component: () => import('@/views/UserProfileView.vue'),
     name: 'UserProfile',
     path: '/users/:id',

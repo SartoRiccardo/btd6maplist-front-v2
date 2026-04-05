@@ -74,14 +74,17 @@ export function useUpdateUser() {
 /**
  * Mutation hook to update the authenticated user (uses @me alias)
  */
-export function useUpdateCurrentUser() {
+export function useUpdateCurrentUser(userId?: MaybeRefOrGetter<string | undefined>) {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (data: UpdateUserRequest) => updateCurrentUser(data),
     onSuccess: () => {
-      // Invalidate the @me query to trigger refetch
       queryClient.invalidateQueries({ queryKey: userQueryKeys.me() });
+      const id = userId ? toValue(userId) : undefined;
+      if (id) {
+        queryClient.invalidateQueries({ queryKey: userQueryKeys.detail(id) });
+      }
     },
   });
 }

@@ -20,6 +20,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   const user = userQuery.data;
   const isLoading = userQuery.isLoading;
+  const isFetching = userQuery.isFetching;
   const isError = userQuery.isError;
   const refetch = userQuery.refetch;
 
@@ -72,6 +73,7 @@ export const useAuthStore = defineStore('auth', () => {
     user,
     isAuthenticated,
     isLoading,
+    isFetching,
     isError,
     setToken,
     logout,
