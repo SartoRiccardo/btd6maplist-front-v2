@@ -22,3 +22,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Agents
+.mcp.json
+grimoire.json
+CLAUDE.md
+.claude
