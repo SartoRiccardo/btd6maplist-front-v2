@@ -196,7 +196,7 @@ function fieldError(field: string): string | undefined {
     <!-- Run Modifiers -->
     <div>
       <label class="block font-bold mb-2">Run Modifiers</label>
-      <div class="flex flex-col gap-3">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <BoxedCheckbox
           :model-value="modelValue.black_border"
           :disabled="disabled"
@@ -213,33 +213,31 @@ function fieldError(field: string): string | undefined {
           @update:model-value="update({ no_geraldo: $event })"
         />
 
-        <div>
-          <BoxedCheckbox
-            :model-value="modelValue.lcc_enabled"
-            :disabled="disabled"
-            :locked="lccOnly"
-            label="LCC (Least Cash CHIMPS)"
-            icon="/images/medals/medal_lcc.webp"
-            @update:model-value="update({ lcc_enabled: $event })"
-          />
+        <BoxedCheckbox
+          :model-value="modelValue.lcc_enabled"
+          :disabled="disabled"
+          :locked="lccOnly"
+          label="LCC"
+          icon="/images/medals/medal_lcc.webp"
+          @update:model-value="update({ lcc_enabled: $event })"
+        />
+      </div>
 
-          <div v-if="modelValue.lcc_enabled" class="mt-2 ml-6">
-            <label for="lcc-leftover" class="block text-sm mb-1">Leftover cash</label>
-            <input
-              id="lcc-leftover"
-              type="number"
-              min="0"
-              :value="modelValue.lcc_leftover"
-              :disabled="disabled"
-              class="w-40 px-3 py-2 rounded-(--radius-btn) bg-(--color-primary) text-(--color-text) border border-(--color-contrast) focus:outline-none focus:border-(--color-active)"
-              :class="{ 'border-red-500!': fieldError('lcc_leftover') }"
-              @input="update({ lcc_leftover: ($event.target as HTMLInputElement).valueAsNumber })"
-            />
-            <p v-if="fieldError('lcc_leftover')" class="text-red-400 text-sm mt-1">
-              {{ fieldError('lcc_leftover') }}
-            </p>
-          </div>
-        </div>
+      <div v-if="modelValue.lcc_enabled" class="mt-2">
+        <label for="lcc-leftover" class="block text-sm mb-1">Leftover cash</label>
+        <input
+          id="lcc-leftover"
+          type="number"
+          min="0"
+          :value="modelValue.lcc_leftover"
+          :disabled="disabled"
+          class="w-40 px-3 py-2 rounded-(--radius-btn) bg-(--color-primary) text-(--color-text) border border-(--color-contrast) focus:outline-none focus:border-(--color-active)"
+          :class="{ 'border-red-500!': fieldError('lcc_leftover') }"
+          @input="update({ lcc_leftover: ($event.target as HTMLInputElement).valueAsNumber })"
+        />
+        <p v-if="fieldError('lcc_leftover')" class="text-red-400 text-sm mt-1">
+          {{ fieldError('lcc_leftover') }}
+        </p>
       </div>
     </div>
 
