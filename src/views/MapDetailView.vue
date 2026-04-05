@@ -201,7 +201,7 @@ const showSubmitCompletion = computed(() =>
         <RouterLink v-if="completionRulesSlug" :to="`/maps/${completionRulesSlug}/completion-rules`" class="text-sm text-(--color-highlight)">
           Completion Submission Rules
         </RouterLink>
-        <LinkButton :to="`/map/${code}/submit`">
+        <LinkButton :to="`/map/${code}/submit-completion`">
           <i class="bi bi-trophy-fill mr-0.5" /> Submit Completion
         </LinkButton>
       </div>
