@@ -5,7 +5,8 @@ import { useTouchedProvider } from "@/composables/useTouchedFields";
 import { useEmitOnChange } from "@/composables/useEmitOnChange";
 import type { FormFieldError } from "@/services/api/formErrors";
 import type { Format } from "@/services/api/formats/types";
-import { FORMAT_ICONS } from "@/constants/formats";
+import { FORMAT_ICONS, FORMAT_NOSTALGIA_PACK } from "@/constants/formats";
+import { getRetroMaps } from "@/services/api/retro-maps";
 import Button from "@/components/ui/Button.vue";
 import ImageDrop from "@/components/ui/ImageDrop.vue";
 import AsyncSelect from "@/components/ui/AsyncSelect.vue";
@@ -58,32 +59,46 @@ function formatIcon(formatId: number): string | undefined {
   return FORMAT_ICONS.find((f) => f.id === formatId)?.image;
 }
 
+const isNostalgiaPack = computed(
+  () => props.modelValue.format_id === FORMAT_NOSTALGIA_PACK,
+);
+
 // --- Proposed category ---
 
 const proposedOptions = computed<ProposedOption[]>(() =>
   props.proposedDifficulties.map((label, index) => ({ index, label })),
 );
 
-const selectedProposed = computed<ProposedOption | null>(() =>
-  props.modelValue.proposed != null
-    ? (proposedOptions.value.find(
-        (o) => o.index === props.modelValue.proposed,
-      ) ?? null)
-    : null,
-);
+const selectedProposed = ref<ProposedOption | null>(null);
 
 const { contains } = useFilter({ sensitivity: "base" });
 
 function searchProposed(query: string): Promise<ProposedOption[]> {
+  if (isNostalgiaPack.value) {
+    return searchRetroMaps(query);
+  }
   const filtered = proposedOptions.value.filter((o) =>
     contains(o.label, query),
   );
   return Promise.resolve(filtered);
 }
 
+async function searchRetroMaps(query: string): Promise<ProposedOption[]> {
+  const response = await getRetroMaps({ search: query, per_page: 5 });
+  return response.data.map((m) => ({
+    index: m.id,
+    label: `${m.name} (${m.game.game_name} — ${m.game.category_name})`,
+  }));
+}
+
 function onProposedSelect(option: ProposedOption | null) {
+  selectedProposed.value = option;
   update({ proposed: option?.index ?? null });
 }
+
+const showProposedCategory = computed(
+  () => isNostalgiaPack.value || props.proposedDifficulties.length > 0,
+);
 
 // --- Validation ---
 
@@ -189,7 +204,7 @@ function fieldError(field: string): string | undefined {
     </div>
 
     <!-- Proposed Category -->
-    <div v-if="proposedDifficulties.length > 0">
+    <div v-if="showProposedCategory">
       <label class="block font-bold mb-1">Proposed Category</label>
       <AsyncSelect
         :model-value="selectedProposed"
@@ -197,7 +212,7 @@ function fieldError(field: string): string | undefined {
         :display-value="(o: ProposedOption) => o.label"
         :disabled="disabled"
         :min-chars="0"
-        :debounce="0"
+        :debounce="isNostalgiaPack ? 400 : 0"
         placeholder="Search categories..."
         @update:model-value="onProposedSelect"
       />
