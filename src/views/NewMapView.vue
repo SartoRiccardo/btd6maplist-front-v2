@@ -1,12 +1,32 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import { useRoute } from "vue-router";
+import { ref, computed, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { useAuthStore } from "@/stores/auth";
+import {
+  FORMAT_MAPLIST,
+  FORMAT_MAPLIST_ALL_VER,
+  FORMAT_EXPERT_LIST,
+  FORMAT_BEST_OF_THE_BEST,
+  FORMAT_NOSTALGIA_PACK,
+} from "@/constants/formats";
+import { permissions } from "@/constants/permissions";
+import { ApiError } from "@/services/api/client";
+import { parseApiErrors, type FormFieldError } from "@/services/api/formErrors";
+import { useCreateMap } from "@/services/api/maps/queries";
 import Panel from "@/components/ui/Panel.vue";
+import Button from "@/components/ui/Button.vue";
 import MapCodeInput, {
   type MapCodeValidation,
 } from "@/components/maps/MapCodeInput.vue";
+import NewMapForm from "@/components/maps/new-map-form/NewMapForm.vue";
+import {
+  createDefaultFormModel,
+  type NewMapFormModel,
+} from "@/components/maps/new-map-form/types";
 
 const route = useRoute();
+const router = useRouter();
+const auth = useAuthStore();
 
 // --- Query params ---
 
@@ -14,17 +34,17 @@ const codeInput = ref(
   typeof route.query["code"] === "string" ? route.query["code"] : "",
 );
 
-const creatorId = computed(() => {
+const prefilledCreatorId = computed(() => {
   const val = route.query["creator_id"];
   return typeof val === "string" ? val : null;
 });
 
-const proposedDifficulty = computed(() => {
+const prefilledDifficulty = computed(() => {
   const val = route.query["proposed_difficulty"];
   return val ? Number(val) : null;
 });
 
-const formatId = computed(() => {
+const prefilledFormat = computed(() => {
   const val = route.query["format"];
   return val ? Number(val) : null;
 });
@@ -45,6 +65,126 @@ const isCodeValid = computed(() => validation.value.isCodeValid);
 const isDataReady = computed(
   () => isCodeValid.value && !validation.value.maplistLoading,
 );
+
+// --- Editable formats ---
+
+const ALL_FORMATS = [
+  FORMAT_MAPLIST,
+  FORMAT_MAPLIST_ALL_VER,
+  FORMAT_EXPERT_LIST,
+  FORMAT_BEST_OF_THE_BEST,
+  FORMAT_NOSTALGIA_PACK,
+];
+
+const editableFormats = computed(() =>
+  ALL_FORMATS.filter((id) => auth.hasPermission(permissions.map.edit, id)),
+);
+
+// --- Form state ---
+
+const formModel = ref<NewMapFormModel>(createDefaultFormModel());
+
+// Prefill name from NK map data
+watch(
+  () => validation.value.nkMap,
+  (map) => {
+    if (map) {
+      formModel.value = {
+        ...formModel.value,
+        name: map.name,
+        map_preview_url: map.mapURL,
+      };
+    }
+  },
+);
+
+// Prefill creator from query param
+watch(
+  prefilledCreatorId,
+  (id) => {
+    if (id) {
+      formModel.value = {
+        ...formModel.value,
+        creators: [{ user_id: id, role: null }],
+      };
+    }
+  },
+  { immediate: true },
+);
+
+// Prefill difficulty from query param
+watch(
+  [prefilledDifficulty, prefilledFormat],
+  ([diff, fmt]) => {
+    if (diff == null || fmt == null) return;
+    if (fmt === FORMAT_EXPERT_LIST) {
+      formModel.value = { ...formModel.value, difficulty: diff };
+    } else if (fmt === FORMAT_BEST_OF_THE_BEST) {
+      formModel.value = { ...formModel.value, botb_difficulty: diff };
+    }
+  },
+  { immediate: true },
+);
+
+// --- Submission ---
+
+const createMutation = useCreateMap();
+const formRef = ref<InstanceType<typeof NewMapForm> | null>(null);
+const apiErrors = ref<FormFieldError[]>([]);
+const activeErrors = ref<FormFieldError[]>([]);
+const submitError = ref<string | null>(null);
+const busy = computed(() => createMutation.isPending.value);
+
+async function handleSubmit() {
+  if (!formRef.value) return;
+
+  submitError.value = null;
+  await formRef.value.touchAll();
+
+  if (activeErrors.value.length > 0) return;
+
+  try {
+    const result = await createMutation.mutateAsync({
+      code: codeInput.value.trim().toUpperCase(),
+      name: formModel.value.name,
+      r6_start: formModel.value.r6_start || undefined,
+      r6_start_file: formModel.value.r6_start_file ?? undefined,
+      map_preview_url: formModel.value.map_preview_url || undefined,
+      custom_map_preview_file:
+        formModel.value.custom_map_preview_file ?? undefined,
+      placement_curver: formModel.value.placement_curver ?? undefined,
+      placement_allver: formModel.value.placement_allver ?? undefined,
+      difficulty: formModel.value.difficulty ?? undefined,
+      botb_difficulty: formModel.value.botb_difficulty ?? undefined,
+      remake_of: formModel.value.remake_of?.map_id ?? undefined,
+      optimal_heros:
+        formModel.value.optimal_heros.length > 0
+          ? formModel.value.optimal_heros
+          : undefined,
+      creators: formModel.value.creators
+        .filter((c) => c.user_id)
+        .map((c) => ({ user_id: c.user_id!, role: c.role })),
+      verifiers: formModel.value.verifiers
+        .filter((v) => v.user_id)
+        .map((v) => ({
+          user_id: v.user_id!,
+          version: v.version.trim() ? Math.round(parseFloat(v.version) * 10) : null,
+        })),
+      aliases: formModel.value.aliases.filter((a) => a.trim()),
+    });
+    router.push(`/map/${result.code}`);
+  } catch (error: unknown) {
+    if (error instanceof ApiError) {
+      apiErrors.value = parseApiErrors(error);
+      await formRef.value.clearTouched();
+      if (apiErrors.value.length === 0) {
+        submitError.value = "Something went wrong. Please try again.";
+      }
+    } else {
+      submitError.value = "Something went wrong. Please try again.";
+    }
+  }
+}
 </script>
 
 <template>
@@ -57,7 +197,11 @@ const isDataReady = computed(
     >
       <!-- Left: Code input panel -->
       <Panel class="sm:col-span-1 lg:col-span-2 flex flex-col">
-        <MapCodeInput v-model="codeInput" @validation="validation = $event" />
+        <MapCodeInput
+          v-model="codeInput"
+          :disabled="busy"
+          @validation="validation = $event"
+        />
       </Panel>
 
       <!-- Right: Map preview -->
@@ -88,9 +232,24 @@ const isDataReady = computed(
       </div>
     </div>
 
-    <!-- Form skeleton (shown when code is valid) -->
+    <!-- Form (shown when code is valid and data is ready) -->
     <Panel v-if="isDataReady">
-      <!-- Form fields will go here -->
+      <NewMapForm
+        ref="formRef"
+        v-model="formModel"
+        :disabled="busy"
+        :external-errors="apiErrors"
+        :editable-formats="editableFormats"
+        @errors="activeErrors = $event"
+      />
+
+      <p v-if="submitError" class="text-red-400 text-sm mt-3">
+        {{ submitError }}
+      </p>
+
+      <div class="flex justify-end gap-2 mt-15">
+        <Button :disabled="busy" @click="handleSubmit"> Create Map </Button>
+      </div>
     </Panel>
   </div>
 </template>

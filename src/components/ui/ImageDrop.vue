@@ -1,18 +1,19 @@
 <script setup lang="ts">
-import { ref, computed, onBeforeUnmount } from 'vue';
-import DropZone from '@/components/ui/DropZone.vue';
-import ImageLightbox from '@/components/common/ImageLightbox.vue';
+import { ref, computed, onBeforeUnmount } from "vue";
+import DropZone from "@/components/ui/DropZone.vue";
+import ImageLightbox from "@/components/common/ImageLightbox.vue";
 
 const props = withDefaults(
   defineProps<{
     modelValue: File | null;
     disabled?: boolean;
+    placeholder?: string;
   }>(),
   { disabled: false },
 );
 
 const emit = defineEmits<{
-  'update:modelValue': [file: File | null];
+  "update:modelValue": [file: File | null];
   error: [message: string];
 }>();
 
@@ -23,7 +24,7 @@ const filesArray = computed(() => (props.modelValue ? [props.modelValue] : []));
 let previewUrl: string | null = null;
 
 function getPreviewUrl(): string {
-  if (!props.modelValue) return '';
+  if (!props.modelValue) return "";
   if (previewUrl) return previewUrl;
   previewUrl = URL.createObjectURL(props.modelValue);
   return previewUrl;
@@ -38,12 +39,12 @@ function revokeUrl() {
 
 function onFilesChange(files: File[]) {
   revokeUrl();
-  emit('update:modelValue', files[0] ?? null);
+  emit("update:modelValue", files[0] ?? null);
 }
 
 function removeImage() {
   revokeUrl();
-  emit('update:modelValue', null);
+  emit("update:modelValue", null);
 }
 
 onBeforeUnmount(revokeUrl);
@@ -79,9 +80,14 @@ onBeforeUnmount(revokeUrl);
       :max-files="1"
       :max-size-bytes="10 * 1024 * 1024"
       :disabled="disabled"
+      :placeholder="placeholder"
       @update:model-value="onFilesChange"
       @error="emit('error', $event)"
-    />
+    >
+      <template v-if="$slots['default']" #dropzone="slotProps">
+        <slot v-bind="slotProps" />
+      </template>
+    </DropZone>
 
     <ImageLightbox ref="lightboxRef" />
   </div>

@@ -14,7 +14,7 @@ const emit = defineEmits<{
 
 <template>
   <label
-    class="flex items-center gap-2 w-full px-4 py-3 rounded-(--radius-panel) border transition-colors"
+    class="flex items-center gap-2 w-full px-4 py-2 rounded-(--radius-panel) border transition-colors"
     :class="[
       disabled
         ? 'border-(--color-contrast)/50 opacity-50 cursor-not-allowed'

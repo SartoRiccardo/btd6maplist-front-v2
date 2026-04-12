@@ -1,7 +1,11 @@
 import { computed, toValue, type MaybeRefOrGetter } from 'vue';
-import { useQuery, type UseQueryOptions } from '@tanstack/vue-query';
-import { getMaps, getMap } from './index';
-import type { MapWithMetadata, MapDetail, MaybeGhostMap, GetMapsParams, GetMapParams } from './types';
+import { useQuery, useMutation, type UseQueryOptions } from '@tanstack/vue-query';
+import { getMaps, getMap, createMap, updateMap } from './index';
+import type {
+  MapWithMetadata, MapDetail, MaybeGhostMap,
+  GetMapsParams, GetMapParams,
+  CreateMapRequest, UpdateMapRequest, CreateMapResponse,
+} from './types';
 import type { PaginatedResponse } from '@/services/api/common/types';
 
 export const mapQueryKeys = {
@@ -46,5 +50,23 @@ export function useMap(
     queryKey: computed(() => mapQueryKeys.detail(toValue(code), toValue(params))),
     queryFn: () => getMap(toValue(code), toValue(params)),
     ...options,
+  });
+}
+
+/**
+ * Mutation hook to create a new map (POST /maps)
+ */
+export function useCreateMap() {
+  return useMutation<CreateMapResponse, Error, CreateMapRequest>({
+    mutationFn: createMap,
+  });
+}
+
+/**
+ * Mutation hook to update an existing map (PUT /maps/{code})
+ */
+export function useUpdateMap() {
+  return useMutation<void, Error, { code: string; data: UpdateMapRequest }>({
+    mutationFn: ({ code, data }) => updateMap(code, data),
   });
 }

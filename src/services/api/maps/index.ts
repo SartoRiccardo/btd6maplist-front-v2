@@ -1,4 +1,8 @@
-import type { MapWithMetadata, MapDetail, MaybeGhostMap, GetMapsParams, GetMapParams } from './types';
+import type {
+  MapWithMetadata, MapDetail, MaybeGhostMap,
+  GetMapsParams, GetMapParams,
+  CreateMapRequest, UpdateMapRequest, CreateMapResponse,
+} from './types';
 import type { PaginatedResponse } from '@/services/api/common/types';
 import { apiRequest } from '../client';
 
@@ -62,4 +66,60 @@ export async function getMap(
 ): Promise<MapDetail> {
   const queryString = buildMapParams(params);
   return apiRequest<MapDetail>(`${BASE_PATH}/${code}${queryString}`);
+}
+
+function buildMapFormData(data: CreateMapRequest | UpdateMapRequest): FormData {
+  const fd = new FormData();
+
+  if ('code' in data) fd.append('code', data.code);
+  fd.append('name', data.name);
+
+  if (data.r6_start != null) fd.append('r6_start', data.r6_start);
+  if (data.r6_start_file != null) fd.append('r6_start_file', data.r6_start_file);
+  if (data.map_preview_url != null) fd.append('map_preview_url', data.map_preview_url);
+  if (data.custom_map_preview_file != null) fd.append('custom_map_preview_file', data.custom_map_preview_file);
+  if (data.map_data != null) fd.append('map_data', data.map_data);
+  if (data.map_notes != null) fd.append('map_notes', data.map_notes);
+  if (data.placement_curver != null) fd.append('placement_curver', data.placement_curver.toString());
+  if (data.placement_allver != null) fd.append('placement_allver', data.placement_allver.toString());
+  if (data.difficulty != null) fd.append('difficulty', data.difficulty.toString());
+  if (data.botb_difficulty != null) fd.append('botb_difficulty', data.botb_difficulty.toString());
+  if (data.remake_of != null) fd.append('remake_of', data.remake_of.toString());
+
+  if (data.optimal_heros) {
+    for (const hero of data.optimal_heros) {
+      fd.append('optimal_heros', hero);
+    }
+  }
+
+  if (data.aliases) {
+    for (const alias of data.aliases) {
+      fd.append('aliases', alias);
+    }
+  }
+
+  if (data.creators) fd.append('creators', JSON.stringify(data.creators));
+  if (data.verifiers) fd.append('verifiers', JSON.stringify(data.verifiers));
+
+  return fd;
+}
+
+/**
+ * POST /maps
+ */
+export async function createMap(data: CreateMapRequest): Promise<CreateMapResponse> {
+  return apiRequest<CreateMapResponse>(BASE_PATH, {
+    method: 'POST',
+    body: buildMapFormData(data),
+  });
+}
+
+/**
+ * PUT /maps/{code}
+ */
+export async function updateMap(code: string, data: UpdateMapRequest): Promise<void> {
+  return apiRequest<void>(`${BASE_PATH}/${code}`, {
+    method: 'PUT',
+    body: buildMapFormData(data),
+  });
 }

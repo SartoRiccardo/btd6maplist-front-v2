@@ -8,11 +8,13 @@ const props = withDefaults(
     maxFiles?: number;
     maxSizeBytes?: number;
     disabled?: boolean;
+    placeholder?: string;
   }>(),
   {
     accept: 'image/*',
     maxFiles: 4,
     maxSizeBytes: 10 * 1024 * 1024,
+    placeholder: 'Drop files here or click to browse',
   }
 );
 
@@ -131,7 +133,7 @@ defineExpose({ removeFile });
     >
       <slot name="dropzone" :dragging="dragging" :can-add-more="canAddMore" :disabled="disabled">
         <p class="text-(--color-text-muted)">
-          {{ canAddMore ? 'Drop files here or click to browse' : `Maximum of ${maxFiles} files reached` }}
+          {{ canAddMore ? placeholder : `Maximum of ${maxFiles} files reached` }}
         </p>
       </slot>
       <input

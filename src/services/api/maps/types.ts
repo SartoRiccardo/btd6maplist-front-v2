@@ -86,3 +86,39 @@ export interface GetMapParams {
   timestamp?: number;
   include?: string;
 }
+
+export interface MapCreatorPayload {
+  user_id: string;
+  role: string | null;
+}
+
+export interface MapVerificationPayload {
+  user_id: string;
+  version: number | null;
+}
+
+export interface CreateMapRequest {
+  code: string;
+  name: string;
+  r6_start?: string | null;
+  r6_start_file?: File | null;
+  map_preview_url?: string | null;
+  custom_map_preview_file?: File | null;
+  map_data?: string | null;
+  map_notes?: string | null;
+  placement_curver?: number | null;
+  placement_allver?: number | null;
+  difficulty?: number | null;
+  optimal_heros?: string[] | null;
+  botb_difficulty?: number | null;
+  remake_of?: number | null;
+  creators?: MapCreatorPayload[];
+  verifiers?: MapVerificationPayload[];
+  aliases?: string[];
+}
+
+export type UpdateMapRequest = Omit<CreateMapRequest, 'code'>;
+
+export interface CreateMapResponse {
+  code: string;
+}
