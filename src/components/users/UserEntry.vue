@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { RouterLink } from 'vue-router';
-import type { User } from '@/services/api/users/types';
-import { DEFAULT_AVATAR_URL } from '@/constants/user';
+import { computed } from "vue";
+import { RouterLink } from "vue-router";
+import type { User } from "@/services/api/users/types";
+import { DEFAULT_AVATAR_URL } from "@/constants/user";
 
 const props = withDefaults(
   defineProps<{
@@ -11,23 +11,21 @@ const props = withDefaults(
     centered?: boolean;
     inline?: boolean;
     noLink?: boolean;
-    textSize?: 'sm' | 'lg';
+    textSize?: "sm" | "lg";
   }>(),
   {
     centered: false,
     inline: false,
     noLink: false,
-  }
+  },
 );
 
-const avatarUrl = computed(
-  () => props.user.avatar_url ?? DEFAULT_AVATAR_URL
-);
+const avatarUrl = computed(() => props.user.avatar_url ?? DEFAULT_AVATAR_URL);
 
 const textSizeClass = computed(() => {
-  if (props.textSize === 'lg') return 'lg:text-xl';
-  if (props.textSize === 'sm') return 'lg:text-sm';
-  return '';
+  if (props.textSize === "lg") return "lg:text-xl";
+  if (props.textSize === "sm") return "lg:text-sm";
+  return "";
 });
 </script>
 
@@ -38,7 +36,7 @@ const textSizeClass = computed(() => {
       v-bind="noLink ? {} : { to: `/users/${user.discord_id}` }"
       class="no-underline!"
       :class="[
-        { 'inline-block': inline, 'block': !inline },
+        { 'inline-block': inline, block: !inline },
         noLink ? '' : 'hover:[&_.user-name]:text-(--color-active)',
       ]"
     >
@@ -49,15 +47,17 @@ const textSizeClass = computed(() => {
         <img
           loading="lazy"
           class="border-2 border-white rounded-sm"
-          :class="inline
-            ? 'w-[1.8em] h-[1.8em] absolute left-0 top-1/2 -translate-y-1/2'
-            : 'w-[45px] h-[45px]'"
+          :class="
+            inline
+              ? 'w-[1.8em] h-[1.8em] absolute left-0 top-1/2 -translate-y-1/2'
+              : 'w-[45px] h-[45px]'
+          "
           :src="avatarUrl"
           alt=""
         />
 
         <div
-          class="pl-2 min-w-0"
+          class="pl-1 min-w-0"
           :class="{ 'flex flex-col justify-center': centered }"
         >
           <p

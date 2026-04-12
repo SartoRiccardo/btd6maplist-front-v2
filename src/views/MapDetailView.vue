@@ -25,7 +25,7 @@ const route = useRoute();
 const auth = useAuthStore();
 const code = computed(() => route.params['code'] as string);
 
-const { data: mapData } = useMap(code, { include: 'creators.flair,verifiers.flair' });
+const { data: mapData, isError: mapError } = useMap(code, { include: 'creators.flair,verifiers.flair' });
 const { data: config } = useConfig();
 const { data: formatsResponse } = useFormats();
 
@@ -125,7 +125,17 @@ const showSubmitCompletion = computed(() =>
 </script>
 
 <template>
-  <div v-if="mapData">
+  <div v-if="mapError" class="text-center mt-12">
+    <h1 class="font-['Luckiest_Guy'] text-4xl mb-4">Map Not Found</h1>
+    <p class="text-(--color-text-muted)">
+      The map code <span class="font-mono">{{ code }}</span> doesn't exist or couldn't be loaded.
+    </p>
+    <RouterLink to="/" class="text-(--color-highlight) mt-4 inline-block">
+      Back to Home
+    </RouterLink>
+  </div>
+
+  <div v-else-if="mapData">
     <!-- Title -->
     <h1 class="text-center font-['Luckiest_Guy'] text-3xl md:text-4xl mt-6 mb-2">
       {{ mapData.name }}

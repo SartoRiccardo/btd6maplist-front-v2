@@ -23,7 +23,7 @@ const hideNoGeraldo = computed(() => {
   <div class="bg-(--color-secondary) rounded-(--radius-panel) my-2 py-2 px-3">
     <!-- Row 1: Map preview + name -->
     <RouterLink
-      :to="`/maps/${completion.map.code}`"
+      :to="`/map/${completion.map.code}`"
       class="no-underline! text-(--color-text)! hover:text-(--color-active)!"
     >
       <div class="flex items-center">

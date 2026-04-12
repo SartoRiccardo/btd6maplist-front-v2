@@ -38,6 +38,7 @@ export async function apiRequest<T>(
   const isFormData = options.body instanceof FormData;
 
   const headers: Record<string, string> = {
+    'Accept': 'application/json',
     ...(options.headers as Record<string, string>),
   };
 

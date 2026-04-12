@@ -30,6 +30,7 @@ const { data: config } = useConfig();
 // --- Route & format ---
 const slug = computed(() => route.params['slug'] as string);
 const format = computed(() => formats.value?.data.find((f) => f.slug === slug.value));
+const formatNotFound = computed(() => formats.value != null && format.value == null);
 const formatId = computed(() => format.value?.id);
 const isNP = computed(() => formatId.value === FORMAT_NOSTALGIA_PACK);
 const btd6Version = computed(() => config.value?.current_btd6_ver);
@@ -150,7 +151,17 @@ const mapBorder = computed(() =>
 </script>
 
 <template>
-  <div>
+  <div v-if="formatNotFound" class="text-center mt-12">
+    <h1 class="font-['Luckiest_Guy'] text-4xl mb-4">List Not Found</h1>
+    <p class="text-(--color-text-muted)">
+      There is no list at <span class="font-mono">{{ slug }}</span>.
+    </p>
+    <RouterLink to="/" class="text-(--color-highlight) mt-4 inline-block">
+      Back to Home
+    </RouterLink>
+  </div>
+
+  <div v-else>
     <!-- Header -->
     <div class="text-center mt-6 mb-4">
       <h1 class="font-['Luckiest_Guy'] text-3xl md:text-4xl">
