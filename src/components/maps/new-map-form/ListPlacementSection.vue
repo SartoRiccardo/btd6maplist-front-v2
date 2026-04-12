@@ -232,7 +232,7 @@ function onDifficultyChange(
           placeholder="Position"
           class="w-full px-3 py-2 rounded-(--radius-btn) bg-(--color-primary) text-(--color-text) border border-(--color-contrast) focus:outline-none focus:border-(--color-active)"
           :class="{
-            'border-red-500!': fieldError('placement_curver'),
+            'border-(--color-danger)!': fieldError('placement_curver'),
             'cursor-not-allowed!': !canEditMaplist,
           }"
           @input="
@@ -244,7 +244,7 @@ function onDifficultyChange(
         />
         <p
           v-if="fieldError('placement_curver')"
-          class="text-red-400 text-sm mt-1"
+          class="text-(--color-danger) text-sm mt-1"
         >
           {{ fieldError("placement_curver") }}
         </p>
@@ -267,7 +267,7 @@ function onDifficultyChange(
           placeholder="Position"
           class="w-full px-3 py-2 rounded-(--radius-btn) bg-(--color-primary) text-(--color-text) border border-(--color-contrast) focus:outline-none focus:border-(--color-active)"
           :class="{
-            'border-red-500!': fieldError('placement_allver'),
+            'border-(--color-danger)!': fieldError('placement_allver'),
             'cursor-not-allowed!': !canEditAllVer,
           }"
           @input="
@@ -279,7 +279,7 @@ function onDifficultyChange(
         />
         <p
           v-if="fieldError('placement_allver')"
-          class="text-red-400 text-sm mt-1"
+          class="text-(--color-danger) text-sm mt-1"
         >
           {{ fieldError("placement_allver") }}
         </p>
@@ -315,6 +315,12 @@ function onDifficultyChange(
             {{ diff.name }}
           </option>
         </select>
+        <p
+          v-if="fieldError('difficulty')"
+          class="text-(--color-danger) text-sm mt-1"
+        >
+          {{ fieldError("difficulty") }}
+        </p>
       </div>
 
       <div>
@@ -347,6 +353,12 @@ function onDifficultyChange(
             {{ diff.name }}
           </option>
         </select>
+        <p
+          v-if="fieldError('botb_difficulty')"
+          class="text-(--color-danger) text-sm mt-1"
+        >
+          {{ fieldError("botb_difficulty") }}
+        </p>
       </div>
     </div>
 
@@ -393,6 +405,12 @@ function onDifficultyChange(
           @update:model-value="onRetroMapSelect"
         />
       </div>
+      <p
+        v-if="fieldError('remake_of')"
+        class="text-(--color-danger) text-sm mt-1"
+      >
+        {{ fieldError("remake_of") }}
+      </p>
     </div>
 
     <!-- Optimal Heroes -->
@@ -403,6 +421,12 @@ function onDifficultyChange(
         :disabled="disabled"
         @update:model-value="update({ optimal_heros: $event })"
       />
+      <p
+        v-if="fieldError('optimal_heros')"
+        class="text-(--color-danger) text-sm mt-1"
+      >
+        {{ fieldError("optimal_heros") }}
+      </p>
     </div>
   </div>
 </template>

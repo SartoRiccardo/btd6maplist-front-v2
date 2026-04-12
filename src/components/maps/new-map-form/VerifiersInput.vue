@@ -123,7 +123,7 @@ function fieldError(field: string): string | undefined {
           />
           <p
             v-if="fieldError(`verifiers.${index}.user_id`)"
-            class="text-red-400 text-xs mt-1"
+            class="text-(--color-danger) text-xs mt-1"
           >
             {{ fieldError(`verifiers.${index}.user_id`) }}
           </p>
@@ -138,7 +138,7 @@ function fieldError(field: string): string | undefined {
               placeholder="e.g. 44.5"
               class="flex-1 sm:w-24 sm:flex-none px-3 py-2 rounded-(--radius-btn) bg-(--color-primary) text-(--color-text) border border-(--color-contrast) focus:outline-none focus:border-(--color-active)"
               :class="{
-                'border-red-500!': fieldError(`verifiers.${index}.version`),
+                'border-(--color-danger)!': fieldError(`verifiers.${index}.version`),
               }"
               @input="
                 updateAt(index, {
@@ -148,7 +148,7 @@ function fieldError(field: string): string | undefined {
             />
             <p
               v-if="fieldError(`verifiers.${index}.version`)"
-              class="text-red-400 text-xs mt-1"
+              class="text-(--color-danger) text-xs mt-1"
             >
               {{ fieldError(`verifiers.${index}.version`) }}
             </p>

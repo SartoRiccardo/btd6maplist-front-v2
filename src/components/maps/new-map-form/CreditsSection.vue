@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useTouchedFields } from "@/composables/useTouchedFields";
 import { useEmitOnChange } from "@/composables/useEmitOnChange";
 import type { FormFieldError } from "@/services/api/formErrors";
@@ -30,19 +30,28 @@ function update(partial: Partial<CreditsSlice>) {
 
 // --- Error aggregation from children ---
 
-const childErrors = ref<FormFieldError[]>([]);
+const childErrorMap = ref<Map<string, FormFieldError[]>>(new Map());
 
-function handleVerifierErrors(errors: FormFieldError[]) {
-  childErrors.value = errors;
+function handleChildErrors(childId: string, errors: FormFieldError[]) {
+  const map = new Map(childErrorMap.value);
+  if (errors.length === 0) map.delete(childId);
+  else map.set(childId, errors);
+  childErrorMap.value = map;
 }
 
-function verifierExternalErrors(): FormFieldError[] {
+const flatErrors = computed<FormFieldError[]>(() => {
+  const result: FormFieldError[] = [];
+  for (const [, errors] of childErrorMap.value) result.push(...errors);
+  return result;
+});
+
+useEmitOnChange(flatErrors, (errors) => emit("errors", errors));
+
+function externalErrorsFor(prefix: string): FormFieldError[] {
   return (props.externalErrors ?? []).filter((e) =>
-    e.path.startsWith("verifiers."),
+    e.path.startsWith(`${prefix}.`),
   );
 }
-
-useEmitOnChange(childErrors, (errors) => emit("errors", errors));
 </script>
 
 <template>
@@ -53,7 +62,9 @@ useEmitOnChange(childErrors, (errors) => emit("errors", errors));
       <CreatorsInput
         :model-value="modelValue.creators"
         :disabled="disabled"
+        :external-errors="externalErrorsFor('creators')"
         @update:model-value="update({ creators: $event })"
+        @errors="handleChildErrors('creators', $event)"
       />
     </div>
 
@@ -63,9 +74,9 @@ useEmitOnChange(childErrors, (errors) => emit("errors", errors));
       <VerifiersInput
         :model-value="modelValue.verifiers"
         :disabled="disabled"
-        :external-errors="verifierExternalErrors()"
+        :external-errors="externalErrorsFor('verifiers')"
         @update:model-value="update({ verifiers: $event })"
-        @errors="handleVerifierErrors"
+        @errors="handleChildErrors('verifiers', $event)"
       />
     </div>
   </div>

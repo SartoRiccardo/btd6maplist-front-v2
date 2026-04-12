@@ -60,6 +60,15 @@ useEmitOnChange(activeErrors, (errors) => emit("errors", errors));
 function fieldError(field: string): string | undefined {
   return activeErrors.value.find((e) => e.path === field)?.message;
 }
+
+function childErrors(prefix: string): FormFieldError[] {
+  return activeErrors.value
+    .filter((e) => e.path.startsWith(`${prefix}.`))
+    .map((e) => ({
+      ...e,
+      path: e.path.slice(prefix.length + 1),
+    }));
+}
 </script>
 
 <template>
@@ -74,10 +83,10 @@ function fieldError(field: string): string | undefined {
         :disabled="disabled"
         placeholder="Map name"
         class="w-full px-3 py-2 rounded-(--radius-btn) bg-(--color-primary) text-(--color-text) border border-(--color-contrast) focus:outline-none focus:border-(--color-active)"
-        :class="{ 'border-red-500!': fieldError('name') }"
+        :class="{ 'border-(--color-danger)!': fieldError('name') }"
         @input="update({ name: ($event.target as HTMLInputElement).value })"
       />
-      <p v-if="fieldError('name')" class="text-red-400 text-sm mt-1">
+      <p v-if="fieldError('name')" class="text-(--color-danger) text-sm mt-1">
         {{ fieldError("name") }}
       </p>
     </div>
@@ -95,6 +104,12 @@ function fieldError(field: string): string | undefined {
           placeholder="Drop image here or click to browse"
           @update:model-value="update({ custom_map_preview_file: $event })"
         />
+        <p
+          v-if="fieldError('custom_map_preview_file')"
+          class="text-(--color-danger) text-sm mt-1"
+        >
+          {{ fieldError("custom_map_preview_file") }}
+        </p>
       </div>
 
       <div>
@@ -109,6 +124,12 @@ function fieldError(field: string): string | undefined {
             update($event);
           "
         />
+        <p
+          v-if="fieldError('r6_start') || fieldError('r6_start_file')"
+          class="text-(--color-danger) text-sm mt-1"
+        >
+          {{ fieldError("r6_start") || fieldError("r6_start_file") }}
+        </p>
       </div>
     </div>
 
@@ -119,6 +140,7 @@ function fieldError(field: string): string | undefined {
         :model-value="modelValue.aliases"
         :disabled="disabled"
         placeholder="Alias"
+        :external-errors="childErrors('aliases')"
         @update:model-value="update({ aliases: $event })"
       />
     </div>
@@ -129,6 +151,7 @@ function fieldError(field: string): string | undefined {
       <AdditionalCodesInput
         :model-value="modelValue.additional_codes"
         :disabled="disabled"
+        :external-errors="childErrors('additional_codes')"
         @update:model-value="update({ additional_codes: $event })"
       />
     </div>
