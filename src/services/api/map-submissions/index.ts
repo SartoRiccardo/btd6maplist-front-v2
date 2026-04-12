@@ -17,7 +17,7 @@ function buildListParams(params?: GetMapSubmissionsParams): string {
 
   if (params.page != null) searchParams.set('page', params.page.toString());
   if (params.per_page != null) searchParams.set('per_page', params.per_page.toString());
-  if (params.format_id != null) searchParams.set('format_id', params.format_id.toString());
+  if (params.format_ids != null) searchParams.set('format_ids', params.format_ids.join(','));
   if (params.submitter_id != null) searchParams.set('submitter_id', params.submitter_id);
   if (params.status != null) searchParams.set('status', params.status);
   if (params.include != null) searchParams.set('include', params.include);

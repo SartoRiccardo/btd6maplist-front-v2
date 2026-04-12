@@ -24,7 +24,6 @@ const props = withDefaults(
   },
 );
 
-
 const { data: nkMap } = useQuery({
   queryKey: computed(() => ["nk", "map", props.submission.code]),
   queryFn: () => getCustomMap(props.submission.code),
@@ -67,6 +66,8 @@ const statusPill = computed(() => {
     return { label: "Rejected", class: "bg-(--color-deleted)" };
   if (props.submission.status === "pending")
     return { label: "Pending", class: "bg-(--color-pending)" };
+  if (props.submission.status === "accepted")
+    return { label: "Accepted", class: "bg-(--color-success)" };
   return null;
 });
 
@@ -112,7 +113,7 @@ const createdOn = computed(() => {
 
       <div
         v-if="formatInfo"
-        class="flex items-center gap-1.5 shrink-0 self-center mr-2"
+        class="hidden md:flex items-center gap-1.5 shrink-0 self-center mr-2"
       >
         <Badge
           :src="formatInfo.image"
@@ -122,7 +123,24 @@ const createdOn = computed(() => {
         <span class="text-sm">{{ formatInfo.name }}</span>
       </div>
 
-      <div class="flex gap-1 shrink-0 self-center">
+      <div class="hidden md:flex gap-1 shrink-0 self-center">
+        <Button @click="lightbox?.show(submission.completion_proof)">
+          <i class="bi bi-search" />
+        </Button>
+        <slot name="buttons" />
+      </div>
+    </div>
+
+    <div class="flex md:hidden items-center my-3">
+      <template v-if="formatInfo">
+        <Badge
+          :src="formatInfo.image"
+          :alt="formatInfo.name"
+          class="translate-y-0 scale-[125%] mr-1"
+        />
+        <span class="text-sm">{{ formatInfo.name }}</span>
+      </template>
+      <div class="flex gap-1 ml-auto">
         <Button @click="lightbox?.show(submission.completion_proof)">
           <i class="bi bi-search" />
         </Button>

@@ -22,7 +22,7 @@ export interface MapSubmission {
 export interface GetMapSubmissionsParams {
   page?: number;
   per_page?: number;
-  format_id?: number;
+  format_ids?: number[];
   submitter_id?: string;
   status?: MapSubmissionStatus;
   include?: string;
