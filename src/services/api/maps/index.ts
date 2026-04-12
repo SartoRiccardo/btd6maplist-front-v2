@@ -87,14 +87,14 @@ function buildMapFormData(data: CreateMapRequest | UpdateMapRequest): FormData {
   if (data.remake_of != null) fd.append('remake_of', data.remake_of.toString());
 
   if (data.optimal_heros) {
-    for (const hero of data.optimal_heros) {
-      fd.append('optimal_heros[]', hero);
+    for (let i = 0; i < data.optimal_heros.length; i++) {
+      fd.append(`optimal_heros[${i}]`, data.optimal_heros[i]!);
     }
   }
 
   if (data.aliases) {
-    for (const alias of data.aliases) {
-      fd.append('aliases[]', alias);
+    for (let i = 0; i < data.aliases.length; i++) {
+      fd.append(`aliases[${i}]`, data.aliases[i]!);
     }
   }
 

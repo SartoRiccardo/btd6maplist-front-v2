@@ -15,8 +15,9 @@ const props = withDefaults(
     modelValue: CreatorEntry[];
     disabled?: boolean;
     externalErrors?: FormFieldError[];
+    initialUsers?: User[];
   }>(),
-  { disabled: false, externalErrors: () => [] },
+  { disabled: false, externalErrors: () => [], initialUsers: () => [] },
 );
 
 const emit = defineEmits<{
@@ -47,7 +48,9 @@ function toggleUnknown(checked: boolean) {
   }
 }
 
-const selectedUsers = ref<Map<number, User | null>>(new Map());
+const selectedUsers = ref<Map<number, User | null>>(
+  new Map(props.initialUsers.map((u, i) => [i, u])),
+);
 
 function updateAt(index: number, partial: Partial<CreatorEntry>) {
   for (const key of Object.keys(partial))

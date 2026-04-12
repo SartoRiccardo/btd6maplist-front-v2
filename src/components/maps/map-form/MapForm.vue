@@ -3,6 +3,7 @@ import { ref, computed } from "vue";
 import { useTouchedProvider } from "@/composables/useTouchedFields";
 import { useEmitOnChange } from "@/composables/useEmitOnChange";
 import type { FormFieldError } from "@/services/api/formErrors";
+import type { User } from "@/services/api/users/types";
 import type {
   MapFormModel,
   MapInfoSlice,
@@ -19,8 +20,15 @@ const props = withDefaults(
     disabled?: boolean;
     externalErrors?: FormFieldError[];
     editableFormats: number[];
+    initialCreatorUsers?: User[];
+    initialVerifierUsers?: User[];
   }>(),
-  { disabled: false, externalErrors: () => [] },
+  {
+    disabled: false,
+    externalErrors: () => [],
+    initialCreatorUsers: () => [],
+    initialVerifierUsers: () => [],
+  },
 );
 
 const emit = defineEmits<{
@@ -150,6 +158,8 @@ useEmitOnChange(flatErrors, (errors) => emit("errors", errors));
       v-model="creditsSlice"
       :disabled="disabled"
       :external-errors="errorsForSection('credits')"
+      :initial-creator-users="initialCreatorUsers"
+      :initial-verifier-users="initialVerifierUsers"
       @errors="handleSectionErrors('credits', $event)"
     />
   </div>

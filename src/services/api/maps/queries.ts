@@ -1,5 +1,5 @@
 import { computed, toValue, type MaybeRefOrGetter } from 'vue';
-import { useQuery, useMutation, type UseQueryOptions } from '@tanstack/vue-query';
+import { useQuery, useMutation, useQueryClient, type UseQueryOptions } from '@tanstack/vue-query';
 import { getMaps, getMap, createMap, updateMap, deleteMap } from './index';
 import type {
   MapWithMetadata, MapDetail, MaybeGhostMap,
@@ -57,8 +57,12 @@ export function useMap(
  * Mutation hook to create a new map (POST /maps)
  */
 export function useCreateMap() {
+  const queryClient = useQueryClient();
   return useMutation<CreateMapResponse, Error, CreateMapRequest>({
     mutationFn: createMap,
+    onSuccess: (result) => {
+      queryClient.invalidateQueries({ queryKey: ['maps', result.code] });
+    },
   });
 }
 
@@ -66,8 +70,12 @@ export function useCreateMap() {
  * Mutation hook to update an existing map (PUT /maps/{code})
  */
 export function useUpdateMap() {
+  const queryClient = useQueryClient();
   return useMutation<void, Error, { code: string; data: UpdateMapRequest }>({
     mutationFn: ({ code, data }) => updateMap(code, data),
+    onSuccess: (_data, { code }) => {
+      queryClient.invalidateQueries({ queryKey: ['maps', code] });
+    },
   });
 }
 
@@ -75,7 +83,11 @@ export function useUpdateMap() {
  * Mutation hook to delete a map (DELETE /maps/{code})
  */
 export function useDeleteMap() {
+  const queryClient = useQueryClient();
   return useMutation<void, Error, string>({
     mutationFn: deleteMap,
+    onSuccess: (_data, code) => {
+      queryClient.invalidateQueries({ queryKey: ['maps', code] });
+    },
   });
 }

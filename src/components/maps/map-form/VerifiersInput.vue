@@ -3,7 +3,7 @@ import { ref, computed } from "vue";
 import { useTouchedFields } from "@/composables/useTouchedFields";
 import { useEmitOnChange } from "@/composables/useEmitOnChange";
 import type { FormFieldError } from "@/services/api/formErrors";
-import BoxedCheckbox from "@/components/ui/BoxedCheckbox.vue";
+import { useConfig } from "@/services/api/config/queries";
 import AsyncSelect from "@/components/ui/AsyncSelect.vue";
 import ListEditor from "@/components/ui/ListEditor.vue";
 import { search } from "@/services/api/search";
@@ -15,8 +15,9 @@ const props = withDefaults(
     modelValue: VerifierEntry[];
     disabled?: boolean;
     externalErrors?: FormFieldError[];
+    initialUsers?: User[];
   }>(),
-  { disabled: false, externalErrors: () => [] },
+  { disabled: false, externalErrors: () => [], initialUsers: () => [] },
 );
 
 const emit = defineEmits<{
@@ -26,8 +27,16 @@ const emit = defineEmits<{
 
 const { isTouched, touch } = useTouchedFields();
 
-const selectedUsers = ref<Map<number, User | null>>(new Map());
-const timelessMap = ref<Map<number, boolean>>(new Map());
+const { data: config } = useConfig();
+
+const currentVersion = computed(() => {
+  if (!config.value) return null;
+  return (config.value.current_btd6_ver / 10).toFixed(1);
+});
+
+const selectedUsers = ref<Map<number, User | null>>(
+  new Map(props.initialUsers.map((u, i) => [i, u])),
+);
 
 function updateAt(index: number, partial: Partial<VerifierEntry>) {
   for (const key of Object.keys(partial)) touch(`verifiers.${index}.${key}`);
@@ -41,14 +50,22 @@ function onUserSelect(index: number, user: User | null) {
   updateAt(index, { user_id: user?.discord_id ?? null });
 }
 
-function toggleTimeless(index: number, checked: boolean) {
-  timelessMap.value = new Map(timelessMap.value).set(index, checked);
-  touch(`verifiers.${index}.version`);
+function onVersionChange(index: number, value: string) {
+  if (value === "current" && currentVersion.value) {
+    updateAt(index, { version: currentVersion.value });
+  } else {
+    updateAt(index, { version: "" });
+  }
+}
+
+function versionSelectValue(version: string): string {
+  if (!version.trim()) return "alltime";
+  if (version === currentVersion.value) return "current";
+  return "alltime";
 }
 
 function onRemove(items: VerifierEntry[]) {
   selectedUsers.value = new Map();
-  timelessMap.value = new Map();
   emit("update:modelValue", items);
 }
 
@@ -67,14 +84,6 @@ const ownErrors = computed<FormFieldError[]>(() => {
       errors.push({
         path: `verifiers.${i}.user_id`,
         message: "A verifier must be selected.",
-        source: "validation",
-      });
-    }
-    const isTimeless = timelessMap.value.get(i) ?? false;
-    if (!isTimeless && v.version.trim() && isNaN(parseFloat(v.version))) {
-      errors.push({
-        path: `verifiers.${i}.version`,
-        message: "Invalid version number.",
         source: "validation",
       });
     }
@@ -129,40 +138,25 @@ function fieldError(field: string): string | undefined {
           </p>
         </div>
 
-        <div class="flex items-start gap-2">
-          <div>
-            <input
-              type="text"
-              :value="modelValue[index]!.version"
-              :disabled="disabled || timelessMap.get(index)"
-              placeholder="e.g. 44.5"
-              class="flex-1 sm:w-24 sm:flex-none px-3 py-2 rounded-(--radius-btn) bg-(--color-primary) text-(--color-text) border border-(--color-contrast) focus:outline-none focus:border-(--color-active)"
-              :class="{
-                'border-(--color-danger)!': fieldError(`verifiers.${index}.version`),
-              }"
-              @input="
-                updateAt(index, {
-                  version: ($event.target as HTMLInputElement).value,
-                })
-              "
-            />
-            <p
-              v-if="fieldError(`verifiers.${index}.version`)"
-              class="text-(--color-danger) text-xs mt-1"
-            >
-              {{ fieldError(`verifiers.${index}.version`) }}
-            </p>
-          </div>
-
-          <div class="flex items-center">
-            <BoxedCheckbox
-              :model-value="timelessMap.get(index) ?? false"
-              :disabled="disabled"
-              label="Timeless"
-              @update:model-value="toggleTimeless(index, $event)"
-            />
-          </div>
-        </div>
+        <select
+          :value="versionSelectValue(modelValue[index]!.version)"
+          :disabled="disabled"
+          class="flex-1 sm:w-36 sm:flex-none px-3 py-2 rounded-(--radius-btn) bg-(--color-primary) text-(--color-text) border border-(--color-contrast) focus:outline-none focus:border-(--color-active)"
+          :class="{
+            'border-(--color-danger)!': fieldError(`verifiers.${index}.version`),
+          }"
+          @change="
+            onVersionChange(
+              index,
+              ($event.target as HTMLSelectElement).value,
+            )
+          "
+        >
+          <option value="alltime">All Time</option>
+          <option v-if="currentVersion" value="current">
+            Current Version ({{ currentVersion }})
+          </option>
+        </select>
       </div>
     </template>
   </ListEditor>

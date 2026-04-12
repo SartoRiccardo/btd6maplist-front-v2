@@ -3,6 +3,7 @@ import { ref, computed } from "vue";
 import { useTouchedFields } from "@/composables/useTouchedFields";
 import { useEmitOnChange } from "@/composables/useEmitOnChange";
 import type { FormFieldError } from "@/services/api/formErrors";
+import type { User } from "@/services/api/users/types";
 import type { CreditsSlice } from "./types";
 import CreatorsInput from "./CreatorsInput.vue";
 import VerifiersInput from "./VerifiersInput.vue";
@@ -12,8 +13,15 @@ const props = withDefaults(
     modelValue: CreditsSlice;
     disabled?: boolean;
     externalErrors?: FormFieldError[];
+    initialCreatorUsers?: User[];
+    initialVerifierUsers?: User[];
   }>(),
-  { disabled: false, externalErrors: () => [] },
+  {
+    disabled: false,
+    externalErrors: () => [],
+    initialCreatorUsers: () => [],
+    initialVerifierUsers: () => [],
+  },
 );
 
 const emit = defineEmits<{
@@ -63,6 +71,7 @@ function externalErrorsFor(prefix: string): FormFieldError[] {
         :model-value="modelValue.creators"
         :disabled="disabled"
         :external-errors="externalErrorsFor('creators')"
+        :initial-users="initialCreatorUsers"
         @update:model-value="update({ creators: $event })"
         @errors="handleChildErrors('creators', $event)"
       />
@@ -75,6 +84,7 @@ function externalErrorsFor(prefix: string): FormFieldError[] {
         :model-value="modelValue.verifiers"
         :disabled="disabled"
         :external-errors="externalErrorsFor('verifiers')"
+        :initial-users="initialVerifierUsers"
         @update:model-value="update({ verifiers: $event })"
         @errors="handleChildErrors('verifiers', $event)"
       />

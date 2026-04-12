@@ -18,6 +18,7 @@ import {
   useDeleteMap,
 } from "@/services/api/maps/queries";
 import type { MapDetail } from "@/services/api/maps/types";
+import type { User } from "@/services/api/users/types";
 import Panel from "@/components/ui/Panel.vue";
 import Button from "@/components/ui/Button.vue";
 import MapForm from "@/components/maps/map-form/MapForm.vue";
@@ -76,7 +77,7 @@ function mapDetailToFormModel(map: MapDetail): MapFormModel {
     difficulty: map.difficulty,
     botb_difficulty: map.botb_difficulty,
     remake_of,
-    optimal_heros: map.optimal_heros ?? [],
+    optimal_heros: (map.optimal_heros ?? []).map((h) => h.toLowerCase()),
     creators: map.creators.map((c) => ({
       user_id: c.user_id,
       role: c.role,
@@ -89,12 +90,16 @@ function mapDetailToFormModel(map: MapDetail): MapFormModel {
 }
 
 const formModel = ref<MapFormModel | null>(null);
+const initialCreatorUsers = ref<User[]>([]);
+const initialVerifierUsers = ref<User[]>([]);
 
 watch(
   mapDetail,
   (map) => {
     if (map && !formModel.value) {
       formModel.value = mapDetailToFormModel(map);
+      initialCreatorUsers.value = map.creators.map((c) => c.user);
+      initialVerifierUsers.value = map.verifications.map((v) => v.user);
     }
   },
   { immediate: true },
@@ -198,6 +203,8 @@ async function handleDelete() {
         :disabled="busy"
         :external-errors="apiErrors"
         :editable-formats="editableFormats"
+        :initial-creator-users="initialCreatorUsers"
+        :initial-verifier-users="initialVerifierUsers"
         @errors="activeErrors = $event"
       />
 
