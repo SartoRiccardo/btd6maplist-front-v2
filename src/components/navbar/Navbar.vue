@@ -12,6 +12,11 @@ const authStore = useAuthStore();
 
 const allAdminLinks = [
   { name: 'Map Submissions', url: '/admin/submissions/maps', perms: [permissions.map.create] },
+  { name: 'Completion Submissions', url: '/admin/submissions/completions', perms: [permissions.completion.edit, permissions.completion.delete] },
+  { name: 'User List', url: '/admin/users', perms: [permissions.user.ban, permissions.user.create] },
+  { name: 'List Configuration', url: '/admin/config', perms: [permissions.config.edit, permissions.formatPresentation.edit] },
+  { name: 'Retro Maps', url: '/admin/lists', perms: [permissions.retroMap.create, permissions.retroMap.edit, permissions.retroMap.delete] },
+  { name: 'Hidden Maps', url: '/admin/maps', perms: [permissions.map.create, permissions.map.edit, permissions.map.delete] },
 ];
 
 const navItems = computed<NavItem[]>(() => {
