@@ -4,7 +4,6 @@ import { useRoute, useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 import { useFormats } from "@/services/api/formats/queries";
 import { useCreateMapSubmission } from "@/services/api/map-submissions/queries";
-import { useNKMapValidation } from "@/composables/useNKMapValidation";
 import { getFormatsMapIsIn } from "@/utils/formatBadges";
 import { permissions } from "@/constants/permissions";
 import { ApiError } from "@/services/api/client";
@@ -12,6 +11,9 @@ import { parseApiErrors, type FormFieldError } from "@/services/api/formErrors";
 import Panel from "@/components/ui/Panel.vue";
 import Button from "@/components/ui/Button.vue";
 import DiscordLoginButton from "@/components/navbar/DiscordLoginButton.vue";
+import MapCodeInput, {
+  type MapCodeValidation,
+} from "@/components/maps/MapCodeInput.vue";
 import SubmitMapForm, {
   type MapSubmissionFormModel,
 } from "@/components/maps/SubmitMapForm.vue";
@@ -35,27 +37,20 @@ const remakeOf = computed(() => {
 // --- Map code validation ---
 
 const codeInput = ref("");
-
-function extractMapCode(input: string): string {
-  const trimmed = input.trim();
-  // https://join.btd6.com/Map/ZFGLYDM
-  const joinMatch = trimmed.match(/join\.btd6\.com\/Map\/([A-Za-z]{7})/i);
-  if (joinMatch) return joinMatch[1]!.toUpperCase();
-  // https://data.ninjakiwi.com/btd6/maps/map/ZFMOOKU
-  const nkMatch = trimmed.match(/data\.ninjakiwi\.com\/btd6\/maps\/map\/([A-Za-z]{7})/i);
-  if (nkMatch) return nkMatch[1]!.toUpperCase();
-  return trimmed;
-}
-
-watch(codeInput, (val) => {
-  const extracted = extractMapCode(val);
-  if (extracted !== val) {
-    codeInput.value = extracted;
-  }
+const validation = ref<MapCodeValidation>({
+  nkMap: null,
+  nkError: null,
+  nkLoading: false,
+  maplistMap: null,
+  maplistLoading: false,
+  isCodeValid: false,
 });
 
-const { nkMap, nkError, nkLoading, maplistMap, maplistLoading, isCodeValid } =
-  useNKMapValidation(codeInput);
+const nkMap = computed(() => validation.value.nkMap);
+const nkLoading = computed(() => validation.value.nkLoading);
+const maplistMap = computed(() => validation.value.maplistMap);
+const maplistLoading = computed(() => validation.value.maplistLoading);
+const isCodeValid = computed(() => validation.value.isCodeValid);
 
 // --- Formats ---
 
@@ -207,32 +202,11 @@ async function handleSubmit() {
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6 items-stretch">
         <!-- Left: Code input panel -->
         <Panel class="sm:col-span-1 lg:col-span-2 flex flex-col">
-          <label for="map-code" class="block font-bold mb-2">Map Code</label>
-          <input
-            id="map-code"
+          <MapCodeInput
             v-model="codeInput"
-            type="text"
-            placeholder="ZFMOOKU"
             :disabled="busy"
-            class="w-full px-3 py-2 rounded-(--radius-btn) bg-(--color-primary) text-(--color-text) border border-(--color-contrast) focus:outline-none focus:border-(--color-active) uppercase"
+            @validation="validation = $event"
           />
-          <p class="text-(--color-text-muted) text-xs mt-1">You can also paste the full map share URL.</p>
-          <div class="mt-2 text-sm">
-            <p v-if="nkLoading" class="text-(--color-text-muted)">
-              <i class="bi bi-arrow-repeat animate-spin inline-block" />
-              Validating...
-            </p>
-            <p v-else-if="nkError" class="text-red-400">
-              {{ nkError }}
-            </p>
-            <p
-              v-else-if="nkMap && maplistLoading"
-              class="text-(--color-text-muted)"
-            >
-              <i class="bi bi-arrow-repeat animate-spin inline-block" />
-              Checking list status...
-            </p>
-          </div>
         </Panel>
 
         <!-- Right: Map preview -->
