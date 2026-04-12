@@ -6,18 +6,25 @@ import ImageLightbox from "@/components/common/ImageLightbox.vue";
 const props = withDefaults(
   defineProps<{
     modelValue: File | null;
+    initialUrl?: string;
     disabled?: boolean;
     placeholder?: string;
   }>(),
-  { disabled: false },
+  { initialUrl: "", disabled: false },
 );
 
 const emit = defineEmits<{
   "update:modelValue": [file: File | null];
+  "clear-initial-url": [];
   error: [message: string];
 }>();
 
 const lightboxRef = ref<InstanceType<typeof ImageLightbox> | null>(null);
+const initialUrlCleared = ref(false);
+
+const showInitialUrl = computed(
+  () => !props.modelValue && !!props.initialUrl && !initialUrlCleared.value,
+);
 
 const filesArray = computed(() => (props.modelValue ? [props.modelValue] : []));
 
@@ -39,6 +46,7 @@ function revokeUrl() {
 
 function onFilesChange(files: File[]) {
   revokeUrl();
+  initialUrlCleared.value = false;
   emit("update:modelValue", files[0] ?? null);
 }
 
@@ -47,12 +55,17 @@ function removeImage() {
   emit("update:modelValue", null);
 }
 
+function removeInitialUrl() {
+  initialUrlCleared.value = true;
+  emit("clear-initial-url");
+}
+
 onBeforeUnmount(revokeUrl);
 </script>
 
 <template>
   <div>
-    <!-- Image preview -->
+    <!-- File preview -->
     <div v-if="modelValue" class="flex justify-center">
       <div class="relative inline-block">
         <img
@@ -66,6 +79,26 @@ onBeforeUnmount(revokeUrl);
           type="button"
           class="absolute -top-2 -left-2 w-6 h-6 rounded-full bg-black/70 text-white flex items-center justify-center text-sm hover:bg-red-600 transition-colors cursor-pointer"
           @click="removeImage"
+        >
+          <i class="bi bi-x" />
+        </button>
+      </div>
+    </div>
+
+    <!-- Initial URL preview -->
+    <div v-else-if="showInitialUrl" class="flex justify-center">
+      <div class="relative inline-block">
+        <img
+          :src="initialUrl"
+          alt="Current image"
+          class="max-w-xs aspect-[4/3] object-cover rounded-(--radius-panel) cursor-zoom-in hover:opacity-80 transition-opacity"
+          @click="lightboxRef?.show(initialUrl)"
+        />
+        <button
+          v-if="!disabled"
+          type="button"
+          class="absolute -top-2 -left-2 w-6 h-6 rounded-full bg-black/70 text-white flex items-center justify-center text-sm hover:bg-red-600 transition-colors cursor-pointer"
+          @click="removeInitialUrl"
         >
           <i class="bi bi-x" />
         </button>

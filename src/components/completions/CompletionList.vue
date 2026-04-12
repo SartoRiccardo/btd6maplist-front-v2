@@ -73,7 +73,7 @@ function toggleDetail(id: number) {
 </script>
 
 <template>
-  <div v-if="showFilters" class="flex justify-end gap-1 mb-2">
+  <div v-if="showFilters && (completions.length > 0 || filterBB !== 'any' || filterNoGeraldo !== 'any' || filterLCC !== 'any')" class="flex justify-end gap-1 mb-2">
     <Button :active="filterBB === 'only'" title="Black Border" @click="toggleBB">
       <img src="/images/medals/medal_bb.webp" class="w-[24px] h-[24px]" />
     </Button>

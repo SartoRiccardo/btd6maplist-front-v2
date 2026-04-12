@@ -100,9 +100,11 @@ function childErrors(prefix: string): FormFieldError[] {
         </p>
         <ImageDrop
           :model-value="modelValue.custom_map_preview_file"
+          :initial-url="modelValue.map_preview_url"
           :disabled="disabled"
           placeholder="Drop image here or click to browse"
           @update:model-value="update({ custom_map_preview_file: $event })"
+          @clear-initial-url="update({ map_preview_url: '' })"
         />
         <p
           v-if="fieldError('custom_map_preview_file')"
