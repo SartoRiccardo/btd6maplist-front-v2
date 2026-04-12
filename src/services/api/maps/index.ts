@@ -88,18 +88,31 @@ function buildMapFormData(data: CreateMapRequest | UpdateMapRequest): FormData {
 
   if (data.optimal_heros) {
     for (const hero of data.optimal_heros) {
-      fd.append('optimal_heros', hero);
+      fd.append('optimal_heros[]', hero);
     }
   }
 
   if (data.aliases) {
     for (const alias of data.aliases) {
-      fd.append('aliases', alias);
+      fd.append('aliases[]', alias);
     }
   }
 
-  if (data.creators) fd.append('creators', JSON.stringify(data.creators));
-  if (data.verifiers) fd.append('verifiers', JSON.stringify(data.verifiers));
+  if (data.creators) {
+    for (let i = 0; i < data.creators.length; i++) {
+      const c = data.creators[i]!;
+      fd.append(`creators[${i}][user_id]`, c.user_id);
+      fd.append(`creators[${i}][role]`, c.role ?? '');
+    }
+  }
+
+  if (data.verifiers) {
+    for (let i = 0; i < data.verifiers.length; i++) {
+      const v = data.verifiers[i]!;
+      fd.append(`verifiers[${i}][user_id]`, v.user_id);
+      fd.append(`verifiers[${i}][version]`, v.version != null ? v.version.toString() : '');
+    }
+  }
 
   return fd;
 }
