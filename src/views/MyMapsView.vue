@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
 import { useAuthStore } from '@/stores/auth';
-import { useMapSubmissions } from '@/services/api/map-submissions/queries';
+import { useMapSubmissions, useDeleteMapSubmission } from '@/services/api/map-submissions/queries';
 import LinkButton from '@/components/ui/LinkButton.vue';
 import MapSubmissionRow from '@/components/map-submissions/MapSubmissionRow.vue';
 import Pagination from '@/components/ui/Pagination.vue';
+import Button from '@/components/ui/Button.vue';
+import ConfirmModal from '@/components/common/ConfirmModal.vue';
 
 const auth = useAuthStore();
 const page = ref(1);
+const confirmModal = ref<InstanceType<typeof ConfirmModal>>();
 
 const { data: submissions, isLoading } = useMapSubmissions(
   computed(() => {
@@ -25,6 +28,14 @@ const cachedMeta = ref(submissions.value?.meta);
 watch(() => submissions.value?.meta, (meta) => {
   if (meta) cachedMeta.value = meta;
 });
+
+const deleteMutation = useDeleteMapSubmission();
+
+async function confirmDelete(id: number) {
+  const confirmed = await confirmModal.value?.confirm();
+  if (!confirmed) return;
+  deleteMutation.mutate(id);
+}
 </script>
 
 <template>
@@ -56,7 +67,16 @@ watch(() => submissions.value?.meta, (meta) => {
         :key="submission.id"
         :submission="submission"
         hide-submitter
-      />
+      >
+        <template #buttons>
+          <Button
+            :disabled="submission.status !== 'pending'"
+            @click="confirmDelete(submission.id)"
+          >
+            <i class="bi bi-trash-fill" />
+          </Button>
+        </template>
+      </MapSubmissionRow>
     </template>
 
     <p v-else class="text-center text-(--color-text-muted)">
@@ -70,5 +90,9 @@ watch(() => submissions.value?.meta, (meta) => {
       :disabled="isLoading"
       @update:current-page="page = $event"
     />
+
+    <ConfirmModal ref="confirmModal">
+      <p class="text-center mb-0">Do you want to delete your submission?</p>
+    </ConfirmModal>
   </div>
 </template>

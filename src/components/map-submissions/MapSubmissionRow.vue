@@ -24,9 +24,6 @@ const props = withDefaults(
   },
 );
 
-const emit = defineEmits<{
-  delete: [];
-}>();
 
 const { data: nkMap } = useQuery({
   queryKey: computed(() => ["nk", "map", props.submission.code]),
@@ -129,9 +126,7 @@ const createdOn = computed(() => {
         <Button @click="lightbox?.show(submission.completion_proof)">
           <i class="bi bi-search" />
         </Button>
-        <Button v-if="submission.status === 'pending'" @click="emit('delete')">
-          <i class="bi bi-trash-fill" />
-        </Button>
+        <slot name="buttons" />
       </div>
     </div>
 
