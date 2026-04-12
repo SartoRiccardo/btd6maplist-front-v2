@@ -4,7 +4,7 @@ import { useTouchedProvider } from "@/composables/useTouchedFields";
 import { useEmitOnChange } from "@/composables/useEmitOnChange";
 import type { FormFieldError } from "@/services/api/formErrors";
 import type {
-  NewMapFormModel,
+  MapFormModel,
   MapInfoSlice,
   ListPlacementSlice,
   CreditsSlice,
@@ -15,7 +15,7 @@ import CreditsSection from "./CreditsSection.vue";
 
 const props = withDefaults(
   defineProps<{
-    modelValue: NewMapFormModel;
+    modelValue: MapFormModel;
     disabled?: boolean;
     externalErrors?: FormFieldError[];
     editableFormats: number[];
@@ -24,7 +24,7 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{
-  (e: "update:modelValue", value: NewMapFormModel): void;
+  (e: "update:modelValue", value: MapFormModel): void;
   (e: "errors", value: FormFieldError[]): void;
 }>();
 

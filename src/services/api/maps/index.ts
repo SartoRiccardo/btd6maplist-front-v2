@@ -136,3 +136,12 @@ export async function updateMap(code: string, data: UpdateMapRequest): Promise<v
     body: buildMapFormData(data),
   });
 }
+
+/**
+ * DELETE /maps/{code}
+ */
+export async function deleteMap(code: string): Promise<void> {
+  return apiRequest<void>(`${BASE_PATH}/${code}`, {
+    method: 'DELETE',
+  });
+}

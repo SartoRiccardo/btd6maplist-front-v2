@@ -1,6 +1,6 @@
 import { computed, toValue, type MaybeRefOrGetter } from 'vue';
 import { useQuery, useMutation, type UseQueryOptions } from '@tanstack/vue-query';
-import { getMaps, getMap, createMap, updateMap } from './index';
+import { getMaps, getMap, createMap, updateMap, deleteMap } from './index';
 import type {
   MapWithMetadata, MapDetail, MaybeGhostMap,
   GetMapsParams, GetMapParams,
@@ -68,5 +68,14 @@ export function useCreateMap() {
 export function useUpdateMap() {
   return useMutation<void, Error, { code: string; data: UpdateMapRequest }>({
     mutationFn: ({ code, data }) => updateMap(code, data),
+  });
+}
+
+/**
+ * Mutation hook to delete a map (DELETE /maps/{code})
+ */
+export function useDeleteMap() {
+  return useMutation<void, Error, string>({
+    mutationFn: deleteMap,
   });
 }

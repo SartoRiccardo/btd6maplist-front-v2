@@ -44,12 +44,12 @@ export interface CreditsSlice {
   verifiers: VerifierEntry[];
 }
 
-export interface NewMapFormModel
+export interface MapFormModel
   extends MapInfoSlice,
     ListPlacementSlice,
     CreditsSlice {}
 
-export function createDefaultFormModel(): NewMapFormModel {
+export function createDefaultFormModel(): MapFormModel {
   return {
     name: '',
     map_preview_url: '',

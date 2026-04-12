@@ -18,11 +18,11 @@ import Button from "@/components/ui/Button.vue";
 import MapCodeInput, {
   type MapCodeValidation,
 } from "@/components/maps/MapCodeInput.vue";
-import NewMapForm from "@/components/maps/new-map-form/NewMapForm.vue";
+import MapForm from "@/components/maps/map-form/MapForm.vue";
 import {
   createDefaultFormModel,
-  type NewMapFormModel,
-} from "@/components/maps/new-map-form/types";
+  type MapFormModel,
+} from "@/components/maps/map-form/types";
 
 const route = useRoute();
 const router = useRouter();
@@ -61,9 +61,13 @@ const validation = ref<MapCodeValidation>({
 });
 
 const nkMap = computed(() => validation.value.nkMap);
+const maplistMap = computed(() => validation.value.maplistMap);
 const isCodeValid = computed(() => validation.value.isCodeValid);
 const isDataReady = computed(
   () => isCodeValid.value && !validation.value.maplistLoading,
+);
+const alreadyExists = computed(
+  () => isDataReady.value && maplistMap.value != null,
 );
 
 // --- Editable formats ---
@@ -82,7 +86,7 @@ const editableFormats = computed(() =>
 
 // --- Form state ---
 
-const formModel = ref<NewMapFormModel>(createDefaultFormModel());
+const formModel = ref<MapFormModel>(createDefaultFormModel());
 
 // Prefill name from NK map data
 watch(
@@ -129,7 +133,7 @@ watch(
 // --- Submission ---
 
 const createMutation = useCreateMap();
-const formRef = ref<InstanceType<typeof NewMapForm> | null>(null);
+const formRef = ref<InstanceType<typeof MapForm> | null>(null);
 const apiErrors = ref<FormFieldError[]>([]);
 const activeErrors = ref<FormFieldError[]>([]);
 const submitError = ref<string | null>(null);
@@ -232,9 +236,20 @@ async function handleSubmit() {
       </div>
     </div>
 
-    <!-- Form (shown when code is valid and data is ready) -->
-    <Panel v-if="isDataReady">
-      <NewMapForm
+    <!-- Map already exists -->
+    <Panel v-if="alreadyExists" class="text-center py-8">
+      <p class="text-lg font-bold mb-3">This map already exists!</p>
+      <router-link
+        :to="`/map/${maplistMap!.code}/edit`"
+        class="text-(--color-highlight) hover:underline"
+      >
+        Edit {{ maplistMap!.name }}
+      </router-link>
+    </Panel>
+
+    <!-- Form (shown when code is valid, data is ready, and map doesn't exist) -->
+    <Panel v-else-if="isDataReady">
+      <MapForm
         ref="formRef"
         v-model="formModel"
         :disabled="busy"
@@ -243,7 +258,7 @@ async function handleSubmit() {
         @errors="activeErrors = $event"
       />
 
-      <p v-if="submitError" class="text-red-400 text-sm mt-3">
+      <p v-if="submitError" class="text-(--color-danger) text-sm mt-3">
         {{ submitError }}
       </p>
 
