@@ -1,23 +1,47 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { RouterLink } from 'vue-router';
 import DesktopNavbar from './DesktopNavbar.vue';
 import MobileNav from './MobileNav.vue';
 import { FORMAT_ICONS } from '@/constants/formats';
+import { permissions } from '@/constants/permissions';
+import { useAuthStore } from '@/stores/auth';
 import type { NavItem } from './types';
 
-const navItems: NavItem[] = [
-  {
-    name: 'Leaderboard',
-    url: '/leaderboard',
-  },
-  {
-    children: FORMAT_ICONS
-      .filter((f) => f.slug)
-      .map((f) => ({ icon_url: f.image, name: f.name, url: `/maps/${f.slug}` })),
-    name: 'Maps',
-  },
+const authStore = useAuthStore();
+
+const allAdminLinks = [
+  { name: 'Map Submissions', url: '/admin/submissions/maps', perms: [permissions.map.create] },
 ];
+
+const navItems = computed<NavItem[]>(() => {
+  const items: NavItem[] = [];
+  const userPerms = authStore.user?.permissions;
+  const visibleAdminLinks = userPerms
+    ? allAdminLinks.filter((link) =>
+        link.perms.some((p) => (userPerms[p]?.length ?? 0) > 0),
+      )
+    : [];
+  if (visibleAdminLinks.length > 0) {
+    items.push({
+      name: 'Admin',
+      children: visibleAdminLinks.map(({ name, url }) => ({ name, url })),
+    });
+  }
+  items.push(
+    {
+      name: 'Leaderboard',
+      url: '/leaderboard',
+    },
+    {
+      children: FORMAT_ICONS
+        .filter((f) => f.slug)
+        .map((f) => ({ icon_url: f.image, name: f.name, url: `/maps/${f.slug}` })),
+      name: 'Maps',
+    },
+  );
+  return items;
+});
 
 const isMobileMenuOpen = ref(false);
 
