@@ -42,6 +42,9 @@ const validation = ref<MapCodeValidation>({
 
 const nkMap = computed(() => validation.value.nkMap);
 const isCodeValid = computed(() => validation.value.isCodeValid);
+const isDataReady = computed(
+  () => isCodeValid.value && !validation.value.maplistLoading,
+);
 </script>
 
 <template>
@@ -86,7 +89,7 @@ const isCodeValid = computed(() => validation.value.isCodeValid);
     </div>
 
     <!-- Form skeleton (shown when code is valid) -->
-    <Panel v-if="isCodeValid">
+    <Panel v-if="isDataReady">
       <!-- Form fields will go here -->
     </Panel>
   </div>
