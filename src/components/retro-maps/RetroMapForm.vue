@@ -8,6 +8,7 @@ import ImageDrop from "@/components/ui/ImageDrop.vue";
 
 export interface RetroMapFormModel {
   name: string;
+  sort_order: number;
   retro_game_id: number | null;
   preview_url: string;
   preview_file: File | null;
@@ -102,6 +103,26 @@ function formatGameOption(game: (typeof retroGameOptions.value)[number]): string
         </p>
       </div>
 
+      <!-- Sort Order -->
+      <div>
+        <label for="retro-map-sort-order" class="block font-bold mb-2">Sort Order</label>
+        <input
+          id="retro-map-sort-order"
+          type="number"
+          :value="modelValue.sort_order"
+          :disabled="disabled"
+          class="w-full px-3 py-2 rounded-(--radius-btn) bg-(--color-primary) text-(--color-text) border border-(--color-contrast) focus:outline-none focus:border-(--color-active)"
+          :class="{ 'border-(--color-danger)!': fieldError('sort_order') }"
+          @input="update({ sort_order: Number(($event.target as HTMLInputElement).value) })"
+        />
+        <p v-if="fieldError('sort_order')" class="text-(--color-danger) text-sm mt-1">
+          {{ fieldError("sort_order") }}
+        </p>
+        <p v-else class="text-(--color-text-muted) text-sm mt-1">
+          yeah this is terrible UX, but for now this is what you get
+        </p>
+      </div>
+
       <!-- Retro Game -->
       <div>
         <label for="retro-game" class="block font-bold mb-2">Retro Game</label>
@@ -145,6 +166,9 @@ function formatGameOption(game: (typeof retroGameOptions.value)[number]): string
         @update:model-value="update({ preview_file: $event })"
         @clear-initial-url="update({ preview_url: '' })"
       />
+      <p v-if="fieldError('preview_url') || fieldError('preview_file')" class="text-(--color-danger) text-sm mt-1">
+        {{ fieldError("preview_url") ?? fieldError("preview_file") }}
+      </p>
     </div>
   </div>
 </template>

@@ -51,9 +51,15 @@ export async function getRetroMap(id: number): Promise<RetroMap> {
 export async function createRetroMap(
   data: CreateRetroMapRequest,
 ): Promise<CreateRetroMapResponse> {
+  const fd = new FormData();
+  fd.append("name", data.name);
+  fd.append("sort_order", data.sort_order.toString());
+  fd.append("retro_game_id", data.retro_game_id.toString());
+  if (data.preview_file) fd.append("preview_file", data.preview_file);
+  if (data.preview_url != null) fd.append("preview_url", data.preview_url);
   return apiRequest<CreateRetroMapResponse>(BASE_PATH, {
     method: "POST",
-    body: JSON.stringify(data),
+    body: fd,
   });
 }
 

@@ -24,6 +24,7 @@ const { data: retroMap, isLoading } = useRetroMap(id);
 
 const formModel = ref<RetroMapFormModel>({
   name: "",
+  sort_order: 0,
   retro_game_id: null,
   preview_url: "",
   preview_file: null,
@@ -38,6 +39,7 @@ watch(
       formInitialized = true;
       formModel.value = {
         name: map.name,
+        sort_order: map.sort_order,
         retro_game_id: map.retro_game_id,
         preview_url: map.preview_url,
         preview_file: null,
@@ -70,7 +72,7 @@ async function handleSave() {
       id,
       data: {
         name: formModel.value.name,
-        sort_order: retroMap.value.sort_order,
+        sort_order: formModel.value.sort_order,
         retro_game_id: formModel.value.retro_game_id!,
         preview_url: formModel.value.preview_url,
         preview_file: formModel.value.preview_file ?? undefined,

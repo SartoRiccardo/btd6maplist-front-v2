@@ -7,6 +7,7 @@ import { NP_DIFFICULTIES } from "@/constants/difficulties";
 import { RouterLink } from "vue-router";
 import Pagination from "@/components/ui/Pagination.vue";
 import Badge from "@/components/common/Badge.vue";
+import Button from "@/components/ui/Button.vue";
 
 const page = ref(1);
 const search = ref("");
@@ -108,6 +109,12 @@ function gameIcon(gameId: number): string | undefined {
           {{ opt.label }}
         </option>
       </select>
+    </div>
+
+    <div class="flex justify-end mb-4">
+      <RouterLink to="/admin/retro-maps/new">
+        <Button>+ Add Retro Map</Button>
+      </RouterLink>
     </div>
 
     <div v-if="isLoading" class="flex justify-center">

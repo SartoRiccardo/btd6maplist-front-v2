@@ -95,6 +95,11 @@ const routes: RouteRecordRaw[] = [
     path: "/admin/retro-maps",
   },
   {
+    component: () => import("@/views/admin/AdminRetroMapNewView.vue"),
+    name: "AdminRetroMapNew",
+    path: "/admin/retro-maps/new",
+  },
+  {
     component: () => import("@/views/admin/AdminRetroMapDetailView.vue"),
     name: "AdminRetroMapDetail",
     path: "/admin/retro-maps/:id",

@@ -15,7 +15,8 @@ export interface GetRetroMapParams {
 export interface CreateRetroMapRequest {
   name: string;
   sort_order: number;
-  preview_url: string;
+  preview_url?: string;
+  preview_file?: File;
   retro_game_id: number;
 }
 
