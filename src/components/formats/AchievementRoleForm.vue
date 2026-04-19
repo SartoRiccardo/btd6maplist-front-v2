@@ -6,7 +6,7 @@ import type { FormFieldError } from "@/services/api/formErrors";
 import { LEADERBOARD_VALUES } from "@/constants/formats";
 import { DEFAULT_AVATAR_URL, DEFAULT_BANNER_URL } from "@/constants/user";
 import BoxedCheckbox from "@/components/ui/BoxedCheckbox.vue";
-import Button from "@/components/ui/Button.vue";
+import DiscordRolesEditor from "./DiscordRolesEditor.vue";
 
 export interface AchievementRoleFormModel {
   lb_type: string;
@@ -41,36 +41,9 @@ function update(partial: Partial<AchievementRoleFormModel>) {
   emit("update:modelValue", { ...props.modelValue, ...partial });
 }
 
-function addDiscordRole() {
+function updateDiscordRoles(val: AchievementRoleFormModel["discord_roles"]) {
   touch("discord_roles");
-  emit("update:modelValue", {
-    ...props.modelValue,
-    discord_roles: [
-      ...props.modelValue.discord_roles,
-      { guild_id: "", role_id: "" },
-    ],
-  });
-}
-
-function removeDiscordRole(index: number) {
-  touch("discord_roles");
-  emit("update:modelValue", {
-    ...props.modelValue,
-    discord_roles: props.modelValue.discord_roles.filter((_, i) => i !== index),
-  });
-}
-
-function updateDiscordRole(
-  index: number,
-  partial: { guild_id?: string; role_id?: string },
-) {
-  touch("discord_roles");
-  emit("update:modelValue", {
-    ...props.modelValue,
-    discord_roles: props.modelValue.discord_roles.map((r, i) =>
-      i === index ? { ...r, ...partial } : r,
-    ),
-  });
+  emit("update:modelValue", { ...props.modelValue, discord_roles: val });
 }
 
 const ownErrors = computed<FormFieldError[]>(() => {
@@ -304,53 +277,13 @@ const errorClass = "border-(--color-danger)!";
 
     <!-- Discord roles -->
     <div>
-      <h2 class="font-['Luckiest_Guy'] text-2xl text-center pt-4">
-        Discord Roles
-      </h2>
+      <h2 class="font-['Luckiest_Guy'] text-2xl text-center pt-4">Discord Roles</h2>
       <hr class="border-(--color-contrast) mb-4" />
-      <div class="flex flex-col gap-2">
-        <div
-          v-for="(dr, i) in modelValue.discord_roles"
-          :key="i"
-          class="flex items-center gap-2"
-        >
-          <input
-            type="text"
-            placeholder="Guild ID"
-            :value="dr.guild_id"
-            :disabled="disabled"
-            :class="[inputClass, 'flex-1']"
-            @input="
-              updateDiscordRole(i, {
-                guild_id: ($event.target as HTMLInputElement).value,
-              })
-            "
-          />
-          <input
-            type="text"
-            placeholder="Role ID"
-            :value="dr.role_id"
-            :disabled="disabled"
-            :class="[inputClass, 'flex-1']"
-            @input="
-              updateDiscordRole(i, {
-                role_id: ($event.target as HTMLInputElement).value,
-              })
-            "
-          />
-          <button
-            v-if="!disabled"
-            type="button"
-            class="text-(--color-text-muted) hover:text-red-400 transition-colors cursor-pointer"
-            @click="removeDiscordRole(i)"
-          >
-            <i class="bi bi-trash" />
-          </button>
-        </div>
-        <Button v-if="!disabled" @click="addDiscordRole">
-          <i class="bi bi-plus-lg" /> Add Discord Role
-        </Button>
-      </div>
+      <DiscordRolesEditor
+        :model-value="modelValue.discord_roles"
+        :disabled="disabled"
+        @update:model-value="updateDiscordRoles"
+      />
     </div>
   </div>
 </template>
