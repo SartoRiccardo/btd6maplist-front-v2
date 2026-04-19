@@ -1,5 +1,26 @@
 import type { Map } from "@/services/api/maps/types";
 
+export interface UpdateFormatRequest {
+  name: string;
+  hidden: boolean;
+  run_submission_status: "closed" | "open" | "lcc_only";
+  map_submission_status: "closed" | "open" | "open_chimps";
+  emoji?: string | null;
+  proposed_difficulties?: unknown[] | null;
+  is_no_geraldo_enabled?: boolean | null;
+  map_submission_wh?: string | null;
+  run_submission_wh?: string | null;
+  slug?: string | null;
+  description?: string | null;
+  button_text?: string | null;
+  preview_map_1_code?: string | null;
+  preview_map_2_code?: string | null;
+  preview_map_3_code?: string | null;
+  map_submission_rules?: string | null;
+  completion_submission_rules?: string | null;
+  discord_server_url?: string | null;
+}
+
 export interface Format {
   id: number;
   name: string;

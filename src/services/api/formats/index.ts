@@ -1,14 +1,17 @@
-import type { Format } from "./types";
+import type { Format, UpdateFormatRequest } from "./types";
 import type { PaginatedResponse } from "@/services/api/common/types";
-import { apiRequest } from "../client";
+import { api } from "../client";
 
 const BASE_PATH = "/api/formats";
 
-/**
- * GET /formats
- *
- * Fetch all formats (paginated, defaults to 100 per page).
- */
 export async function getFormats(): Promise<PaginatedResponse<Format>> {
-  return apiRequest<PaginatedResponse<Format>>(BASE_PATH);
+  return api.get<PaginatedResponse<Format>>(BASE_PATH);
+}
+
+export async function getFormat(id: number): Promise<Format> {
+  return api.get<Format>(`${BASE_PATH}/${id}`);
+}
+
+export async function updateFormat(id: number, data: UpdateFormatRequest): Promise<void> {
+  return api.put<void>(`${BASE_PATH}/${id}`, data);
 }
