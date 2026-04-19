@@ -121,7 +121,11 @@ watch(
   (cfg) => {
     if (cfg && !formInitialized) {
       formInitialized = true;
-      formModel.value = { ...(cfg as unknown as Record<string, number>) };
+      const raw = cfg as unknown as Record<string, number>;
+      formModel.value = {
+        ...raw,
+        current_btd6_ver: raw["current_btd6_ver"]! / 10,
+      };
     }
   },
   { immediate: true },
@@ -140,7 +144,7 @@ const miscCategory = computed<ConfigCategoryDef>(() => ({
   id: "miscellaneous",
   label: "Miscellaneous",
   fields: [
-    { key: "current_btd6_ver", label: "Current BTD6 Version" },
+    { key: "current_btd6_ver", label: "Current BTD6 Version", step: 0.1 },
     ...extraMiscFields.value,
   ],
 }));
@@ -158,7 +162,10 @@ const isBusy = ref(false);
 async function handleSave() {
   isBusy.value = true;
   try {
-    await saveConfig(formModel.value as never);
+    await saveConfig({
+      ...formModel.value,
+      current_btd6_ver: Math.round(formModel.value["current_btd6_ver"]! * 10),
+    } as never);
     toast.success("Config saved successfully.");
   } catch (error: unknown) {
     toast.error(
