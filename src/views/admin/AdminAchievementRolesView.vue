@@ -13,7 +13,6 @@ import type { AchievementRole } from "@/services/api/achievement-roles/types";
 import { permissions } from "@/constants/permissions";
 import { LEADERBOARD_VALUES } from "@/constants/formats";
 import { intToHex } from "@/utils/colors";
-import { ApiError } from "@/services/api/client";
 import { toast } from "vue-sonner";
 import Button from "@/components/ui/Button.vue";
 import ConfirmModal from "@/components/common/ConfirmModal.vue";
@@ -79,39 +78,20 @@ const confirmRef = ref<InstanceType<typeof ConfirmModal> | null>(null);
 const isBusy = ref(false);
 
 async function handleAdd(lbType: string) {
-  const request = await modalRef.value?.openModal(undefined, lbType);
-  if (!request) return;
-  isBusy.value = true;
-  try {
-    await createRole(request);
-    toast.success("Role created.");
-  } catch (e) {
-    toast.error(
-      e instanceof ApiError
-        ? "Failed to create role."
-        : "Something went wrong.",
-    );
-  } finally {
-    isBusy.value = false;
-  }
+  const ok = await modalRef.value?.openModal(
+    (data) => createRole(data),
+    undefined,
+    lbType,
+  );
+  if (ok) toast.success("Role created.");
 }
 
 async function handleEdit(role: AchievementRole) {
-  const request = await modalRef.value?.openModal(role);
-  if (!request) return;
-  isBusy.value = true;
-  try {
-    await updateRole({ id: role.id, data: request });
-    toast.success("Role updated.");
-  } catch (e) {
-    toast.error(
-      e instanceof ApiError
-        ? "Failed to update role."
-        : "Something went wrong.",
-    );
-  } finally {
-    isBusy.value = false;
-  }
+  const ok = await modalRef.value?.openModal(
+    (data) => updateRole({ id: role.id, data }),
+    role,
+  );
+  if (ok) toast.success("Role updated.");
 }
 
 async function handleDelete(role: AchievementRole) {

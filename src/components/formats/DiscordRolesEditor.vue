@@ -25,18 +25,34 @@ const emit = defineEmits<{
 const { data: guildsRaw, isLoading: guildsLoading } = useDiscordGuilds();
 const guilds = computed(() => (guildsRaw.value ?? []).filter(canManageRoles));
 
+// Roles in guilds the user is not in — always preserved in the API call
+const hiddenRoles = computed(() => {
+  if (!guildsRaw.value) return [];
+  const knownIds = new Set(guildsRaw.value.map((g) => g.id));
+  return props.modelValue.filter((r) => r.guild_id && !knownIds.has(r.guild_id));
+});
+
+const visibleRoles = computed(() => {
+  if (!guildsRaw.value) return props.modelValue;
+  const knownIds = new Set(guildsRaw.value.map((g) => g.id));
+  return props.modelValue.filter((r) => !r.guild_id || knownIds.has(r.guild_id));
+});
+
+function emitVisible(visible: DiscordRoleEntry[]) {
+  emit("update:modelValue", [...hiddenRoles.value, ...visible]);
+}
+
 function add() {
-  emit("update:modelValue", [...props.modelValue, { guild_id: "", role_id: "" }]);
+  emitVisible([...visibleRoles.value, { guild_id: "", role_id: "" }]);
 }
 
 function remove(index: number) {
-  emit("update:modelValue", props.modelValue.filter((_, i) => i !== index));
+  emitVisible(visibleRoles.value.filter((_, i) => i !== index));
 }
 
 function updateEntry(index: number, partial: Partial<DiscordRoleEntry>) {
-  emit(
-    "update:modelValue",
-    props.modelValue.map((r, i) => (i === index ? { ...r, ...partial } : r)),
+  emitVisible(
+    visibleRoles.value.map((r, i) => (i === index ? { ...r, ...partial } : r)),
   );
 }
 
@@ -47,7 +63,7 @@ const inputClass =
 <template>
   <div class="flex flex-col gap-2">
     <div
-      v-for="(entry, i) in modelValue"
+      v-for="(entry, i) in visibleRoles"
       :key="i"
       class="flex items-center gap-2"
     >
@@ -78,6 +94,10 @@ const inputClass =
         <i class="bi bi-trash" />
       </button>
     </div>
+
+    <p v-if="hiddenRoles.length" class="text-(--color-text-muted) text-sm">
+      +{{ hiddenRoles.length }} role{{ hiddenRoles.length !== 1 ? "s" : "" }} in servers you are not in
+    </p>
 
     <Button v-if="!disabled" @click="add">
       <i class="bi bi-plus-lg" /> Add Discord Role

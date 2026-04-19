@@ -5,6 +5,8 @@ import type {
   UpsertAchievementRoleRequest,
 } from "@/services/api/achievement-roles/types";
 import type { FormFieldError } from "@/services/api/formErrors";
+import { parseApiErrors } from "@/services/api/formErrors";
+import { ApiError } from "@/services/api/client";
 import { intToHex, hexToInt } from "@/utils/colors";
 import Button from "@/components/ui/Button.vue";
 import AchievementRoleForm, {
@@ -15,8 +17,10 @@ const props = defineProps<{ formatId: number }>();
 
 const open = ref(false);
 const isEdit = ref(false);
-const resolvePromise = ref<
-  ((value: UpsertAchievementRoleRequest | null) => void) | null
+const saving = ref(false);
+const resolvePromise = ref<((value: boolean) => void) | null>(null);
+const submitFn = ref<
+  ((data: UpsertAchievementRoleRequest) => Promise<unknown>) | null
 >(null);
 
 const formRef = ref<InstanceType<typeof AchievementRoleForm> | null>(null);
@@ -66,33 +70,48 @@ function toRequest(): UpsertAchievementRoleRequest {
 }
 
 function openModal(
+  submit: (data: UpsertAchievementRoleRequest) => Promise<unknown>,
   role?: AchievementRole,
   defaultLbType = "",
-): Promise<UpsertAchievementRoleRequest | null> {
+): Promise<boolean> {
   isEdit.value = !!role;
   formModel.value = role ? fromRole(role) : emptyModel(defaultLbType);
   apiErrors.value = [];
+  submitFn.value = submit;
   open.value = true;
   return new Promise((resolve) => {
     resolvePromise.value = resolve;
   });
 }
 
-function respond(value: UpsertAchievementRoleRequest | null) {
+function close(success: boolean) {
   open.value = false;
-  resolvePromise.value?.(value);
+  resolvePromise.value?.(success);
   resolvePromise.value = null;
+  submitFn.value = null;
 }
 
 async function handleSave() {
-  if (!formRef.value) return;
+  if (!formRef.value || !submitFn.value) return;
   await formRef.value.touchAll();
   if (activeErrors.value.length > 0) return;
-  respond(toRequest());
+
+  saving.value = true;
+  try {
+    await submitFn.value(toRequest());
+    close(true);
+  } catch (e) {
+    if (e instanceof ApiError) {
+      apiErrors.value = parseApiErrors(e);
+      await formRef.value.clearTouched();
+    }
+  } finally {
+    saving.value = false;
+  }
 }
 
 function onKeydown(e: KeyboardEvent) {
-  if (e.key === "Escape") respond(null);
+  if (e.key === "Escape" && !saving.value) close(false);
 }
 
 watch(open, (isOpen) => {
@@ -109,7 +128,7 @@ defineExpose({ openModal });
       <div
         v-if="open"
         class="fixed inset-0 z-50 flex items-center justify-center"
-        @click="respond(null)"
+        @click="!saving && close(false)"
       >
         <div class="absolute inset-0 bg-black/80" />
         <div
@@ -124,14 +143,17 @@ defineExpose({ openModal });
             <AchievementRoleForm
               ref="formRef"
               v-model="formModel"
+              :disabled="saving"
               :external-errors="apiErrors"
               @errors="activeErrors = $event"
             />
           </div>
 
           <div class="flex justify-end gap-3 mt-4">
-            <Button @click="respond(null)">Cancel</Button>
-            <Button active @click="handleSave">Save</Button>
+            <Button :disabled="saving" @click="close(false)">Cancel</Button>
+            <Button active :disabled="saving" @click="handleSave">
+              {{ saving ? "Saving..." : "Save" }}
+            </Button>
           </div>
         </div>
       </div>

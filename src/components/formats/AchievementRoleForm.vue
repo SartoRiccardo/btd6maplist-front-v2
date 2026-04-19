@@ -187,6 +187,9 @@ const errorClass = "border-(--color-danger)!";
           label="First place only"
           @update:model-value="update({ for_first: $event })"
         />
+        <p v-if="fieldError('for_first')" class="text-(--color-danger) text-xs mt-1">
+          {{ fieldError("for_first") }}
+        </p>
       </div>
 
       <!-- colors -->
