@@ -5,10 +5,12 @@ import { calcMapPoints } from "@/utils/points";
 
 const props = defineProps<{
   placement: number;
-  config: Config;
+  config?: Config;
 }>();
 
-const points = computed(() => calcMapPoints(props.placement, props.config));
+const points = computed(() =>
+  props.config != null ? calcMapPoints(props.placement, props.config) : null,
+);
 </script>
 
 <template>
@@ -17,7 +19,10 @@ const points = computed(() => calcMapPoints(props.placement, props.config));
   >
     <p class="relative text-2xl md:text-[2rem] my-0 leading-none pt-2">
       #{{ placement }}
-      <span class="absolute w-full left-0 bottom-[-0.7rem] text-[1.1rem]">
+      <span
+        v-if="points != null"
+        class="absolute w-full left-0 bottom-[-0.7rem] text-[1.1rem]"
+      >
         {{ points }}<span class="ml-0.5">pt</span>
       </span>
     </p>

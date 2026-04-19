@@ -28,6 +28,7 @@ function buildMapsParams(params?: GetMapsParams): string {
   if (params.per_page != null)
     searchParams.set("per_page", params.per_page.toString());
   if (params.deleted != null) searchParams.set("deleted", params.deleted);
+  if (params.sort_by != null) searchParams.set("sort_by", params.sort_by);
   if (params.created_by != null)
     searchParams.set("created_by", params.created_by.toString());
   if (params.verified_by != null)

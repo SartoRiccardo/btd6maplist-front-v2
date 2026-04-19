@@ -75,7 +75,8 @@ export interface GetMapsParams {
   fill_missing_retro?: boolean;
   page?: number;
   per_page?: number;
-  deleted?: FilterOption;
+  deleted?: FilterOption | "only_or_hidden";
+  sort_by?: string;
   created_by?: number | string;
   verified_by?: number;
   include?: string;

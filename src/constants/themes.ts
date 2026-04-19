@@ -19,7 +19,7 @@ export interface Theme {
 export const themes: Theme[] = [
   {
     id: "deep-ocean",
-    name: "Cool epic",
+    name: "Newgen Wonder",
     colors: {
       primary: "#0d1b2a",
       secondary: "#1b3a5c",
