@@ -23,6 +23,7 @@ import {
   createDefaultFormModel,
   type MapFormModel,
 } from "@/components/maps/map-form/types";
+import type { User } from "@/services/api/users/types";
 
 const route = useRoute();
 const router = useRouter();
@@ -36,6 +37,11 @@ const codeInput = ref(
 
 const prefilledCreatorId = computed(() => {
   const val = route.query["creator_id"];
+  return typeof val === "string" ? val : null;
+});
+
+const prefilledCreatorName = computed(() => {
+  const val = route.query["creator_name"];
   return typeof val === "string" ? val : null;
 });
 
@@ -87,6 +93,7 @@ const editableFormats = computed(() =>
 // --- Form state ---
 
 const formModel = ref<MapFormModel>(createDefaultFormModel());
+const initialCreatorUsers = ref<User[]>([]);
 
 // Prefill name from NK map data
 watch(
@@ -104,13 +111,18 @@ watch(
 
 // Prefill creator from query param
 watch(
-  prefilledCreatorId,
-  (id) => {
-    if (id) {
+  [prefilledCreatorId, prefilledCreatorName],
+  ([discord_id, name]) => {
+    if (discord_id && name) {
       formModel.value = {
         ...formModel.value,
-        creators: [{ user_id: id, role: null }],
+        creators: [{ user_id: discord_id, role: null }],
       };
+      initialCreatorUsers.value = [
+        { discord_id, name, is_banned: false, roles: [] },
+      ];
+    } else {
+      initialCreatorUsers.value = [];
     }
   },
   { immediate: true },
@@ -172,7 +184,9 @@ async function handleSubmit() {
         .filter((v) => v.user_id)
         .map((v) => ({
           user_id: v.user_id!,
-          version: v.version.trim() ? Math.round(parseFloat(v.version) * 10) : null,
+          version: v.version.trim()
+            ? Math.round(parseFloat(v.version) * 10)
+            : null,
         })),
       aliases: formModel.value.aliases.filter((a) => a.trim()),
     });
@@ -255,6 +269,7 @@ async function handleSubmit() {
         :disabled="busy"
         :external-errors="apiErrors"
         :editable-formats="editableFormats"
+        :initial-creator-users="initialCreatorUsers"
         @errors="activeErrors = $event"
       />
 

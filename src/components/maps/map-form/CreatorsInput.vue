@@ -53,8 +53,7 @@ const selectedUsers = ref<Map<number, User | null>>(
 );
 
 function updateAt(index: number, partial: Partial<CreatorEntry>) {
-  for (const key of Object.keys(partial))
-    touch(`creators.${index}.${key}`);
+  for (const key of Object.keys(partial)) touch(`creators.${index}.${key}`);
   const next = [...props.modelValue];
   next[index] = { ...next[index]!, ...partial };
   emit("update:modelValue", next);
@@ -156,7 +155,9 @@ function fieldError(field: string): string | undefined {
                   placeholder="Role (optional)"
                   class="w-full px-3 py-2 rounded-(--radius-btn) bg-(--color-primary) text-(--color-text) border border-(--color-contrast) focus:outline-none focus:border-(--color-active)"
                   :class="{
-                    'border-(--color-danger)!': fieldError(`creators.${index}.role`),
+                    'border-(--color-danger)!': fieldError(
+                      `creators.${index}.role`,
+                    ),
                   }"
                   @input="
                     updateAt(index, {

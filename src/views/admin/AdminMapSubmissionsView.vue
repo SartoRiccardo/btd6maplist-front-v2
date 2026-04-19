@@ -5,7 +5,10 @@ import {
   useMapSubmissions,
   useRejectMapSubmission,
 } from "@/services/api/map-submissions/queries";
-import type { MapSubmissionStatus } from "@/services/api/map-submissions/types";
+import type {
+  MapSubmission,
+  MapSubmissionStatus,
+} from "@/services/api/map-submissions/types";
 import MapSubmissionRow from "@/components/map-submissions/MapSubmissionRow.vue";
 import Pagination from "@/components/ui/Pagination.vue";
 import Button from "@/components/ui/Button.vue";
@@ -18,11 +21,11 @@ const authStore = useAuthStore();
 const page = ref(1);
 
 const statusFilters: { value: MapSubmissionStatus; label: string }[] = [
-  { value: 'pending', label: 'Pending' },
-  { value: 'accepted', label: 'Accepted' },
-  { value: 'rejected', label: 'Rejected' },
+  { value: "pending", label: "Pending" },
+  { value: "accepted", label: "Accepted" },
+  { value: "rejected", label: "Rejected" },
 ];
-const selectedStatus = ref<MapSubmissionStatus>('pending');
+const selectedStatus = ref<MapSubmissionStatus>("pending");
 
 function selectStatus(status: MapSubmissionStatus) {
   if (selectedStatus.value === status) return;
@@ -69,15 +72,11 @@ async function confirmReject(id: number) {
   rejectMutation.mutate(id);
 }
 
-function acceptUrl(submission: {
-  code: string;
-  submitter_id: string;
-  proposed: number;
-  format_id: number;
-}) {
+function acceptUrl(submission: MapSubmission) {
   const params = new URLSearchParams({
     code: submission.code,
     creator_id: submission.submitter_id,
+    creator_name: submission.submitter.name,
     proposed_difficulty: submission.proposed.toString(),
     format: submission.format_id.toString(),
   });
