@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
-import { RouterLink } from "vue-router";
 import { refDebounced } from "@vueuse/core";
 import { useUsers } from "@/services/api/users/queries";
 import UserEntry from "@/components/users/UserEntry.vue";
+import NewUserModal from "@/components/users/NewUserModal.vue";
 import Pagination from "@/components/ui/Pagination.vue";
 import Button from "@/components/ui/Button.vue";
+
+const newUserModal = ref<InstanceType<typeof NewUserModal> | null>(null);
 
 const page = ref(1);
 const search = ref("");
@@ -50,9 +52,7 @@ watch(
         placeholder="Search users..."
         class="flex-1 px-3 py-1.5 rounded-(--radius-btn) bg-(--color-primary) text-(--color-text) border border-(--color-contrast) focus:outline-none focus:border-(--color-active)"
       />
-      <RouterLink to="/admin/users/new" class="no-underline">
-        <Button>+ New User</Button>
-      </RouterLink>
+      <Button @click="newUserModal?.open()">+ New User</Button>
     </div>
 
     <div v-if="isLoading" class="flex justify-center">
@@ -81,5 +81,7 @@ watch(
       :disabled="isLoading"
       @update:current-page="page = $event"
     />
+
+    <NewUserModal ref="newUserModal" />
   </div>
 </template>

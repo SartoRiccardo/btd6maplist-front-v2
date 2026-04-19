@@ -1,5 +1,6 @@
 import type {
   User,
+  CreateUserRequest,
   UpdateUserRequest,
   GetUserParams,
   GetUsersParams,
@@ -43,6 +44,16 @@ export async function getUsers(
   if (params?.include) searchParams.set("include", params.include);
   const qs = searchParams.toString();
   return apiRequest<UserListResponse>(`${BASE_PATH}${qs ? `?${qs}` : ""}`);
+}
+
+/**
+ * POST /users
+ */
+export async function createUser(data: CreateUserRequest): Promise<User> {
+  return apiRequest<User>(BASE_PATH, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
 }
 
 /**

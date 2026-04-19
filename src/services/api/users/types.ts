@@ -42,6 +42,11 @@ export interface User {
   ranks?: UserFormatRanks[];
 }
 
+export interface CreateUserRequest {
+  discord_id: string;
+  name: string;
+}
+
 export interface UpdateUserRequest {
   name: string; // required, max 50 characters, must be unique (case-insensitive)
   nk_oak?: string | null; // optional - Ninja Kiwi OpenAPI Key

@@ -8,6 +8,7 @@ import {
 import {
   getUser,
   getUsers,
+  createUser,
   updateUser,
   updateCurrentUser,
   getMe,
@@ -16,6 +17,7 @@ import {
 } from "./index";
 import type {
   User,
+  CreateUserRequest,
   UpdateUserRequest,
   GetUserParams,
   GetUsersParams,
@@ -31,6 +33,20 @@ export const userQueryKeys = {
   me: (params?: GetUserParams) =>
     params ? (["users", "@me", params] as const) : (["users", "@me"] as const),
 } as const;
+
+/**
+ * Mutation hook to create a new user
+ */
+export function useCreateUser() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: CreateUserRequest) => createUser(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: userQueryKeys.list() });
+    },
+  });
+}
 
 /**
  * Query hook to fetch a paginated list of users
