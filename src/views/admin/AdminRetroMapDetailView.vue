@@ -3,10 +3,17 @@ import { ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { ApiError } from "@/services/api/client";
 import { parseApiErrors, type FormFieldError } from "@/services/api/formErrors";
-import { useRetroMap, useUpdateRetroMap, useDeleteRetroMap } from "@/services/api/retro-maps/queries";
+import {
+  useRetroMap,
+  useUpdateRetroMap,
+  useDeleteRetroMap,
+} from "@/services/api/retro-maps/queries";
 import Panel from "@/components/ui/Panel.vue";
 import Button from "@/components/ui/Button.vue";
-import RetroMapForm, { type RetroMapFormModel } from "@/components/retro-maps/RetroMapForm.vue";
+import ConfirmModal from "@/components/common/ConfirmModal.vue";
+import RetroMapForm, {
+  type RetroMapFormModel,
+} from "@/components/retro-maps/RetroMapForm.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -41,6 +48,7 @@ watch(
 );
 
 const formRef = ref<InstanceType<typeof RetroMapForm> | null>(null);
+const deleteModal = ref<InstanceType<typeof ConfirmModal> | null>(null);
 const apiErrors = ref<FormFieldError[]>([]);
 const activeErrors = ref<FormFieldError[]>([]);
 const submitError = ref<string | null>(null);
@@ -85,7 +93,7 @@ async function handleSave() {
 }
 
 async function handleDelete() {
-  if (!confirm("Delete this retro map? This cannot be undone.")) return;
+  if (!await deleteModal.value?.confirm()) return;
   isBusy.value = true;
   try {
     await deleteMutation.mutateAsync(id);
@@ -122,25 +130,20 @@ async function handleDelete() {
       <p v-if="submitError" class="text-(--color-danger) text-sm mt-4">
         {{ submitError }}
       </p>
-
-      <div class="flex justify-between items-center mt-8">
-        <Button @click="router.push('/admin/retro-maps')">← Back</Button>
-        <div class="flex gap-2">
-          <button
-            class="px-3 py-1.5 rounded-(--radius-btn) font-bold transition-colors! duration-200 cursor-pointer"
-            :class="
-              isBusy
-                ? 'bg-(--color-secondary) text-(--color-text-muted) opacity-50 cursor-not-allowed'
-                : 'bg-(--color-danger) text-white hover:opacity-80'
-            "
-            :disabled="isBusy"
-            @click="handleDelete"
-          >
-            Delete
-          </button>
-          <Button :disabled="isBusy" @click="handleSave">Save</Button>
-        </div>
-      </div>
     </Panel>
+
+    <div class="flex justify-between items-center mt-4">
+      <Button @click="router.push('/admin/retro-maps')">← Back</Button>
+      <div class="flex gap-2">
+        <Button danger :disabled="isBusy" @click="handleDelete">Delete</Button>
+        <Button :disabled="isBusy" @click="handleSave">Save</Button>
+      </div>
+    </div>
+
+    <ConfirmModal ref="deleteModal">
+      <p class="text-center mb-0">
+        Delete this retro map? This cannot be undone.
+      </p>
+    </ConfirmModal>
   </div>
 </template>

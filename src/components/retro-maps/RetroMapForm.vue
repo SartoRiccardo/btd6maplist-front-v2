@@ -81,57 +81,60 @@ function formatGameOption(game: (typeof retroGameOptions.value)[number]): string
 </script>
 
 <template>
-  <div class="flex flex-col gap-6">
-    <!-- Name -->
-    <div>
-      <label for="retro-map-name" class="block font-bold mb-2">Name</label>
-      <input
-        id="retro-map-name"
-        type="text"
-        :value="modelValue.name"
-        :disabled="disabled"
-        placeholder="Map name"
-        class="w-full px-3 py-2 rounded-(--radius-btn) bg-(--color-primary) text-(--color-text) border border-(--color-contrast) focus:outline-none focus:border-(--color-active)"
-        :class="{ 'border-(--color-danger)!': fieldError('name') }"
-        @input="update({ name: ($event.target as HTMLInputElement).value })"
-      />
-      <p v-if="fieldError('name')" class="text-(--color-danger) text-sm mt-1">
-        {{ fieldError("name") }}
-      </p>
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Column 1: Name + Retro Game -->
+    <div class="flex flex-col gap-6">
+      <!-- Name -->
+      <div>
+        <label for="retro-map-name" class="block font-bold mb-2">Name</label>
+        <input
+          id="retro-map-name"
+          type="text"
+          :value="modelValue.name"
+          :disabled="disabled"
+          placeholder="Map name"
+          class="w-full px-3 py-2 rounded-(--radius-btn) bg-(--color-primary) text-(--color-text) border border-(--color-contrast) focus:outline-none focus:border-(--color-active)"
+          :class="{ 'border-(--color-danger)!': fieldError('name') }"
+          @input="update({ name: ($event.target as HTMLInputElement).value })"
+        />
+        <p v-if="fieldError('name')" class="text-(--color-danger) text-sm mt-1">
+          {{ fieldError("name") }}
+        </p>
+      </div>
+
+      <!-- Retro Game -->
+      <div>
+        <label for="retro-game" class="block font-bold mb-2">Retro Game</label>
+        <select
+          id="retro-game"
+          :value="modelValue.retro_game_id ?? ''"
+          :disabled="disabled"
+          class="w-full px-3 py-2 rounded-(--radius-btn) bg-(--color-primary) text-(--color-text) border border-(--color-contrast) focus:outline-none focus:border-(--color-active)"
+          :class="{ 'border-(--color-danger)!': fieldError('retro_game_id') }"
+          @change="
+            update({
+              retro_game_id:
+                ($event.target as HTMLSelectElement).value === ''
+                  ? null
+                  : Number(($event.target as HTMLSelectElement).value),
+            })
+          "
+        >
+          <option value="">Select a game...</option>
+          <option v-for="game in retroGameOptions" :key="game.id" :value="game.id">
+            {{ formatGameOption(game) }}
+          </option>
+        </select>
+        <p
+          v-if="fieldError('retro_game_id')"
+          class="text-(--color-danger) text-sm mt-1"
+        >
+          {{ fieldError("retro_game_id") }}
+        </p>
+      </div>
     </div>
 
-    <!-- Retro Game -->
-    <div>
-      <label for="retro-game" class="block font-bold mb-2">Retro Game</label>
-      <select
-        id="retro-game"
-        :value="modelValue.retro_game_id ?? ''"
-        :disabled="disabled"
-        class="w-full px-3 py-2 rounded-(--radius-btn) bg-(--color-primary) text-(--color-text) border border-(--color-contrast) focus:outline-none focus:border-(--color-active)"
-        :class="{ 'border-(--color-danger)!': fieldError('retro_game_id') }"
-        @change="
-          update({
-            retro_game_id:
-              ($event.target as HTMLSelectElement).value === ''
-                ? null
-                : Number(($event.target as HTMLSelectElement).value),
-          })
-        "
-      >
-        <option value="">Select a game...</option>
-        <option v-for="game in retroGameOptions" :key="game.id" :value="game.id">
-          {{ formatGameOption(game) }}
-        </option>
-      </select>
-      <p
-        v-if="fieldError('retro_game_id')"
-        class="text-(--color-danger) text-sm mt-1"
-      >
-        {{ fieldError("retro_game_id") }}
-      </p>
-    </div>
-
-    <!-- Preview Image -->
+    <!-- Column 2: Preview Image -->
     <div>
       <label class="block font-bold mb-2">Preview Image</label>
       <ImageDrop
