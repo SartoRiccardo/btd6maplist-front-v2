@@ -15,7 +15,7 @@ import {
   EXPERT_DIFFICULTIES,
   BOTB_DIFFICULTIES,
 } from "@/constants/difficulties";
-import { getRetroMaps } from "@/services/api/retro-maps";
+import { getRetroMaps, getRetroMap } from "@/services/api/retro-maps";
 import { useRetroGames } from "@/services/api/retro-games/queries";
 import type { RetroMap } from "@/services/api/maps/types";
 import AsyncSelect from "@/components/ui/AsyncSelect.vue";
@@ -29,6 +29,7 @@ const props = withDefaults(
     disabled?: boolean;
     externalErrors?: FormFieldError[];
     editableFormats: number[];
+    prefilledRetroMapId?: number;
   }>(),
   { disabled: false, externalErrors: () => [] },
 );
@@ -88,7 +89,9 @@ const uniqueGames = computed<GameOption[]>(() => {
 });
 
 // Derive game selection from model
-const selectedGameId = computed(() => props.modelValue.remake_of?.game_id ?? null);
+const selectedGameId = computed(
+  () => props.modelValue.remake_of?.game_id ?? null,
+);
 
 interface RetroMapOption {
   id: number;
@@ -112,7 +115,8 @@ function onGameChange(gameId: number | null) {
     cachedRemakeByGame.set(current.game_id, current);
   }
   // Restore cached selection for the new game, or clear
-  const cached = gameId != null ? cachedRemakeByGame.get(gameId) ?? null : null;
+  const cached =
+    gameId != null ? (cachedRemakeByGame.get(gameId) ?? null) : null;
   update({ remake_of: cached });
   pendingGameId.value = gameId;
 }
@@ -120,7 +124,9 @@ function onGameChange(gameId: number | null) {
 // Temp storage for game selection before a map is picked
 const pendingGameId = ref<number | null>(selectedGameId.value);
 
-const activeGameId = computed(() => pendingGameId.value ?? selectedGameId.value);
+const activeGameId = computed(
+  () => pendingGameId.value ?? selectedGameId.value,
+);
 
 async function searchRetroMaps(query: string): Promise<RetroMapOption[]> {
   const response = await getRetroMaps({
@@ -149,6 +155,25 @@ function onRetroMapSelect(option: RetroMapOption | null) {
     },
   });
 }
+
+// Pre-load map if it comes prefilled
+
+const prefilledRetroMapId = computed(() => props.prefilledRetroMapId);
+
+watch(prefilledRetroMapId, async (retroMapId) => {
+  if (!retroMapId) return;
+
+  const map: RetroMap = await getRetroMap(retroMapId);
+  pendingGameId.value = map.game.game_id;
+  update({
+    remake_of: {
+      game_id: map.game.game_id,
+      game_name: map.game.game_name,
+      map_id: map.id,
+      map_name: map.name,
+    },
+  });
+}, { immediate: true });
 
 // --- Validation ---
 
@@ -213,6 +238,7 @@ function onDifficultyChange(
 
 <template>
   <div class="flex flex-col gap-6">
+    <div>{{ prefilledRetroMapId }}</div>
     <!-- Row 1: Maplist placements -->
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
       <div>

@@ -13,6 +13,7 @@ import type {
 import MapInfoSection from "./MapInfoSection.vue";
 import ListPlacementSection from "./ListPlacementSection.vue";
 import CreditsSection from "./CreditsSection.vue";
+import { FORMAT_NOSTALGIA_PACK } from "@/constants/formats";
 
 const props = withDefaults(
   defineProps<{
@@ -22,6 +23,8 @@ const props = withDefaults(
     editableFormats: number[];
     initialCreatorUsers?: User[];
     initialVerifierUsers?: User[];
+    initialFormat?: number;
+    initialFormatPlacement?: number;
   }>(),
   {
     disabled: false,
@@ -148,6 +151,12 @@ useEmitOnChange(flatErrors, (errors) => emit("errors", errors));
       :disabled="disabled"
       :external-errors="errorsForSection('placement')"
       :editable-formats="editableFormats"
+      :prefilled-retro-map-id="
+        props.initialFormat === FORMAT_NOSTALGIA_PACK &&
+        props.initialFormatPlacement
+          ? props.initialFormatPlacement
+          : undefined
+      "
       @errors="handleSectionErrors('placement', $event)"
     />
 

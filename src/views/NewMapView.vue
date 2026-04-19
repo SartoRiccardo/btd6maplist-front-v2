@@ -270,6 +270,8 @@ async function handleSubmit() {
         :external-errors="apiErrors"
         :editable-formats="editableFormats"
         :initial-creator-users="initialCreatorUsers"
+        :initial-format="prefilledFormat ?? undefined"
+        :initial-format-placement="prefilledDifficulty ?? undefined"
         @errors="activeErrors = $event"
       />
 
