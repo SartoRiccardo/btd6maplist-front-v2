@@ -1,5 +1,9 @@
 <script setup lang="ts">
+import { computed } from "vue";
+import { useDiscordGuilds } from "@/services/discord/queries";
+import { canManageRoles } from "@/services/discord/index";
 import Button from "@/components/ui/Button.vue";
+import RoleSelector from "./RoleSelector.vue";
 
 export interface DiscordRoleEntry {
   guild_id: string;
@@ -17,6 +21,9 @@ const props = withDefaults(
 const emit = defineEmits<{
   (e: "update:modelValue", value: DiscordRoleEntry[]): void;
 }>();
+
+const { data: guildsRaw, isLoading: guildsLoading } = useDiscordGuilds();
+const guilds = computed(() => (guildsRaw.value ?? []).filter(canManageRoles));
 
 function add() {
   emit("update:modelValue", [...props.modelValue, { guild_id: "", role_id: "" }]);
@@ -44,21 +51,23 @@ const inputClass =
       :key="i"
       class="flex items-center gap-2"
     >
-      <input
-        type="text"
-        placeholder="Guild ID"
+      <select
         :value="entry.guild_id"
-        :disabled="disabled"
+        :disabled="disabled || guildsLoading"
         :class="[inputClass, 'flex-1']"
-        @input="updateEntry(i, { guild_id: ($event.target as HTMLInputElement).value })"
-      />
-      <input
-        type="text"
-        placeholder="Role ID"
-        :value="entry.role_id"
+        @change="updateEntry(i, { guild_id: ($event.target as HTMLSelectElement).value })"
+      >
+        <option value="" disabled>{{ guildsLoading ? "Loading..." : "Select server..." }}</option>
+        <option v-for="guild in guilds" :key="guild.id" :value="guild.id">
+          {{ guild.name }}
+        </option>
+      </select>
+      <RoleSelector
+        :guild-id="entry.guild_id"
+        :model-value="entry.role_id"
         :disabled="disabled"
-        :class="[inputClass, 'flex-1']"
-        @input="updateEntry(i, { role_id: ($event.target as HTMLInputElement).value })"
+        class="flex-1"
+        @update:model-value="updateEntry(i, { role_id: $event })"
       />
       <button
         v-if="!disabled"

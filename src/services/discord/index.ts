@@ -1,4 +1,5 @@
 import { getAuthToken } from "@/services/api/client";
+import { api } from "@/services/api/client";
 
 const BASE_URL = "https://discord.com/api/v10";
 
@@ -17,6 +18,16 @@ export interface DiscordGuild {
   id: string;
   name: string;
   icon: string | null;
+  permissions: string; // bitfield string
+}
+
+const PERMISSION_ADMINISTRATOR = BigInt(0x8);
+const PERMISSION_MANAGE_ROLES = BigInt(0x10000000);
+
+export function canManageRoles(guild: DiscordGuild): boolean {
+  const perms = BigInt(guild.permissions);
+  return (perms & PERMISSION_ADMINISTRATOR) !== BigInt(0) ||
+    (perms & PERMISSION_MANAGE_ROLES) !== BigInt(0);
 }
 
 export interface DiscordRole {
@@ -30,5 +41,5 @@ export function getUserGuilds(): Promise<DiscordGuild[]> {
 }
 
 export function getGuildRoles(guildId: string): Promise<DiscordRole[]> {
-  return discordRequest<DiscordRole[]>(`/guilds/${guildId}/roles`);
+  return api.get<DiscordRole[]>(`/api/proxy/discord/guilds/${guildId}/roles`);
 }
