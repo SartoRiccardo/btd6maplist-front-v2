@@ -159,42 +159,38 @@ async function handleDelete(role: AchievementRole) {
           <div
             v-for="role in group.roles"
             :key="role.id"
-            class="bg-(--color-secondary) rounded-(--radius-panel) py-2 px-3 flex items-center gap-3"
+            class="bg-(--color-secondary) rounded-(--radius-panel) py-2 px-3 pt-3 flex items-center gap-3"
           >
-            <!-- Badge preview -->
-            <div
-              class="px-2 py-0.5 rounded-[0.3rem] border-2 border-solid font-border text-sm whitespace-nowrap shrink-0"
-              :style="{
-                backgroundColor: intToHex(role.clr_inner),
-                borderColor: intToHex(role.clr_border),
-              }"
-            >
-              {{ role.name }}
-            </div>
-
             <!-- Details -->
             <div class="flex-1 min-w-0">
-              <p class="text-sm">
-                <span v-if="role.for_first" class="text-(--color-text-muted)"
-                  >1st place</span
+              <!-- Line 1: badge + discord roles count -->
+              <div class="flex items-center gap-2">
+                <div
+                  class="px-2 py-0.5 rounded-[0.3rem] border-2 border-solid font-border text-sm whitespace-nowrap shrink-0"
+                  :style="{
+                    backgroundColor: intToHex(role.clr_inner),
+                    borderColor: intToHex(role.clr_border),
+                  }"
                 >
-                <span v-else class="text-(--color-text-muted)"
-                  >Threshold: {{ role.threshold }}</span
-                >
+                  {{ role.name }}
+                </div>
                 <span
                   v-if="role.discord_roles.length"
-                  class="ml-2 text-xs text-(--color-text-muted)"
+                  class="flex items-center gap-1 text-md text-(--color-text-muted)"
                 >
-                  · {{ role.discord_roles.length }} Discord role{{
-                    role.discord_roles.length !== 1 ? "s" : ""
-                  }}
                 </span>
-              </p>
-              <p
-                v-if="role.tooltip_description"
-                class="text-xs text-(--color-text-muted) truncate"
-              >
-                {{ role.tooltip_description }}
+              </div>
+              <!-- Line 2: threshold + description -->
+              <p class="text-sm text-(--color-text-muted) mt-0.5 mb-0 truncate">
+                <span v-if="role.for_first"><strong>1st place</strong></span>
+                <span v-else
+                  ><strong>Score threshold:</strong> {{ role.threshold }}</span
+                >
+                <span v-if="role.discord_roles.length">
+                  &nbsp;&mdash;&nbsp;
+                  <i class="bi bi-discord" />
+                  {{ role.discord_roles.length }}</span
+                >
               </p>
             </div>
 
