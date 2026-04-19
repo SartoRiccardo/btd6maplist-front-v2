@@ -4,6 +4,7 @@ import { refDebounced } from "@vueuse/core";
 import { useRetroMaps } from "@/services/api/retro-maps/queries";
 import { useRetroGames } from "@/services/api/retro-games/queries";
 import { NP_DIFFICULTIES } from "@/constants/difficulties";
+import { RouterLink } from "vue-router";
 import Pagination from "@/components/ui/Pagination.vue";
 import Badge from "@/components/common/Badge.vue";
 
@@ -58,7 +59,9 @@ const filterOptions = computed<FilterOption[]>(() => {
   const seenGames = new Map<number, string>();
   const seenCats = new Set<string>();
 
-  for (const g of [...games].sort((a, b) => a.game_id - b.game_id || a.category_id - b.category_id)) {
+  for (const g of [...games].sort(
+    (a, b) => a.game_id - b.game_id || a.category_id - b.category_id,
+  )) {
     if (!seenGames.has(g.game_id)) {
       seenGames.set(g.game_id, g.game_name);
       options.push({ key: String(g.game_id), label: `${g.game_name} (All)` });
@@ -66,7 +69,10 @@ const filterOptions = computed<FilterOption[]>(() => {
     const catKey = `${g.game_id}:${g.category_id}`;
     if (!seenCats.has(catKey)) {
       seenCats.add(catKey);
-      options.push({ key: catKey, label: `${g.game_name} (${g.category_name})` });
+      options.push({
+        key: catKey,
+        label: `${g.game_name} (${g.category_name})`,
+      });
     }
   }
 
@@ -109,10 +115,11 @@ function gameIcon(gameId: number): string | undefined {
     </div>
 
     <template v-else-if="maps && maps.data.length > 0">
-      <div
+      <RouterLink
         v-for="map in maps.data"
         :key="map.id"
-        class="bg-(--color-secondary) rounded-(--radius-panel) my-2 py-2 px-3 flex items-center gap-3"
+        :to="`/admin/retro-maps/${map.id}`"
+        class="bg-(--color-secondary) rounded-(--radius-panel) my-2 py-2 px-3 flex items-center gap-3 no-underline hover:brightness-110"
       >
         <img
           :src="map.preview_url"
@@ -121,10 +128,14 @@ function gameIcon(gameId: number): string | undefined {
           loading="lazy"
         />
         <div class="min-w-0">
-          <p class="font-['Luckiest_Guy'] font-border text-base leading-tight truncate">
+          <p
+            class="font-['Luckiest_Guy'] text-(--color-text) font-border text-base leading-tight truncate"
+          >
             {{ map.name }}
           </p>
-          <p class="text-sm text-(--color-text-muted) flex items-center gap-1 mt-0.5">
+          <p
+            class="text-sm text-(--color-text-muted) flex items-center gap-1 mt-0.5"
+          >
             <Badge
               v-if="gameIcon(map.game.game_id)"
               :src="gameIcon(map.game.game_id)!"
@@ -133,7 +144,7 @@ function gameIcon(gameId: number): string | undefined {
             {{ map.game.game_name }}
           </p>
         </div>
-      </div>
+      </RouterLink>
     </template>
 
     <p v-else-if="!isLoading" class="text-center text-(--color-text-muted)">

@@ -64,10 +64,13 @@ export async function updateRetroMap(
   id: number,
   data: UpdateRetroMapRequest,
 ): Promise<void> {
-  return apiRequest<void>(`${BASE_PATH}/${id}`, {
-    method: "PUT",
-    body: JSON.stringify(data),
-  });
+  const fd = new FormData();
+  fd.append("name", data.name);
+  fd.append("sort_order", data.sort_order.toString());
+  fd.append("retro_game_id", data.retro_game_id.toString());
+  if (data.preview_file) fd.append("preview_file", data.preview_file);
+  if (data.preview_url != null) fd.append("preview_url", data.preview_url);
+  return apiRequest<void>(`${BASE_PATH}/${id}`, { method: "PUT", body: fd });
 }
 
 /**
