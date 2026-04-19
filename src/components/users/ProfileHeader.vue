@@ -48,7 +48,10 @@ const medalTypes = [
 
       <!-- Name & Roles -->
       <div class="pl-3 pt-3.5 flex flex-col">
-        <h1 class="font-['Luckiest_Guy'] text-3xl font-border mb-2">
+        <h1
+          class="font-['Luckiest_Guy'] text-3xl font-border mb-2"
+          :class="{ 'line-through': user.is_banned }"
+        >
           {{ user.name }}
         </h1>
 
