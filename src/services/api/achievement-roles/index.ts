@@ -2,7 +2,7 @@ import type { AchievementRole, UpsertAchievementRoleRequest } from "./types";
 import type { PaginatedResponse } from "@/services/api/common/types";
 import { api } from "../client";
 
-const BASE_PATH = "/roles/achievement";
+const BASE_PATH = "/api/roles/achievement";
 
 export async function getAchievementRoles(params: {
   format_id?: number;
