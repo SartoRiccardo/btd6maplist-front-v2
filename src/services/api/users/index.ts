@@ -1,4 +1,10 @@
-import type { User, UpdateUserRequest, GetUserParams } from "./types";
+import type {
+  User,
+  UpdateUserRequest,
+  GetUserParams,
+  GetUsersParams,
+  UserListResponse,
+} from "./types";
 import { apiRequest } from "../client";
 
 const BASE_PATH = "/api/users";
@@ -21,6 +27,22 @@ function buildUserParams(params?: GetUserParams): string {
 
   const queryString = searchParams.toString();
   return queryString ? `?${queryString}` : "";
+}
+
+/**
+ * GET /users
+ */
+export async function getUsers(
+  params?: GetUsersParams,
+): Promise<UserListResponse> {
+  const searchParams = new URLSearchParams();
+  if (params?.page != null) searchParams.set("page", params.page.toString());
+  if (params?.per_page != null)
+    searchParams.set("per_page", params.per_page.toString());
+  if (params?.search) searchParams.set("search", params.search);
+  if (params?.include) searchParams.set("include", params.include);
+  const qs = searchParams.toString();
+  return apiRequest<UserListResponse>(`${BASE_PATH}${qs ? `?${qs}` : ""}`);
 }
 
 /**

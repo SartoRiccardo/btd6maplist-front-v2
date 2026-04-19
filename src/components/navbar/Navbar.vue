@@ -24,7 +24,11 @@ const allAdminLinks = [
   {
     name: "User List",
     url: "/admin/users",
-    perms: [permissions.user.ban, permissions.user.create],
+    perms: [
+      permissions.user.ban,
+      permissions.user.create,
+      permissions.user.list,
+    ],
   },
   {
     name: "List Configuration",

@@ -55,3 +55,17 @@ export interface GetUserParams {
   include?: UserIncludeParams;
   timestamp?: number; // Unix timestamp for medal calculation (defaults to now)
 }
+
+export interface GetUsersParams {
+  page?: number;
+  per_page?: number; // 1–100, default 20
+  search?: string;
+  include?: "flair";
+}
+
+export interface UserListResponse {
+  data: User[];
+  total: number;
+  page: number;
+  per_page: number;
+}

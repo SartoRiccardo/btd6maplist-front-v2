@@ -10,6 +10,7 @@ export const permissions = {
     editSelf: "edit:self",
     ban: "ban:user",
     create: "create:user",
+    list: "list:users",
   },
   map: {
     create: "create:map",

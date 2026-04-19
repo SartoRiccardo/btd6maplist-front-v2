@@ -7,22 +7,44 @@ import {
 } from "@tanstack/vue-query";
 import {
   getUser,
+  getUsers,
   updateUser,
   updateCurrentUser,
   getMe,
   banUser,
   unbanUser,
 } from "./index";
-import type { User, UpdateUserRequest, GetUserParams } from "./types";
+import type {
+  User,
+  UpdateUserRequest,
+  GetUserParams,
+  GetUsersParams,
+  UserListResponse,
+} from "./types";
 
 // Query Keys
 export const userQueryKeys = {
   all: ["users"] as const,
+  list: (params?: GetUsersParams) => ["users", "list", params] as const,
   detail: (id: string, params?: GetUserParams) =>
     params ? (["users", id, params] as const) : (["users", id] as const),
   me: (params?: GetUserParams) =>
     params ? (["users", "@me", params] as const) : (["users", "@me"] as const),
 } as const;
+
+/**
+ * Query hook to fetch a paginated list of users
+ */
+export function useUsers(
+  params?: MaybeRefOrGetter<GetUsersParams | undefined>,
+  options?: Omit<UseQueryOptions<UserListResponse>, "queryKey" | "queryFn">,
+) {
+  return useQuery({
+    queryKey: computed(() => userQueryKeys.list(toValue(params))),
+    queryFn: () => getUsers(toValue(params)),
+    ...options,
+  });
+}
 
 /**
  * Query hook to fetch a user by ID
