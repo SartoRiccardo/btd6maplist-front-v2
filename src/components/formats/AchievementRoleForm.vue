@@ -187,7 +187,10 @@ const errorClass = "border-(--color-danger)!";
           label="First place only"
           @update:model-value="update({ for_first: $event })"
         />
-        <p v-if="fieldError('for_first')" class="text-(--color-danger) text-xs mt-1">
+        <p
+          v-if="fieldError('for_first')"
+          class="text-(--color-danger) text-xs mt-1"
+        >
           {{ fieldError("for_first") }}
         </p>
       </div>
@@ -248,8 +251,6 @@ const errorClass = "border-(--color-danger)!";
 
     <!-- Preview section -->
     <div>
-      <h2 class="font-['Luckiest_Guy'] text-2xl text-center pt-4">Preview</h2>
-      <hr class="border-(--color-contrast) mb-4" />
       <div class="bg-(--color-secondary) rounded-(--radius-panel) p-[5px]">
         <div
           class="flex py-3 bg-cover bg-center rounded-[0.5rem] px-2"
@@ -262,7 +263,7 @@ const errorClass = "border-(--color-danger)!";
           />
           <div class="pl-3 pt-3.5 flex flex-col">
             <h1 class="font-['Luckiest_Guy'] text-3xl font-border mb-2">
-              Username
+              Preview
             </h1>
             <div
               class="px-2 py-0.5 rounded-[0.3rem] border-2 border-solid font-border text-sm inline-block self-start"
@@ -280,7 +281,9 @@ const errorClass = "border-(--color-danger)!";
 
     <!-- Discord roles -->
     <div>
-      <h2 class="font-['Luckiest_Guy'] text-2xl text-center pt-4">Discord Roles</h2>
+      <h2 class="font-['Luckiest_Guy'] text-2xl text-center pt-4">
+        Discord Roles
+      </h2>
       <hr class="border-(--color-contrast) mb-4" />
       <DiscordRolesEditor
         :model-value="modelValue.discord_roles"
