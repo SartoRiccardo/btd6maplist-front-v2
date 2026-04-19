@@ -13,10 +13,12 @@ import {
 import Panel from "@/components/ui/Panel.vue";
 import Button from "@/components/ui/Button.vue";
 import Badge from "@/components/common/Badge.vue";
+import { MARKDOWN_ICONS } from "@/utils/markdownIcons";
 
 interface ConfigFieldDef {
   key: string;
   label: string;
+  icon?: string;
   step?: number;
 }
 
@@ -63,9 +65,17 @@ const MAPLIST_CATEGORY: ConfigCategoryDef = {
     { key: "points_top_map", label: "Points (Top Map)" },
     { key: "points_bottom_map", label: "Points (Bottom Map)" },
     { key: "formula_slope", label: "Formula Slope", step: 0.001 },
-    { key: "points_extra_lcc", label: "LCC Bonus Points" },
-    { key: "points_multi_gerry", label: "No Optimal Hero Multiplier" },
-    { key: "points_multi_bb", label: "Black Border Multiplier" },
+    { key: "points_extra_lcc", label: "LCC Bonus Points", icon: "lcc" },
+    {
+      key: "points_multi_gerry",
+      label: "No Optimal Hero Multiplier",
+      icon: "no_optimal_hero",
+    },
+    {
+      key: "points_multi_bb",
+      label: "Black Border Multiplier",
+      icon: "black_border",
+    },
     { key: "decimal_digits", label: "Decimal Digits" },
     { key: "map_count", label: "Map Count" },
   ],
@@ -76,27 +86,42 @@ const EXPERT_CATEGORY: ConfigCategoryDef = {
   label: "Expert List",
   icon: FORMAT_ICONS.find((f) => f.id === FORMAT_EXPERT_LIST)?.image,
   fields: [
-    { key: "exp_points_casual", label: "Casual Points" },
-    { key: "exp_points_medium", label: "Medium Points" },
-    { key: "exp_points_high", label: "High Points" },
-    { key: "exp_points_true", label: "True Points" },
-    { key: "exp_points_extreme", label: "Extreme Points" },
+    { key: "exp_points_casual", label: "Casual Expert Points" },
+    { key: "exp_points_medium", label: "Medium Expert Points" },
+    { key: "exp_points_high", label: "High Expert Points" },
+    { key: "exp_points_true", label: "True Expert Points" },
+    { key: "exp_points_extreme", label: "Extreme Expert Points" },
     {
       key: "exp_nogerry_points_casual",
-      label: "Casual No Optimal Hero Points",
+      label: "Casual Expert No Optimal Hero Points",
+      icon: "no_optimal_hero",
     },
     {
       key: "exp_nogerry_points_medium",
-      label: "Medium No Optimal Hero Points",
+      label: "Medium Expert No Optimal Hero Points",
+      icon: "no_optimal_hero",
     },
-    { key: "exp_nogerry_points_high", label: "High No Optimal Hero Points" },
-    { key: "exp_nogerry_points_true", label: "True No Optimal Hero Points" },
+    {
+      key: "exp_nogerry_points_high",
+      label: "High Expert No Optimal Hero Points",
+      icon: "no_optimal_hero",
+    },
+    {
+      key: "exp_nogerry_points_true",
+      label: "True Expert No Optimal Hero Points",
+      icon: "no_optimal_hero",
+    },
     {
       key: "exp_nogerry_points_extreme",
-      label: "Extreme No Optimal Hero Points",
+      label: "Extreme Expert No Optimal Hero Points",
+      icon: "no_optimal_hero",
     },
-    { key: "exp_bb_multi", label: "Black Border Multiplier" },
-    { key: "exp_lcc_extra", label: "LCC Extra Points" },
+    {
+      key: "exp_bb_multi",
+      label: "Black Border Multiplier",
+      icon: "black_border",
+    },
+    { key: "exp_lcc_extra", label: "LCC Extra Points", icon: "lcc" },
   ],
 };
 
@@ -215,8 +240,14 @@ async function handleSave() {
           <div v-for="field in category.fields" :key="field.key">
             <label
               :for="`config-${field.key}`"
-              class="block font-semibold text-sm mb-1"
+              class="flex items-center gap-1 font-semibold text-sm mb-1"
             >
+              <img
+                v-if="field.icon"
+                :src="MARKDOWN_ICONS[field.icon]"
+                :alt="field.icon"
+                class="inline-block h-[1.2em] w-[1.2em] object-cover"
+              />
               {{ field.label }}
             </label>
             <input
