@@ -15,23 +15,23 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{
-  'update:modelValue': [value: string[]];
+  "update:modelValue": [value: string[]];
 }>();
 
 function updateAt(index: number, value: string) {
   const next = [...props.modelValue];
   next[index] = value;
-  emit('update:modelValue', next);
+  emit("update:modelValue", next);
 }
 
 function removeAt(index: number) {
   const next = [...props.modelValue];
   next.splice(index, 1);
-  emit('update:modelValue', next);
+  emit("update:modelValue", next);
 }
 
 function addUrl() {
-  emit('update:modelValue', [...props.modelValue, '']);
+  emit("update:modelValue", [...props.modelValue, ""]);
 }
 </script>
 
@@ -39,8 +39,12 @@ function addUrl() {
   <div>
     <label v-if="label" class="block font-bold mb-1">
       {{ label }}
-      <span v-if="required" class="text-(--color-highlight) font-normal">(required)</span>
-      <span v-else class="text-(--color-text-muted) font-normal">(optional)</span>
+      <span v-if="required" class="text-(--color-highlight) font-normal"
+        >(required)</span
+      >
+      <span v-else class="text-(--color-text-muted) font-normal"
+        >(optional)</span
+      >
     </label>
 
     <div class="flex flex-col gap-2">

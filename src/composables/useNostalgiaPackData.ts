@@ -1,7 +1,7 @@
-import { computed, ref, watch, type Ref } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { useRetroGames } from '@/services/api/retro-games/queries';
-import type { Difficulty } from '@/constants/difficulties';
+import { computed, ref, watch, type Ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { useRetroGames } from "@/services/api/retro-games/queries";
+import type { Difficulty } from "@/constants/difficulties";
 
 export interface Category {
   id: number;
@@ -10,7 +10,7 @@ export interface Category {
 }
 
 function nameToQuery(name: string): string {
-  return name.toLowerCase().replace(/[^a-z0-9]/gi, '_');
+  return name.toLowerCase().replace(/[^a-z0-9]/gi, "_");
 }
 
 /**
@@ -25,14 +25,16 @@ export function useNostalgiaPackData(
   const router = useRouter();
 
   const { data: retroGamesResponse } = useRetroGames(
-    { per_page: 100, include: 'progress' },
+    { per_page: 100, include: "progress" },
     { enabled },
   );
 
   const categories = computed(() => {
     if (!retroGamesResponse.value || !selectedDifficulty.value) return null;
     const gameId = selectedDifficulty.value.value;
-    const matching = retroGamesResponse.value.data.filter((rg) => rg.game_id === gameId);
+    const matching = retroGamesResponse.value.data.filter(
+      (rg) => rg.game_id === gameId,
+    );
 
     const seen = new Map<number, Category>();
     for (const rg of matching) {
@@ -48,19 +50,31 @@ export function useNostalgiaPackData(
     return cats.length > 1 ? cats : null;
   });
 
-  const selectedQuery = ref('');
+  const selectedQuery = ref("");
 
-  watch([categories, () => route.query['category']], ([cats, queryCat]) => {
-    if (!cats) { selectedQuery.value = ''; return; }
-    if (typeof queryCat === 'string' && cats.some((c) => c.query === queryCat)) {
-      selectedQuery.value = queryCat;
-      return;
-    }
-    selectedQuery.value = cats[0]!.query;
-  }, { immediate: true });
+  watch(
+    [categories, () => route.query["category"]],
+    ([cats, queryCat]) => {
+      if (!cats) {
+        selectedQuery.value = "";
+        return;
+      }
+      if (
+        typeof queryCat === "string" &&
+        cats.some((c) => c.query === queryCat)
+      ) {
+        selectedQuery.value = queryCat;
+        return;
+      }
+      selectedQuery.value = cats[0]!.query;
+    },
+    { immediate: true },
+  );
 
-  const selected = computed(() =>
-    categories.value?.find((c) => c.query === selectedQuery.value) ?? categories.value?.[0]
+  const selected = computed(
+    () =>
+      categories.value?.find((c) => c.query === selectedQuery.value) ??
+      categories.value?.[0],
   );
 
   function onCategoryChange(query: string) {
@@ -71,7 +85,9 @@ export function useNostalgiaPackData(
   const progress = computed(() => {
     if (!retroGamesResponse.value || !selectedDifficulty.value) return null;
     const gameId = selectedDifficulty.value.value;
-    const matching = retroGamesResponse.value.data.filter((rg) => rg.game_id === gameId);
+    const matching = retroGamesResponse.value.data.filter(
+      (rg) => rg.game_id === gameId,
+    );
     if (!matching.length || matching[0]!.total_maps == null) return null;
 
     let totalMaps = 0;

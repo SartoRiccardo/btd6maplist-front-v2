@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import Button from '@/components/ui/Button.vue';
+import { ref, watch } from "vue";
+import Button from "@/components/ui/Button.vue";
 
 const open = ref(false);
 const resolvePromise = ref<((value: boolean) => void) | null>(null);
@@ -19,14 +19,14 @@ function respond(value: boolean) {
 }
 
 function onKeydown(e: KeyboardEvent) {
-  if (e.key === 'Escape') respond(false);
+  if (e.key === "Escape") respond(false);
 }
 
 watch(open, (isOpen) => {
   if (isOpen) {
-    document.addEventListener('keydown', onKeydown);
+    document.addEventListener("keydown", onKeydown);
   } else {
-    document.removeEventListener('keydown', onKeydown);
+    document.removeEventListener("keydown", onKeydown);
   }
 });
 

@@ -1,26 +1,26 @@
-import type { User, UpdateUserRequest, GetUserParams } from './types';
-import { apiRequest } from '../client';
+import type { User, UpdateUserRequest, GetUserParams } from "./types";
+import { apiRequest } from "../client";
 
-const BASE_PATH = '/api/users';
+const BASE_PATH = "/api/users";
 
 /**
  * Build query string from GetUserParams
  */
 function buildUserParams(params?: GetUserParams): string {
-  if (!params) return '';
+  if (!params) return "";
 
   const searchParams = new URLSearchParams();
 
   if (params.include && params.include.length > 0) {
-    searchParams.set('include', params.include.join(','));
+    searchParams.set("include", params.include.join(","));
   }
 
   if (params.timestamp) {
-    searchParams.set('timestamp', params.timestamp.toString());
+    searchParams.set("timestamp", params.timestamp.toString());
   }
 
   const queryString = searchParams.toString();
-  return queryString ? `?${queryString}` : '';
+  return queryString ? `?${queryString}` : "";
 }
 
 /**
@@ -33,7 +33,10 @@ function buildUserParams(params?: GetUserParams): string {
  * - include: Comma-separated: flair,medals,achievement_roles
  * - timestamp: Unix timestamp for medal calculation (defaults to now)
  */
-export async function getUser(id: string, params?: GetUserParams): Promise<User> {
+export async function getUser(
+  id: string,
+  params?: GetUserParams,
+): Promise<User> {
   const queryString = buildUserParams(params);
   return apiRequest<User>(`${BASE_PATH}/${id}${queryString}`);
 }
@@ -42,7 +45,7 @@ export async function getUser(id: string, params?: GetUserParams): Promise<User>
  * Convenience function to get authenticated user (uses @me alias)
  */
 export async function getMe(params?: GetUserParams): Promise<User> {
-  return getUser('@me', params);
+  return getUser("@me", params);
 }
 
 /**
@@ -59,10 +62,10 @@ export async function getMe(params?: GetUserParams): Promise<User> {
  */
 export async function updateUser(
   id: string,
-  data: UpdateUserRequest
+  data: UpdateUserRequest,
 ): Promise<User> {
   return apiRequest<User>(`${BASE_PATH}/${id}`, {
-    method: 'PUT',
+    method: "PUT",
     body: JSON.stringify(data),
   });
 }
@@ -70,20 +73,22 @@ export async function updateUser(
 /**
  * Convenience function to update authenticated user
  */
-export async function updateCurrentUser(data: UpdateUserRequest): Promise<User> {
-  return updateUser('@me', data);
+export async function updateCurrentUser(
+  data: UpdateUserRequest,
+): Promise<User> {
+  return updateUser("@me", data);
 }
 
 /**
  * PUT /users/{id}/ban
  */
 export async function banUser(id: string): Promise<void> {
-  return apiRequest(`${BASE_PATH}/${id}/ban`, { method: 'PUT' });
+  return apiRequest(`${BASE_PATH}/${id}/ban`, { method: "PUT" });
 }
 
 /**
  * PUT /users/{id}/unban
  */
 export async function unbanUser(id: string): Promise<void> {
-  return apiRequest(`${BASE_PATH}/${id}/unban`, { method: 'PUT' });
+  return apiRequest(`${BASE_PATH}/${id}/unban`, { method: "PUT" });
 }

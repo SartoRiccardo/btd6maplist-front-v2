@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import { RouterLink } from 'vue-router';
-import DiscordLoginButton from './DiscordLoginButton.vue';
-import Icon from '@/components/common/Icon.vue';
+import { RouterLink } from "vue-router";
+import DiscordLoginButton from "./DiscordLoginButton.vue";
+import Icon from "@/components/common/Icon.vue";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { useAuthStore } from '@/stores/auth';
-import { DEFAULT_AVATAR_URL } from '@/constants/user';
+} from "@/components/ui/dropdown-menu";
+import { useAuthStore } from "@/stores/auth";
+import { DEFAULT_AVATAR_URL } from "@/constants/user";
 
 interface Props {
   onClose: () => void;
@@ -33,14 +33,20 @@ function handleLogout() {
       v-if="authStore.isAuthenticated && authStore.isLoading"
       class="flex items-start gap-3"
     >
-      <div class="aspect-square w-12 animate-pulse rounded-md border-2 border-[#E0E3FF] bg-gray-600"></div>
+      <div
+        class="aspect-square w-12 animate-pulse rounded-md border-2 border-[#E0E3FF] bg-gray-600"
+      ></div>
       <div class="flex-1">
         <div class="h-4 animate-pulse rounded bg-gray-600"></div>
       </div>
     </div>
 
     <!-- User profile -->
-    <DropdownMenu v-else-if="authStore.isAuthenticated && authStore.user && !authStore.isLoading">
+    <DropdownMenu
+      v-else-if="
+        authStore.isAuthenticated && authStore.user && !authStore.isLoading
+      "
+    >
       <DropdownMenuTrigger as-child>
         <button class="flex items-center gap-3 w-full text-left">
           <img
@@ -49,15 +55,25 @@ function handleLogout() {
             class="aspect-square w-12 rounded-md border-2 border-[#E0E3FF] object-cover"
           />
           <div class="min-w-0 flex-1">
-            <div class="truncate font-bold uppercase text-xl">{{ authStore.user.name }}</div>
-            <div v-if="authStore.user.medals" class="text-sm text-(--color-text-muted) flex items-center gap-2">
-              <Icon src="/images/medals/medal_win.webp" /> {{ authStore.user.medals.wins }} Completions
+            <div class="truncate font-bold uppercase text-xl">
+              {{ authStore.user.name }}
+            </div>
+            <div
+              v-if="authStore.user.medals"
+              class="text-sm text-(--color-text-muted) flex items-center gap-2"
+            >
+              <Icon src="/images/medals/medal_win.webp" />
+              {{ authStore.user.medals.wins }} Completions
             </div>
           </div>
         </button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent class="bg-(--color-secondary) font-[Oswald] border-none w-(--reka-dropdown-menu-trigger-width)" side="top" :side-offset="25">
+      <DropdownMenuContent
+        class="bg-(--color-secondary) font-[Oswald] border-none w-(--reka-dropdown-menu-trigger-width)"
+        side="top"
+        :side-offset="25"
+      >
         <DropdownMenuItem as-child>
           <RouterLink
             :to="`/users/${authStore.user.discord_id}`"

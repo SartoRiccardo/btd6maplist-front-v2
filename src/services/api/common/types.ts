@@ -1,6 +1,6 @@
-export type FilterOption = 'only' | 'exclude' | 'any';
+export type FilterOption = "only" | "exclude" | "any";
 
-export type SortOrder = 'asc' | 'desc';
+export type SortOrder = "asc" | "desc";
 
 export interface PaginatedResponse<T> {
   data: T[];

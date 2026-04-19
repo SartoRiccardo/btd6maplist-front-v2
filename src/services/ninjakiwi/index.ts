@@ -1,4 +1,4 @@
-const BASE_URL = 'https://data.ninjakiwi.com';
+const BASE_URL = "https://data.ninjakiwi.com";
 
 export interface NKCustomMap {
   id: string;

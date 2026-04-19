@@ -14,14 +14,20 @@
     <!-- Images header -->
     <div class="h-5 w-40 bg-(--color-primary) rounded mb-3" />
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
-      <div class="w-full aspect-video bg-(--color-primary) rounded-(--radius-panel)" />
-      <div class="w-full aspect-video bg-(--color-primary) rounded-(--radius-panel)" />
+      <div
+        class="w-full aspect-video bg-(--color-primary) rounded-(--radius-panel)"
+      />
+      <div
+        class="w-full aspect-video bg-(--color-primary) rounded-(--radius-panel)"
+      />
     </div>
 
     <!-- Videos header -->
     <div class="h-5 w-44 bg-(--color-primary) rounded mb-3" />
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-      <div class="w-full aspect-video bg-(--color-primary) rounded-(--radius-panel)" />
+      <div
+        class="w-full aspect-video bg-(--color-primary) rounded-(--radius-panel)"
+      />
     </div>
   </div>
 </template>

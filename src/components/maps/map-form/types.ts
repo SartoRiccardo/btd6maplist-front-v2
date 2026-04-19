@@ -45,16 +45,14 @@ export interface CreditsSlice {
 }
 
 export interface MapFormModel
-  extends MapInfoSlice,
-    ListPlacementSlice,
-    CreditsSlice {}
+  extends MapInfoSlice, ListPlacementSlice, CreditsSlice {}
 
 export function createDefaultFormModel(): MapFormModel {
   return {
-    name: '',
-    map_preview_url: '',
+    name: "",
+    map_preview_url: "",
     custom_map_preview_file: null,
-    r6_start: '',
+    r6_start: "",
     r6_start_file: null,
     aliases: [],
     additional_codes: [],
@@ -65,6 +63,6 @@ export function createDefaultFormModel(): MapFormModel {
     remake_of: null,
     optimal_heros: [],
     creators: [{ user_id: null, role: null }],
-    verifiers: [{ user_id: null, version: '' }],
+    verifiers: [{ user_id: null, version: "" }],
   };
 }

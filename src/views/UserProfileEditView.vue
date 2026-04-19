@@ -16,7 +16,9 @@ const oakGuideOpen = ref(false);
 
 const router = useRouter();
 const auth = useAuthStore();
-const updateMutation = useUpdateCurrentUser(computed(() => auth.user?.discord_id));
+const updateMutation = useUpdateCurrentUser(
+  computed(() => auth.user?.discord_id),
+);
 
 const formRef = ref<InstanceType<typeof ProfileForm> | null>(null);
 const apiErrors = ref<FormFieldError[]>([]);
@@ -82,9 +84,7 @@ async function handleSave() {
 
       <div class="flex justify-end gap-2 mt-6">
         <LinkButton :to="profileUrl" :disabled="busy">Cancel</LinkButton>
-        <Button :disabled="busy" @click="handleSave">
-          Save
-        </Button>
+        <Button :disabled="busy" @click="handleSave"> Save </Button>
       </div>
 
       <div class="pt-6">

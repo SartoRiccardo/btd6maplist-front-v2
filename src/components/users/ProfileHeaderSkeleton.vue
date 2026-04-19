@@ -1,5 +1,7 @@
 <template>
-  <div class="bg-(--color-secondary) rounded-(--radius-panel) p-[5px] animate-pulse">
+  <div
+    class="bg-(--color-secondary) rounded-(--radius-panel) p-[5px] animate-pulse"
+  >
     <!-- Banner area -->
     <div class="flex py-3 bg-(--color-primary) rounded-[0.5rem] px-2">
       <!-- Avatar -->

@@ -199,7 +199,9 @@ async function handleSubmit() {
 
     <template v-else-if="!auth.isLoading">
       <!-- Map Code + Preview row -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6 items-stretch">
+      <div
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6 items-stretch"
+      >
         <!-- Left: Code input panel -->
         <Panel class="sm:col-span-1 lg:col-span-2 flex flex-col">
           <MapCodeInput
@@ -211,8 +213,13 @@ async function handleSubmit() {
 
         <!-- Right: Map preview -->
         <div>
-          <div v-if="nkMap" class="relative p-[0.4rem] pb-4 rounded-(--radius-panel) shadow-md bg-(--color-secondary)">
-            <p class="absolute top-[-0.7rem] left-[-0.1rem] w-full text-center font-['Luckiest_Guy'] font-border text-base md:text-2xl break-words z-10">
+          <div
+            v-if="nkMap"
+            class="relative p-[0.4rem] pb-4 rounded-(--radius-panel) shadow-md bg-(--color-secondary)"
+          >
+            <p
+              class="absolute top-[-0.7rem] left-[-0.1rem] w-full text-center font-['Luckiest_Guy'] font-border text-base md:text-2xl break-words z-10"
+            >
               {{ nkMap.name }}
             </p>
             <img
@@ -225,7 +232,9 @@ async function handleSubmit() {
             v-else
             class="p-[0.4rem] pb-4 rounded-(--radius-panel) shadow-md bg-(--color-secondary)"
           >
-            <div class="w-full aspect-[3/2] bg-(--color-primary) rounded-sm animate-pulse" />
+            <div
+              class="w-full aspect-[3/2] bg-(--color-primary) rounded-sm animate-pulse"
+            />
           </div>
         </div>
       </div>

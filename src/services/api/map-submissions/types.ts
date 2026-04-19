@@ -1,7 +1,7 @@
-import type { User } from '@/services/api/users/types';
-import type { Format } from '@/services/api/formats/types';
+import type { User } from "@/services/api/users/types";
+import type { Format } from "@/services/api/formats/types";
 
-export type MapSubmissionStatus = 'pending' | 'accepted' | 'rejected';
+export type MapSubmissionStatus = "pending" | "accepted" | "rejected";
 
 export interface MapSubmission {
   id: number;

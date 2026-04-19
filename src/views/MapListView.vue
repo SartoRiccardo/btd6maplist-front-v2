@@ -1,24 +1,29 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { useFormats } from '@/services/api/formats/queries';
-import { useMaps } from '@/services/api/maps/queries';
-import { useConfig } from '@/services/api/config/queries';
-import { useAuthStore } from '@/stores/auth';
-import { useNostalgiaPackData } from '@/composables/useNostalgiaPackData';
-import { useMapGroups } from '@/composables/useMapGroups';
-import { FORMAT_MAPLIST, FORMAT_NOSTALGIA_PACK, FORMAT_BEST_OF_THE_BEST, FORMAT_DESCRIPTIONS } from '@/constants/formats';
-import { FORMAT_DIFFICULTIES } from '@/constants/difficulties';
-import { permissions } from '@/constants/permissions';
-import type { GhostMap, MapWithMetadata } from '@/services/api/maps/types';
-import MapGrid from '@/components/maps/MapGrid.vue';
-import PlacementBadge from '@/components/maps/badges/PlacementBadge.vue';
-import MinimapBadge from '@/components/maps/badges/MinimapBadge.vue';
-import IconSelector from '@/components/ui/IconSelector.vue';
-import GhostBtd6Map from '@/components/maps/GhostBtd6Map.vue';
-import Button from '@/components/ui/Button.vue';
-import LinkButton from '@/components/ui/LinkButton.vue';
-import DiscordLoginButton from '@/components/navbar/DiscordLoginButton.vue';
+import { computed, ref, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { useFormats } from "@/services/api/formats/queries";
+import { useMaps } from "@/services/api/maps/queries";
+import { useConfig } from "@/services/api/config/queries";
+import { useAuthStore } from "@/stores/auth";
+import { useNostalgiaPackData } from "@/composables/useNostalgiaPackData";
+import { useMapGroups } from "@/composables/useMapGroups";
+import {
+  FORMAT_MAPLIST,
+  FORMAT_NOSTALGIA_PACK,
+  FORMAT_BEST_OF_THE_BEST,
+  FORMAT_DESCRIPTIONS,
+} from "@/constants/formats";
+import { FORMAT_DIFFICULTIES } from "@/constants/difficulties";
+import { permissions } from "@/constants/permissions";
+import type { GhostMap, MapWithMetadata } from "@/services/api/maps/types";
+import MapGrid from "@/components/maps/MapGrid.vue";
+import PlacementBadge from "@/components/maps/badges/PlacementBadge.vue";
+import MinimapBadge from "@/components/maps/badges/MinimapBadge.vue";
+import IconSelector from "@/components/ui/IconSelector.vue";
+import GhostBtd6Map from "@/components/maps/GhostBtd6Map.vue";
+import Button from "@/components/ui/Button.vue";
+import LinkButton from "@/components/ui/LinkButton.vue";
+import DiscordLoginButton from "@/components/navbar/DiscordLoginButton.vue";
 
 // --- Services & stores ---
 const route = useRoute();
@@ -28,40 +33,60 @@ const { data: formats } = useFormats();
 const { data: config } = useConfig();
 
 // --- Route & format ---
-const slug = computed(() => route.params['slug'] as string);
-const format = computed(() => formats.value?.data.find((f) => f.slug === slug.value));
-const formatNotFound = computed(() => formats.value != null && format.value == null);
+const slug = computed(() => route.params["slug"] as string);
+const format = computed(() =>
+  formats.value?.data.find((f) => f.slug === slug.value),
+);
+const formatNotFound = computed(
+  () => formats.value != null && format.value == null,
+);
 const formatId = computed(() => format.value?.id);
 const isNP = computed(() => formatId.value === FORMAT_NOSTALGIA_PACK);
 const btd6Version = computed(() => config.value?.current_btd6_ver);
 
 // --- Difficulty selector ---
 const difficulties = computed(() =>
-  formatId.value != null ? FORMAT_DIFFICULTIES[formatId.value] ?? null : null
+  formatId.value != null ? (FORMAT_DIFFICULTIES[formatId.value] ?? null) : null,
 );
 
-const difficultyOptions = computed(() =>
-  difficulties.value?.map((d) => ({ image: d.image, key: d.query, name: d.name })) ?? []
+const difficultyOptions = computed(
+  () =>
+    difficulties.value?.map((d) => ({
+      image: d.image,
+      key: d.query,
+      name: d.name,
+    })) ?? [],
 );
 
-const selectedDifficultyQuery = ref('');
+const selectedDifficultyQuery = ref("");
 
-watch([difficulties, () => route.query['difficulty']], ([diffs, queryDiff]) => {
-  if (!diffs) return;
-  if (typeof queryDiff === 'string' && diffs.some((d) => d.query === queryDiff)) {
-    selectedDifficultyQuery.value = queryDiff;
-    return;
-  }
-  selectedDifficultyQuery.value = diffs[0]!.query;
-}, { immediate: true });
-
-const selectedDifficulty = computed(() =>
-  difficulties.value?.find((d) => d.query === selectedDifficultyQuery.value) ?? difficulties.value?.[0]
+watch(
+  [difficulties, () => route.query["difficulty"]],
+  ([diffs, queryDiff]) => {
+    if (!diffs) return;
+    if (
+      typeof queryDiff === "string" &&
+      diffs.some((d) => d.query === queryDiff)
+    ) {
+      selectedDifficultyQuery.value = queryDiff;
+      return;
+    }
+    selectedDifficultyQuery.value = diffs[0]!.query;
+  },
+  { immediate: true },
 );
 
-const currentDescription = computed(() =>
-  selectedDifficulty.value?.description
-  ?? (formatId.value != null ? FORMAT_DESCRIPTIONS[formatId.value] : undefined)
+const selectedDifficulty = computed(
+  () =>
+    difficulties.value?.find(
+      (d) => d.query === selectedDifficultyQuery.value,
+    ) ?? difficulties.value?.[0],
+);
+
+const currentDescription = computed(
+  () =>
+    selectedDifficulty.value?.description ??
+    (formatId.value != null ? FORMAT_DESCRIPTIONS[formatId.value] : undefined),
 );
 
 function onDifficultyChange(query: string) {
@@ -71,7 +96,7 @@ function onDifficultyChange(query: string) {
 }
 
 function subfilterString(value: number | number[]): string {
-  return Array.isArray(value) ? value.join(',') : value.toString();
+  return Array.isArray(value) ? value.join(",") : value.toString();
 }
 
 // --- Maps query ---
@@ -96,7 +121,7 @@ const { data: mapsResponse } = useMaps(
       params.fill_missing_retro = true;
     }
     if (auth.isAuthenticated) {
-      params.include = 'medals';
+      params.include = "medals";
       params.medal_formats = formatId.value;
     }
     return params;
@@ -111,13 +136,18 @@ const {
   selectedQuery: selectedCategoryQuery,
   onCategoryChange,
   progress,
-} = useNostalgiaPackData(isNP, computed(() => selectedDifficulty.value));
+} = useNostalgiaPackData(
+  isNP,
+  computed(() => selectedDifficulty.value),
+);
 
 // --- Filtered & grouped maps ---
 const filteredMaps = computed(() => {
   const maps = mapsResponse.value?.data;
   if (!maps || !selectedCategory.value) return maps;
-  return maps.filter((m) => m.retro_map?.game.category_id === selectedCategory.value!.id);
+  return maps.filter(
+    (m) => m.retro_map?.game.category_id === selectedCategory.value!.id,
+  );
 });
 
 const mapGroups = useMapGroups(filteredMaps, formatId);
@@ -126,27 +156,37 @@ const mapGroups = useMapGroups(filteredMaps, formatId);
 const isBurning = computed(() =>
   formatId.value === FORMAT_BEST_OF_THE_BEST
     ? (map: MapWithMetadata) => map.botb_difficulty === 4
-    : undefined
+    : undefined,
 );
 
-const showSubmitButton = computed(() =>
-  formatId.value != null
-  && auth.hasPermission(permissions.mapSubmission.create, formatId.value)
+const showSubmitButton = computed(
+  () =>
+    formatId.value != null &&
+    auth.hasPermission(permissions.mapSubmission.create, formatId.value),
 );
 
-const showAddButton = computed(() =>
-  formatId.value != null && auth.hasPermission(permissions.map.create, formatId.value)
+const showAddButton = computed(
+  () =>
+    formatId.value != null &&
+    auth.hasPermission(permissions.map.create, formatId.value),
 );
 
-const hideNoGeraldo = computed(() => format.value?.is_no_geraldo_enabled === false);
+const hideNoGeraldo = computed(
+  () => format.value?.is_no_geraldo_enabled === false,
+);
 
 const mapBorder = computed(() =>
   auth.isAuthenticated
     ? (map: MapWithMetadata) => {
-        if (!map.medals?.no_geraldo && !hideNoGeraldo.value) return 'none' as const;
-        return map.medals?.black_border ? 'black' as const : map.medals?.completed ? 'gold' as const : 'none' as const;
+        if (!map.medals?.no_geraldo && !hideNoGeraldo.value)
+          return "none" as const;
+        return map.medals?.black_border
+          ? ("black" as const)
+          : map.medals?.completed
+            ? ("gold" as const)
+            : ("none" as const);
       }
-    : undefined
+    : undefined,
 );
 </script>
 
@@ -154,7 +194,8 @@ const mapBorder = computed(() =>
   <div v-if="formatNotFound" class="text-center mt-12">
     <h1 class="font-['Luckiest_Guy'] text-4xl mb-4">List Not Found</h1>
     <p class="text-(--color-text-muted)">
-      There is no list at <span class="font-mono">{{ slug }}</span>.
+      There is no list at <span class="font-mono">{{ slug }}</span
+      >.
     </p>
     <RouterLink to="/" class="text-(--color-highlight) mt-4 inline-block">
       Back to Home
@@ -165,7 +206,7 @@ const mapBorder = computed(() =>
     <!-- Header -->
     <div class="text-center mt-6 mb-4">
       <h1 class="font-['Luckiest_Guy'] text-3xl md:text-4xl">
-        {{ format?.name ?? 'Loading...' }}
+        {{ format?.name ?? "Loading..." }}
       </h1>
     </div>
 
@@ -191,13 +232,25 @@ const mapBorder = computed(() =>
 
     <!-- Progress Bar (NP) -->
     <div v-if="progress" class="w-[90%] max-w-md mx-auto my-6">
-      <div class="relative h-6 bg-(--color-secondary) rounded-full overflow-hidden">
+      <div
+        class="relative h-6 bg-(--color-secondary) rounded-full overflow-hidden"
+      >
         <div
           class="h-full bg-(--color-highlight) rounded-full transition-[width] duration-500"
-          :style="{ width: `${progress.totalMaps > 0 ? (progress.mapsRemade / progress.totalMaps) * 100 : 0}%` }"
+          :style="{
+            width: `${progress.totalMaps > 0 ? (progress.mapsRemade / progress.totalMaps) * 100 : 0}%`,
+          }"
         />
-        <span class="absolute inset-0 flex items-center justify-center text-sm font-bold font-border">
-          {{ Math.round(progress.totalMaps > 0 ? (progress.mapsRemade / progress.totalMaps) * 100 : 0) }}% remade — {{ progress.mapsRemade }}/{{ progress.totalMaps }}
+        <span
+          class="absolute inset-0 flex items-center justify-center text-sm font-bold font-border"
+        >
+          {{
+            Math.round(
+              progress.totalMaps > 0
+                ? (progress.mapsRemade / progress.totalMaps) * 100
+                : 0,
+            )
+          }}% remade — {{ progress.mapsRemade }}/{{ progress.totalMaps }}
         </span>
       </div>
     </div>
@@ -208,20 +261,40 @@ const mapBorder = computed(() =>
     </p>
 
     <!-- Submission Rules Links -->
-    <p v-if="format?.map_submission_status !== 'closed' || format?.run_submission_status !== 'closed'" class="text-center my-4">
-      <RouterLink v-if="format?.map_submission_status !== 'closed'" :to="`/maps/${slug}/map-rules`">
+    <p
+      v-if="
+        format?.map_submission_status !== 'closed' ||
+        format?.run_submission_status !== 'closed'
+      "
+      class="text-center my-4"
+    >
+      <RouterLink
+        v-if="format?.map_submission_status !== 'closed'"
+        :to="`/maps/${slug}/map-rules`"
+      >
         Map Submission Rules
       </RouterLink>
-      <template v-if="format?.map_submission_status !== 'closed' && format?.run_submission_status !== 'closed'">
-        {{ ' | ' }}
+      <template
+        v-if="
+          format?.map_submission_status !== 'closed' &&
+          format?.run_submission_status !== 'closed'
+        "
+      >
+        {{ " | " }}
       </template>
-      <RouterLink v-if="format?.run_submission_status !== 'closed'" :to="`/maps/${slug}/completion-rules`">
+      <RouterLink
+        v-if="format?.run_submission_status !== 'closed'"
+        :to="`/maps/${slug}/completion-rules`"
+      >
         Completion Submission Rules
       </RouterLink>
     </p>
 
     <!-- Action Buttons -->
-    <div v-if="showSubmitButton || showAddButton" class="flex justify-center gap-4 my-4">
+    <div
+      v-if="showSubmitButton || showAddButton"
+      class="flex justify-center gap-4 my-4"
+    >
       <LinkButton v-if="showSubmitButton" :to="`/map/submit?on=${formatId}`">
         <i class="bi bi-pencil-fill mr-0.5" /> Submit a Map
       </LinkButton>
@@ -229,7 +302,14 @@ const mapBorder = computed(() =>
         <i class="bi bi-plus-lg mr-0.5" /> Add Map
       </LinkButton>
     </div>
-    <div v-else-if="formatId != null && !auth.isAuthenticated && format?.map_submission_status !== 'closed'" class="flex justify-center my-4">
+    <div
+      v-else-if="
+        formatId != null &&
+        !auth.isAuthenticated &&
+        format?.map_submission_status !== 'closed'
+      "
+      class="flex justify-center my-4"
+    >
       <DiscordLoginButton text="Log in to submit maps" />
     </div>
 
@@ -245,13 +325,25 @@ const mapBorder = computed(() =>
     <!-- Map Groups -->
     <template v-if="mapGroups">
       <div v-for="(group, i) in mapGroups" :key="i">
-        <h2 v-if="group.subcategoryName" class="text-center mt-8 mb-2 font-['Luckiest_Guy'] text-2xl">
+        <h2
+          v-if="group.subcategoryName"
+          class="text-center mt-8 mb-2 font-['Luckiest_Guy'] text-2xl"
+        >
           {{ group.subcategoryName }}
         </h2>
-        <MapGrid :maps="group.maps" :btd6-version="btd6Version" :burning="isBurning" :border="mapBorder">
+        <MapGrid
+          :maps="group.maps"
+          :btd6-version="btd6Version"
+          :burning="isBurning"
+          :border="mapBorder"
+        >
           <template #badge="{ map }">
             <PlacementBadge
-              v-if="formatId === FORMAT_MAPLIST && map.placement_curver != null && config"
+              v-if="
+                formatId === FORMAT_MAPLIST &&
+                map.placement_curver != null &&
+                config
+              "
               :placement="map.placement_curver"
               :config="config"
             />
@@ -261,11 +353,16 @@ const mapBorder = computed(() =>
             />
           </template>
           <template v-if="auth.isAuthenticated" #bottom="{ map }">
-            <div v-if="map.medals" class="absolute bottom-[-1rem] left-0 w-full flex justify-center gap-2 z-10">
+            <div
+              v-if="map.medals"
+              class="absolute bottom-[-1rem] left-0 w-full flex justify-center gap-2 z-10"
+            >
               <img
-                :src="map.medals.black_border
-                  ? '/images/medals/medal_bb.webp'
-                  : '/images/medals/medal_win.webp'"
+                :src="
+                  map.medals.black_border
+                    ? '/images/medals/medal_bb.webp'
+                    : '/images/medals/medal_win.webp'
+                "
                 :title="map.medals.black_border ? 'Black Border' : 'CHIMPS'"
                 class="w-[40px] h-[40px] md:w-[60px] md:h-[60px]"
                 :class="{ 'medal-blocked': !map.medals.completed }"
@@ -286,7 +383,7 @@ const mapBorder = computed(() =>
             </div>
           </template>
           <template #ghost="{ map }">
-            <GhostBtd6Map :map="(map as GhostMap)" />
+            <GhostBtd6Map :map="map as GhostMap" />
           </template>
         </MapGrid>
       </div>
@@ -297,6 +394,7 @@ const mapBorder = computed(() =>
 
 <style scoped>
 .medal-blocked {
-  filter: brightness(0%) drop-shadow(1px 1px 0 white) drop-shadow(-1px -1px 0 white);
+  filter: brightness(0%) drop-shadow(1px 1px 0 white)
+    drop-shadow(-1px -1px 0 white);
 }
 </style>

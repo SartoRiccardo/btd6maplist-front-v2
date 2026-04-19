@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { RouterLink } from 'vue-router';
-import type { Format } from '@/services/api/formats/types';
-import Btd6Map from '@/components/maps/Btd6Map.vue';
+import { RouterLink } from "vue-router";
+import type { Format } from "@/services/api/formats/types";
+import Btd6Map from "@/components/maps/Btd6Map.vue";
 
 defineProps<{
   format: Format;
@@ -22,19 +22,29 @@ defineProps<{
       class="relative flex justify-center order-last"
       :class="inverted ? 'md:order-first' : 'md:order-last'"
     >
-      <img
-        :src="heroUrl"
-        alt=""
-        class="w-[350px] h-[350px] object-contain"
-      />
-      <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[22rem] h-full">
-        <div v-if="format.preview_map1" class="absolute bottom-8 left-0 w-[40%] animate-float-slow" style="animation-delay: 0s">
+      <img :src="heroUrl" alt="" class="w-[350px] h-[350px] object-contain" />
+      <div
+        class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[22rem] h-full"
+      >
+        <div
+          v-if="format.preview_map1"
+          class="absolute bottom-8 left-0 w-[40%] animate-float-slow"
+          style="animation-delay: 0s"
+        >
           <Btd6Map :code="format.preview_map1.code" />
         </div>
-        <div v-if="format.preview_map2" class="absolute bottom-8 right-0 w-[40%] animate-float-slow" style="animation-delay: -2.3s">
+        <div
+          v-if="format.preview_map2"
+          class="absolute bottom-8 right-0 w-[40%] animate-float-slow"
+          style="animation-delay: -2.3s"
+        >
           <Btd6Map :code="format.preview_map2.code" />
         </div>
-        <div v-if="format.preview_map3" class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[40%] animate-float-slow" style="animation-delay: -4.7s">
+        <div
+          v-if="format.preview_map3"
+          class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[40%] animate-float-slow"
+          style="animation-delay: -4.7s"
+        >
           <Btd6Map :code="format.preview_map3.code" />
         </div>
       </div>
@@ -54,9 +64,7 @@ defineProps<{
       <div class="pt-6">
         <RouterLink
           :to="`/maps/${format.slug}`"
-          class="font-border inline-block no-underline! px-5 py-2 rounded-(--radius-btn) text-lg font-bold
-                 bg-(--color-highlight) text-(--color-text)!
-                 hover:bg-(--color-active) hover:text-(--color-text)! transition-colors duration-200"
+          class="font-border inline-block no-underline! px-5 py-2 rounded-(--radius-btn) text-lg font-bold bg-(--color-highlight) text-(--color-text)! hover:bg-(--color-active) hover:text-(--color-text)! transition-colors duration-200"
         >
           {{ format.button_text }}
         </RouterLink>

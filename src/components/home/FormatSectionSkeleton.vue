@@ -7,7 +7,7 @@ withDefaults(
   {
     inverted: false,
     bordered: true,
-  }
+  },
 );
 </script>
 
@@ -22,15 +22,23 @@ withDefaults(
       :class="inverted ? 'md:order-first' : 'md:order-last'"
     >
       <div class="w-[350px] h-[350px] opacity-0" />
-      <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[22rem] h-full">
+      <div
+        class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-[22rem] h-full"
+      >
         <div class="absolute bottom-8 left-0 w-[40%]">
-          <div class="bg-(--color-secondary) rounded-(--radius-panel) aspect-[3/2] w-full" />
+          <div
+            class="bg-(--color-secondary) rounded-(--radius-panel) aspect-[3/2] w-full"
+          />
         </div>
         <div class="absolute bottom-8 right-0 w-[40%]">
-          <div class="bg-(--color-secondary) rounded-(--radius-panel) aspect-[3/2] w-full" />
+          <div
+            class="bg-(--color-secondary) rounded-(--radius-panel) aspect-[3/2] w-full"
+          />
         </div>
         <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[40%]">
-          <div class="bg-(--color-secondary) rounded-(--radius-panel) aspect-[3/2] w-full" />
+          <div
+            class="bg-(--color-secondary) rounded-(--radius-panel) aspect-[3/2] w-full"
+          />
         </div>
       </div>
     </div>
@@ -46,7 +54,9 @@ withDefaults(
         <div class="h-4 w-full bg-(--color-secondary) rounded" />
         <div class="h-4 w-3/4 bg-(--color-secondary) rounded mx-auto" />
       </div>
-      <div class="h-10 w-52 bg-(--color-secondary) rounded-(--radius-btn) mt-3" />
+      <div
+        class="h-10 w-52 bg-(--color-secondary) rounded-(--radius-btn) mt-3"
+      />
     </div>
   </div>
 </template>

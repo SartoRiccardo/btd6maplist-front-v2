@@ -1,6 +1,6 @@
-import { computed, type Ref } from 'vue';
-import type { MaybeGhostMap } from '@/services/api/maps/types';
-import { FORMAT_NOSTALGIA_PACK } from '@/constants/formats';
+import { computed, type Ref } from "vue";
+import type { MaybeGhostMap } from "@/services/api/maps/types";
+import { FORMAT_NOSTALGIA_PACK } from "@/constants/formats";
 
 export interface MapGroup {
   subcategoryName?: string;
@@ -28,13 +28,20 @@ export function useMapGroups(
 }
 
 function groupNostalgiaPack(maps: MaybeGhostMap[]): MapGroup[] {
-  const groupMap = new Map<number, { subcategoryName: string; retroGameId: number; maps: MaybeGhostMap[] }>();
+  const groupMap = new Map<
+    number,
+    { subcategoryName: string; retroGameId: number; maps: MaybeGhostMap[] }
+  >();
 
   for (const map of maps) {
     const rg = map.retro_map?.game;
     if (!rg) {
       // Map without retro_map — put in a fallback group
-      const fallback = groupMap.get(-1) ?? { subcategoryName: '', retroGameId: -1, maps: [] };
+      const fallback = groupMap.get(-1) ?? {
+        subcategoryName: "",
+        retroGameId: -1,
+        maps: [],
+      };
       fallback.maps.push(map);
       groupMap.set(-1, fallback);
       continue;
@@ -57,7 +64,8 @@ function groupNostalgiaPack(maps: MaybeGhostMap[]): MapGroup[] {
     .sort((a, b) => a.retroGameId - b.retroGameId)
     .map((g) => {
       const sorted = [...g.maps].sort(
-        (a, b) => (a.retro_map?.sort_order ?? 0) - (b.retro_map?.sort_order ?? 0),
+        (a, b) =>
+          (a.retro_map?.sort_order ?? 0) - (b.retro_map?.sort_order ?? 0),
       );
       return {
         subcategoryName: g.subcategoryName || undefined,

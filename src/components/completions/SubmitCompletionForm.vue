@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import { useTouchedProvider } from '@/composables/useTouchedFields';
-import { useEmitOnChange } from '@/composables/useEmitOnChange';
-import type { FormFieldError } from '@/services/api/formErrors';
-import type { Format } from '@/services/api/formats/types';
-import { FORMAT_ICONS } from '@/constants/formats';
-import Button from '@/components/ui/Button.vue';
-import BoxedCheckbox from '@/components/ui/BoxedCheckbox.vue';
-import ProofImageUploader from './ProofImageUploader.vue';
-import UrlListInput from './UrlListInput.vue';
+import { computed, ref } from "vue";
+import { useTouchedProvider } from "@/composables/useTouchedFields";
+import { useEmitOnChange } from "@/composables/useEmitOnChange";
+import type { FormFieldError } from "@/services/api/formErrors";
+import type { Format } from "@/services/api/formats/types";
+import { FORMAT_ICONS } from "@/constants/formats";
+import Button from "@/components/ui/Button.vue";
+import BoxedCheckbox from "@/components/ui/BoxedCheckbox.vue";
+import ProofImageUploader from "./ProofImageUploader.vue";
+import UrlListInput from "./UrlListInput.vue";
 
 export interface CompletionFormModel {
   format_id: number | null;
@@ -41,8 +41,8 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', value: CompletionFormModel): void;
-  (e: 'errors', value: FormFieldError[]): void;
+  (e: "update:modelValue", value: CompletionFormModel): void;
+  (e: "errors", value: FormFieldError[]): void;
 }>();
 
 const { touchAll, clearTouched, isTouched, touch } = useTouchedProvider();
@@ -52,7 +52,7 @@ const imageError = ref<string | null>(null);
 
 function update(partial: Partial<CompletionFormModel>) {
   for (const key of Object.keys(partial)) touch(key);
-  emit('update:modelValue', { ...props.modelValue, ...partial });
+  emit("update:modelValue", { ...props.modelValue, ...partial });
 }
 
 function formatIcon(formatId: number): string | undefined {
@@ -74,30 +74,59 @@ const ownErrors = computed<FormFieldError[]>(() => {
   const errors: FormFieldError[] = [];
 
   if (props.eligibleFormats.length > 1 && props.modelValue.format_id == null) {
-    errors.push({ path: 'format_id', message: 'Please select a format.', source: 'validation' });
+    errors.push({
+      path: "format_id",
+      message: "Please select a format.",
+      source: "validation",
+    });
   }
 
   if (props.modelValue.proof_images.length === 0) {
-    errors.push({ path: 'proof_images', message: 'At least one proof image is required.', source: 'validation' });
+    errors.push({
+      path: "proof_images",
+      message: "At least one proof image is required.",
+      source: "validation",
+    });
   }
 
   if (props.modelValue.subm_notes.length > 5000) {
-    errors.push({ path: 'subm_notes', message: 'Notes must be 5000 characters or less.', source: 'validation' });
+    errors.push({
+      path: "subm_notes",
+      message: "Notes must be 5000 characters or less.",
+      source: "validation",
+    });
   }
 
-  const nonEmptyVideos = props.modelValue.proof_videos.filter((v) => v.trim() !== '');
+  const nonEmptyVideos = props.modelValue.proof_videos.filter(
+    (v) => v.trim() !== "",
+  );
   if (props.videoRequired && nonEmptyVideos.length === 0) {
-    errors.push({ path: 'proof_videos', message: 'At least one video URL is required.', source: 'validation' });
+    errors.push({
+      path: "proof_videos",
+      message: "At least one video URL is required.",
+      source: "validation",
+    });
   }
   for (const url of nonEmptyVideos) {
     if (!isValidUrl(url)) {
-      errors.push({ path: 'proof_videos', message: `"${url}" is not a valid URL.`, source: 'validation' });
+      errors.push({
+        path: "proof_videos",
+        message: `"${url}" is not a valid URL.`,
+        source: "validation",
+      });
       break;
     }
   }
 
-  if (props.modelValue.lcc_enabled && (props.modelValue.lcc_leftover == null || props.modelValue.lcc_leftover < 0)) {
-    errors.push({ path: 'lcc_leftover', message: 'LCC leftover must be a non-negative number.', source: 'validation' });
+  if (
+    props.modelValue.lcc_enabled &&
+    (props.modelValue.lcc_leftover == null || props.modelValue.lcc_leftover < 0)
+  ) {
+    errors.push({
+      path: "lcc_leftover",
+      message: "LCC leftover must be a non-negative number.",
+      source: "validation",
+    });
   }
 
   return errors;
@@ -106,15 +135,15 @@ const ownErrors = computed<FormFieldError[]>(() => {
 const activeErrors = computed<FormFieldError[]>(() => {
   const validation = ownErrors.value.filter((e) => isTouched(e.path));
   const externalValidation = (props.externalErrors ?? []).filter(
-    (e) => e.source === 'validation' && isTouched(e.path),
+    (e) => e.source === "validation" && isTouched(e.path),
   );
   const externalApi = (props.externalErrors ?? []).filter(
-    (e) => e.source === 'api' && !isTouched(e.path),
+    (e) => e.source === "api" && !isTouched(e.path),
   );
   return [...validation, ...externalValidation, ...externalApi];
 });
 
-useEmitOnChange(activeErrors, (errors) => emit('errors', errors));
+useEmitOnChange(activeErrors, (errors) => emit("errors", errors));
 
 function fieldError(field: string): string | undefined {
   return activeErrors.value.find((e) => e.path === field)?.message;
@@ -133,7 +162,7 @@ function fieldError(field: string): string | undefined {
         @error="imageError = $event"
       />
       <p v-if="fieldError('proof_images')" class="text-red-400 text-sm mt-1">
-        {{ fieldError('proof_images') }}
+        {{ fieldError("proof_images") }}
       </p>
       <p v-else-if="imageError" class="text-red-400 text-sm mt-1">
         {{ imageError }}
@@ -150,22 +179,24 @@ function fieldError(field: string): string | undefined {
       @update:model-value="update({ proof_videos: $event })"
     />
     <p v-if="fieldError('proof_videos')" class="text-red-400 text-sm -mt-4">
-      {{ fieldError('proof_videos') }}
+      {{ fieldError("proof_videos") }}
     </p>
 
     <!-- List Ruleset Picker -->
     <div v-if="eligibleFormats.length > 1">
       <label class="block font-bold mb-1">List Ruleset</label>
       <p class="text-(--color-text-muted) text-sm mb-2">
-        This map is in multiple lists which may have different rulesets.
-        Please specify which list's ruleset you followed.
-        Check the
+        This map is in multiple lists which may have different rulesets. Please
+        specify which list's ruleset you followed. Check the
         <template v-for="(fmt, i) in eligibleFormats" :key="fmt.id">
-          <template v-if="i > 0">{{ i === eligibleFormats.length - 1 ? ' or ' : ', ' }}</template>
+          <template v-if="i > 0">{{
+            i === eligibleFormats.length - 1 ? " or " : ", "
+          }}</template>
           <RouterLink
             :to="`/maps/${fmt.slug}/completion-rules`"
             class="text-(--color-highlight) hover:text-(--color-active)"
-          >{{ fmt.name }}</RouterLink>
+            >{{ fmt.name }}</RouterLink
+          >
         </template>
         completion rules for details.
       </p>
@@ -189,7 +220,7 @@ function fieldError(field: string): string | undefined {
         </Button>
       </div>
       <p v-if="fieldError('format_id')" class="text-red-400 text-sm mt-1">
-        {{ fieldError('format_id') }}
+        {{ fieldError("format_id") }}
       </p>
     </div>
 
@@ -224,7 +255,9 @@ function fieldError(field: string): string | undefined {
       </div>
 
       <div v-if="modelValue.lcc_enabled" class="mt-2">
-        <label for="lcc-leftover" class="block text-sm mb-1">Leftover cash</label>
+        <label for="lcc-leftover" class="block text-sm mb-1"
+          >Leftover cash</label
+        >
         <input
           id="lcc-leftover"
           type="number"
@@ -233,10 +266,14 @@ function fieldError(field: string): string | undefined {
           :disabled="disabled"
           class="w-40 px-3 py-2 rounded-(--radius-btn) bg-(--color-primary) text-(--color-text) border border-(--color-contrast) focus:outline-none focus:border-(--color-active)"
           :class="{ 'border-red-500!': fieldError('lcc_leftover') }"
-          @input="update({ lcc_leftover: ($event.target as HTMLInputElement).valueAsNumber })"
+          @input="
+            update({
+              lcc_leftover: ($event.target as HTMLInputElement).valueAsNumber,
+            })
+          "
         />
         <p v-if="fieldError('lcc_leftover')" class="text-red-400 text-sm mt-1">
-          {{ fieldError('lcc_leftover') }}
+          {{ fieldError("lcc_leftover") }}
         </p>
       </div>
     </div>
@@ -255,11 +292,13 @@ function fieldError(field: string): string | undefined {
         rows="4"
         class="w-full px-3 py-2 rounded-(--radius-btn) bg-(--color-primary) text-(--color-text) border border-(--color-contrast) focus:outline-none focus:border-(--color-active) resize-y"
         :class="{ 'border-red-500!': fieldError('subm_notes') }"
-        @input="update({ subm_notes: ($event.target as HTMLTextAreaElement).value })"
+        @input="
+          update({ subm_notes: ($event.target as HTMLTextAreaElement).value })
+        "
       />
       <div class="flex justify-between mt-1">
         <p v-if="fieldError('subm_notes')" class="text-red-400 text-sm">
-          {{ fieldError('subm_notes') }}
+          {{ fieldError("subm_notes") }}
         </p>
         <span class="text-(--color-text-muted) text-xs ml-auto">
           {{ modelValue.subm_notes.length }} / 5000

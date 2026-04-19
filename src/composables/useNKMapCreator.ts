@@ -1,6 +1,6 @@
-import { computed, toValue, type MaybeRefOrGetter } from 'vue';
-import { useQuery } from '@tanstack/vue-query';
-import { getCustomMap, getBtd6User } from '@/services/ninjakiwi';
+import { computed, toValue, type MaybeRefOrGetter } from "vue";
+import { useQuery } from "@tanstack/vue-query";
+import { getCustomMap, getBtd6User } from "@/services/ninjakiwi";
 
 /**
  * Fetches the map creator from the NinjaKiwi API as a fallback
@@ -13,7 +13,7 @@ export function useNKMapCreator(
   enabled: MaybeRefOrGetter<boolean>,
 ) {
   const { data: nkMap, isLoading: isMapLoading } = useQuery({
-    queryKey: computed(() => ['nk', 'map', toValue(code)]),
+    queryKey: computed(() => ["nk", "map", toValue(code)]),
     queryFn: () => getCustomMap(toValue(code)),
     enabled: computed(() => toValue(enabled)),
     staleTime: 24 * 60 * 60 * 1000,
@@ -25,7 +25,7 @@ export function useNKMapCreator(
   });
 
   const { data: nkUser, isLoading: isUserLoading } = useQuery({
-    queryKey: computed(() => ['nk', 'user', creatorUid.value]),
+    queryKey: computed(() => ["nk", "user", creatorUid.value]),
     queryFn: () => getBtd6User(creatorUid.value!),
     enabled: computed(() => creatorUid.value != null),
     staleTime: 24 * 60 * 60 * 1000,

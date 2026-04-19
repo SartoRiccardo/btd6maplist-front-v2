@@ -1,5 +1,5 @@
-import type { SearchResult, SearchParams } from './types';
-import { apiRequest } from '../client';
+import type { SearchResult, SearchParams } from "./types";
+import { apiRequest } from "../client";
 
 /**
  * GET /api/search
@@ -9,14 +9,14 @@ import { apiRequest } from '../client';
  */
 export async function search(params: SearchParams): Promise<SearchResult[]> {
   const searchParams = new URLSearchParams();
-  searchParams.set('q', params.q);
+  searchParams.set("q", params.q);
 
   if (params.entities && params.entities.length > 0) {
-    searchParams.set('entities', params.entities.join(','));
+    searchParams.set("entities", params.entities.join(","));
   }
 
   if (params.limit != null) {
-    searchParams.set('limit', params.limit.toString());
+    searchParams.set("limit", params.limit.toString());
   }
 
   return apiRequest<SearchResult[]>(`/api/search?${searchParams.toString()}`);

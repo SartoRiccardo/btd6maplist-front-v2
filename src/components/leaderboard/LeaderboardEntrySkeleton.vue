@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed } from "vue";
 
 const props = defineProps<{ placement: number }>();
 
 const positionColor = computed(() => {
-  if (props.placement === 1) return '#ffd54f';
-  if (props.placement === 2) return '#e0e0e0';
-  if (props.placement === 3) return '#cd7f32';
+  if (props.placement === 1) return "#ffd54f";
+  if (props.placement === 2) return "#e0e0e0";
+  if (props.placement === 3) return "#cd7f32";
   return undefined;
 });
 
@@ -25,7 +25,9 @@ const isTopThree = computed(() => props.placement <= 3);
 
     <div class="flex-1 min-w-0">
       <div class="flex items-center my-1.5">
-        <div class="w-[45px] h-[45px] bg-(--color-primary) rounded-sm shrink-0" />
+        <div
+          class="w-[45px] h-[45px] bg-(--color-primary) rounded-sm shrink-0"
+        />
         <div class="pl-2">
           <div class="h-4 w-24 bg-(--color-primary) rounded" />
         </div>

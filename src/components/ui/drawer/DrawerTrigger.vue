@@ -1,16 +1,13 @@
 <script lang="ts" setup>
 // @ts-nocheck
-import type { DrawerTriggerProps } from "vaul-vue"
-import { DrawerTrigger } from "vaul-vue"
+import type { DrawerTriggerProps } from "vaul-vue";
+import { DrawerTrigger } from "vaul-vue";
 
-const props = defineProps<DrawerTriggerProps>()
+const props = defineProps<DrawerTriggerProps>();
 </script>
 
 <template>
-  <DrawerTrigger
-    data-slot="drawer-trigger"
-    v-bind="props"
-  >
+  <DrawerTrigger data-slot="drawer-trigger" v-bind="props">
     <slot />
   </DrawerTrigger>
 </template>

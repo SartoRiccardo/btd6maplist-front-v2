@@ -1,22 +1,24 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { Marked } from 'marked';
-import { renderIcon } from '@/utils/markdownIcons';
+import { computed } from "vue";
+import { Marked } from "marked";
+import { renderIcon } from "@/utils/markdownIcons";
 
 const props = defineProps<{
   text: string;
 }>();
 
 const iconExtension = {
-  name: 'icon',
-  level: 'inline' as const,
-  start(src: string) { return src.match(/:/)?.index; },
+  name: "icon",
+  level: "inline" as const,
+  start(src: string) {
+    return src.match(/:/)?.index;
+  },
   tokenizer(src: string) {
     // :(name): — with border (badge style)
     const borderMatch = /^:\(([a-z0-9_]+)\):/.exec(src);
     if (borderMatch) {
       return {
-        type: 'icon',
+        type: "icon",
         raw: borderMatch[0],
         name: borderMatch[1],
         withBorder: true,
@@ -26,7 +28,7 @@ const iconExtension = {
     const match = /^:([a-z0-9_]+):/.exec(src);
     if (match) {
       return {
-        type: 'icon',
+        type: "icon",
         raw: match[0],
         name: match[1],
         withBorder: false,

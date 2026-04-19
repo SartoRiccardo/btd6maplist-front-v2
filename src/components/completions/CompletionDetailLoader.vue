@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { useCompletion } from '@/services/api/completions/queries';
-import CompletionDetail from './CompletionDetail.vue';
-import CompletionDetailSkeleton from './CompletionDetailSkeleton.vue';
+import { useCompletion } from "@/services/api/completions/queries";
+import CompletionDetail from "./CompletionDetail.vue";
+import CompletionDetailSkeleton from "./CompletionDetailSkeleton.vue";
 
 const props = defineProps<{
   completionId: number;
@@ -9,7 +9,7 @@ const props = defineProps<{
 
 const { data: completion, isLoading } = useCompletion(
   () => props.completionId,
-  { include: 'accepted_by.flair,players.flair' },
+  { include: "accepted_by.flair,players.flair" },
 );
 </script>
 

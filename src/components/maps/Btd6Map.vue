@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import type { MapWithMetadata } from '@/services/api/maps/types';
-import { useFireEffect } from '@/composables/useFireEffect';
+import { computed } from "vue";
+import type { MapWithMetadata } from "@/services/api/maps/types";
+import { useFireEffect } from "@/composables/useFireEffect";
 
 const props = withDefaults(
   defineProps<{
@@ -11,14 +11,15 @@ const props = withDefaults(
     burning?: boolean | undefined;
     showPlayButton?: boolean | undefined;
     showName?: boolean | undefined;
-    border?: 'none' | 'black' | 'gold';
+    border?: "none" | "black" | "gold";
   }>(),
-  { showName: true, border: 'none' }
+  { showName: true, border: "none" },
 );
 
 const previewUrl = computed(
-  () => props.map?.map_preview_url
-    ?? `https://data.ninjakiwi.com/btd6/maps/map/${props.code}/preview`
+  () =>
+    props.map?.map_preview_url ??
+    `https://data.ninjakiwi.com/btd6/maps/map/${props.code}/preview`,
 );
 
 const mapName = computed(() => props.map?.name);
@@ -26,11 +27,11 @@ const mapName = computed(() => props.map?.name);
 const mapCode = computed(() => props.map?.code ?? props.code);
 
 const playUrl = computed(() =>
-  mapCode.value ? `https://join.btd6.com/Map/${mapCode.value}` : undefined
+  mapCode.value ? `https://join.btd6.com/Map/${mapCode.value}` : undefined,
 );
 
 const versionLabel = computed(() => {
-  if (!props.btd6Version) return '';
+  if (!props.btd6Version) return "";
   return `v${props.btd6Version / 10}`;
 });
 
@@ -41,9 +42,11 @@ const { containerRef: fireContainer } = useFireEffect(() => props.burning);
   <div
     class="p-[0.4rem] pb-4 rounded-(--radius-panel) shadow-md hover:shadow-lg relative my-6 mx-0.5 transition-all duration-200"
     :class="[
-      border === 'black' ? 'btd6map-black-border' :
-      border === 'gold' ? 'btd6map-gold-border' :
-      'bg-(--color-secondary) group-hover:bg-(--color-active)'
+      border === 'black'
+        ? 'btd6map-black-border'
+        : border === 'gold'
+          ? 'btd6map-gold-border'
+          : 'bg-(--color-secondary) group-hover:bg-(--color-active)',
     ]"
   >
     <p
@@ -86,8 +89,13 @@ const { containerRef: fireContainer } = useFireEffect(() => props.burning);
 
     <!-- Fire effect -->
     <template v-if="burning">
-      <div class="absolute inset-[-3px] rounded-[calc(var(--radius-panel)+3px)] pointer-events-none z-[2] shadow-[0_0_20px_6px_rgba(255,140,0,0.6),0_0_50px_15px_rgba(255,60,0,0.3)]" />
-      <div ref="fireContainer" class="absolute inset-0 pointer-events-none z-10 overflow-visible" />
+      <div
+        class="absolute inset-[-3px] rounded-[calc(var(--radius-panel)+3px)] pointer-events-none z-[2] shadow-[0_0_20px_6px_rgba(255,140,0,0.6),0_0_50px_15px_rgba(255,60,0,0.3)]"
+      />
+      <div
+        ref="fireContainer"
+        class="absolute inset-0 pointer-events-none z-10 overflow-visible"
+      />
     </template>
   </div>
 </template>

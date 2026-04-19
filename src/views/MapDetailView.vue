@@ -1,38 +1,39 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import { useRoute } from 'vue-router';
-import { useMap } from '@/services/api/maps/queries';
-import { useConfig } from '@/services/api/config/queries';
-import { useFormats } from '@/services/api/formats/queries';
-import { getMapFormatBadges, getFormatsMapIsIn } from '@/utils/formatBadges';
-import { permissions } from '@/constants/permissions';
-import { useAuthStore } from '@/stores/auth';
-import Btd6Map from '@/components/maps/Btd6Map.vue';
-import LinkButton from '@/components/ui/LinkButton.vue';
-import DiscordLoginButton from '@/components/navbar/DiscordLoginButton.vue';
-import MapInfoPanel from '@/components/maps/MapInfoPanel.vue';
-import StandaloneImage from '@/components/common/StandaloneImage.vue';
-import CompletionList from '@/components/completions/CompletionList.vue';
-import CompletionRow from '@/components/completions/CompletionRow.vue';
-import CompletionRowSkeleton from '@/components/completions/CompletionRowSkeleton.vue';
-import CompletionDetailLoader from '@/components/completions/CompletionDetailLoader.vue';
-import UserEntry from '@/components/users/UserEntry.vue';
-import UserEntrySkeleton from '@/components/users/UserEntrySkeleton.vue';
-import { useCompletions } from '@/services/api/completions/queries';
-import { formatDate } from '@/utils/dates';
+import { computed, ref } from "vue";
+import { useRoute } from "vue-router";
+import { useMap } from "@/services/api/maps/queries";
+import { useConfig } from "@/services/api/config/queries";
+import { useFormats } from "@/services/api/formats/queries";
+import { getMapFormatBadges, getFormatsMapIsIn } from "@/utils/formatBadges";
+import { permissions } from "@/constants/permissions";
+import { useAuthStore } from "@/stores/auth";
+import Btd6Map from "@/components/maps/Btd6Map.vue";
+import LinkButton from "@/components/ui/LinkButton.vue";
+import DiscordLoginButton from "@/components/navbar/DiscordLoginButton.vue";
+import MapInfoPanel from "@/components/maps/MapInfoPanel.vue";
+import StandaloneImage from "@/components/common/StandaloneImage.vue";
+import CompletionList from "@/components/completions/CompletionList.vue";
+import CompletionRow from "@/components/completions/CompletionRow.vue";
+import CompletionRowSkeleton from "@/components/completions/CompletionRowSkeleton.vue";
+import CompletionDetailLoader from "@/components/completions/CompletionDetailLoader.vue";
+import UserEntry from "@/components/users/UserEntry.vue";
+import UserEntrySkeleton from "@/components/users/UserEntrySkeleton.vue";
+import { useCompletions } from "@/services/api/completions/queries";
+import { formatDate } from "@/utils/dates";
 
 const route = useRoute();
 const auth = useAuthStore();
-const code = computed(() => route.params['code'] as string);
+const code = computed(() => route.params["code"] as string);
 
-const { data: mapData, isError: mapError } = useMap(code, { include: 'creators.flair,verifiers.flair' });
+const { data: mapData, isError: mapError } = useMap(code, {
+  include: "creators.flair,verifiers.flair",
+});
 const { data: config } = useConfig();
 const { data: formatsResponse } = useFormats();
 
-const visibleFormatIds = computed(() =>
-  formatsResponse.value?.data
-    .filter((f) => !f.hidden)
-    .map((f) => f.id) ?? []
+const visibleFormatIds = computed(
+  () =>
+    formatsResponse.value?.data.filter((f) => !f.hidden).map((f) => f.id) ?? [],
 );
 
 // --- Copy to clipboard ---
@@ -44,7 +45,9 @@ function copyCode() {
   navigator.clipboard.writeText(mapData.value.code);
   copied.value = true;
   clearTimeout(copyTimeout);
-  copyTimeout = setTimeout(() => { copied.value = false; }, 2000);
+  copyTimeout = setTimeout(() => {
+    copied.value = false;
+  }, 2000);
 }
 
 // --- Round 6 Start ---
@@ -52,12 +55,16 @@ const r6Start = computed(() => mapData.value?.r6_start ?? null);
 
 const youtubeEmbedUrl = computed(() => {
   if (!r6Start.value) return null;
-  const match = r6Start.value.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/);
+  const match = r6Start.value.match(
+    /(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/,
+  );
   if (!match) return null;
   return `https://www.youtube.com/embed/${match[1]}`;
 });
 
-const isR6Image = computed(() => r6Start.value != null && !youtubeEmbedUrl.value);
+const isR6Image = computed(
+  () => r6Start.value != null && !youtubeEmbedUrl.value,
+);
 
 // --- Format badges ---
 const formatBadges = computed(() => {
@@ -73,11 +80,11 @@ const formatBadges = computed(() => {
 const { data: lccResponse, isLoading: lccLoading } = useCompletions(
   computed(() => ({
     map_code: code.value,
-    lcc: 'only' as const,
-    deleted: 'exclude' as const,
-    pending: 'exclude' as const,
+    lcc: "only" as const,
+    deleted: "exclude" as const,
+    pending: "exclude" as const,
     per_page: 50,
-    include: 'players.flair',
+    include: "players.flair",
   })),
 );
 
@@ -85,7 +92,7 @@ const currentLcc = computed(() => {
   const completions = lccResponse.value?.data;
   if (!completions?.length) return null;
   return completions.reduce((best, c) =>
-    (c.lcc?.leftover ?? 0) > (best.lcc?.leftover ?? 0) ? c : best
+    (c.lcc?.leftover ?? 0) > (best.lcc?.leftover ?? 0) ? c : best,
   );
 });
 
@@ -93,7 +100,7 @@ const lccExpanded = ref(false);
 
 // --- Submission open? ---
 const mapFormatIds = computed(() =>
-  mapData.value ? getFormatsMapIsIn(mapData.value) : []
+  mapData.value ? getFormatsMapIsIn(mapData.value) : [],
 );
 
 const hasOpenSubmissions = computed(() => {
@@ -101,7 +108,7 @@ const hasOpenSubmissions = computed(() => {
   if (!formats) return false;
   return mapFormatIds.value.some((id) => {
     const format = formats.find((f) => f.id === id);
-    return format != null && format.map_submission_status !== 'closed';
+    return format != null && format.map_submission_status !== "closed";
   });
 });
 
@@ -117,10 +124,16 @@ const completionRulesSlug = computed(() => {
 
 // --- Admin actions ---
 const canEditMap = computed(() => auth.hasPermission(permissions.map.edit));
-const canEditCompletion = computed(() => auth.hasPermission(permissions.completion.edit));
-const canCreateCompletion = computed(() => auth.hasPermission(permissions.completion.create));
-const showSubmitCompletion = computed(() =>
-  auth.hasPermission(permissions.completionSubmission.create) && hasOpenSubmissions.value
+const canEditCompletion = computed(() =>
+  auth.hasPermission(permissions.completion.edit),
+);
+const canCreateCompletion = computed(() =>
+  auth.hasPermission(permissions.completion.create),
+);
+const showSubmitCompletion = computed(
+  () =>
+    auth.hasPermission(permissions.completionSubmission.create) &&
+    hasOpenSubmissions.value,
 );
 </script>
 
@@ -128,7 +141,8 @@ const showSubmitCompletion = computed(() =>
   <div v-if="mapError" class="text-center mt-12">
     <h1 class="font-['Luckiest_Guy'] text-4xl mb-4">Map Not Found</h1>
     <p class="text-(--color-text-muted)">
-      The map code <span class="font-mono">{{ code }}</span> doesn't exist or couldn't be loaded.
+      The map code <span class="font-mono">{{ code }}</span> doesn't exist or
+      couldn't be loaded.
     </p>
     <RouterLink to="/" class="text-(--color-highlight) mt-4 inline-block">
       Back to Home
@@ -137,12 +151,17 @@ const showSubmitCompletion = computed(() =>
 
   <div v-else-if="mapData">
     <!-- Title -->
-    <h1 class="text-center font-['Luckiest_Guy'] text-3xl md:text-4xl mt-6 mb-2">
+    <h1
+      class="text-center font-['Luckiest_Guy'] text-3xl md:text-4xl mt-6 mb-2"
+    >
       {{ mapData.name }}
     </h1>
 
     <!-- Aliases -->
-    <p v-if="mapData.aliases.length > 0" class="text-center text-(--color-text-muted) mb-2">
+    <p
+      v-if="mapData.aliases.length > 0"
+      class="text-center text-(--color-text-muted) mb-2"
+    >
       <template v-for="(alias, i) in mapData.aliases" :key="alias">
         <template v-if="i !== 0">, </template>
         <span class="font-mono">{{ alias }}</span>
@@ -171,7 +190,14 @@ const showSubmitCompletion = computed(() =>
     <div class="flex flex-col md:flex-row gap-6 my-4">
       <!-- Left: Map preview -->
       <div class="w-full md:w-5/12">
-        <Btd6Map :map="mapData" :code="mapData.code" :show-name="false" :btd6-version="config?.current_btd6_ver" show-play-button class="mb-0 mt-0" />
+        <Btd6Map
+          :map="mapData"
+          :code="mapData.code"
+          :show-name="false"
+          :btd6-version="config?.current_btd6_ver"
+          show-play-button
+          class="mb-0 mt-0"
+        />
       </div>
 
       <!-- Right: Info panel -->
@@ -189,26 +215,48 @@ const showSubmitCompletion = computed(() =>
 
     <!-- Round 6 Start -->
     <div v-if="r6Start" class="my-6">
-      <h2 class="text-center font-['Luckiest_Guy'] text-2xl mb-4">Round 6 Start</h2>
+      <h2 class="text-center font-['Luckiest_Guy'] text-2xl mb-4">
+        Round 6 Start
+      </h2>
       <div v-if="youtubeEmbedUrl" class="flex justify-center">
         <iframe
           :src="youtubeEmbedUrl"
           class="w-full max-w-2xl aspect-video rounded-(--radius-panel)"
           frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allow="
+            accelerometer;
+            autoplay;
+            clipboard-write;
+            encrypted-media;
+            gyroscope;
+            picture-in-picture;
+          "
           allowfullscreen
         />
       </div>
       <div v-else-if="isR6Image" class="flex justify-center">
-        <StandaloneImage :src="r6Start!" alt="Round 6 Start" class="max-w-2xl" />
+        <StandaloneImage
+          :src="r6Start!"
+          alt="Round 6 Start"
+          class="max-w-2xl"
+        />
       </div>
     </div>
 
     <!-- My Completions -->
     <div v-if="auth.isAuthenticated && auth.user" class="my-6">
-      <h2 class="text-center font-['Luckiest_Guy'] text-2xl mb-4">My Completions</h2>
-      <div v-if="showSubmitCompletion" class="flex flex-col items-center gap-2 mb-4">
-        <RouterLink v-if="completionRulesSlug" :to="`/maps/${completionRulesSlug}/completion-rules`" class="text-sm text-(--color-highlight)">
+      <h2 class="text-center font-['Luckiest_Guy'] text-2xl mb-4">
+        My Completions
+      </h2>
+      <div
+        v-if="showSubmitCompletion"
+        class="flex flex-col items-center gap-2 mb-4"
+      >
+        <RouterLink
+          v-if="completionRulesSlug"
+          :to="`/maps/${completionRulesSlug}/completion-rules`"
+          class="text-sm text-(--color-highlight)"
+        >
           Completion Submission Rules
         </RouterLink>
         <LinkButton :to="`/map/${code}/submit-completion`">
@@ -222,13 +270,17 @@ const showSubmitCompletion = computed(() =>
           deleted: 'any',
           pending: 'any',
         }"
-        :edit-url="canEditCompletion ? (id) => `/completions/${id}/edit` : undefined"
+        :edit-url="
+          canEditCompletion ? (id) => `/completions/${id}/edit` : undefined
+        "
         :show-filters="false"
         empty-message="You haven't completed this map yet."
       />
     </div>
     <div v-else-if="!auth.isAuthenticated" class="my-6">
-      <h2 class="text-center font-['Luckiest_Guy'] text-2xl mb-4">My Completions</h2>
+      <h2 class="text-center font-['Luckiest_Guy'] text-2xl mb-4">
+        My Completions
+      </h2>
       <div class="flex justify-center">
         <DiscordLoginButton text="Log in to submit completions" />
       </div>
@@ -236,7 +288,9 @@ const showSubmitCompletion = computed(() =>
 
     <!-- Current LCC -->
     <div class="my-6">
-      <h2 class="text-center font-['Luckiest_Guy'] text-2xl mb-4">Current LCC</h2>
+      <h2 class="text-center font-['Luckiest_Guy'] text-2xl mb-4">
+        Current LCC
+      </h2>
       <CompletionRowSkeleton v-if="lccLoading">
         <UserEntrySkeleton />
       </CompletionRowSkeleton>
@@ -244,7 +298,11 @@ const showSubmitCompletion = computed(() =>
         v-else-if="currentLcc"
         :completion="currentLcc"
         :expanded="lccExpanded"
-        v-bind="canEditCompletion ? { editUrl: `/completions/${currentLcc.id}/edit` } : {}"
+        v-bind="
+          canEditCompletion
+            ? { editUrl: `/completions/${currentLcc.id}/edit` }
+            : {}
+        "
         @toggle-detail="lccExpanded = !lccExpanded"
       >
         <div v-for="player in currentLcc.players" :key="player.discord_id">
@@ -255,8 +313,14 @@ const showSubmitCompletion = computed(() =>
         </div>
         <template #medals>
           <div class="flex items-center justify-end gap-2 pr-5">
-            <img src="/images/medals/medal_lcc.webp" title="Current LCC" class="w-[40px] h-[40px]" />
-            <span class="font-bold font-border text-lg">${{ currentLcc.lcc?.leftover.toLocaleString() }}</span>
+            <img
+              src="/images/medals/medal_lcc.webp"
+              title="Current LCC"
+              class="w-[40px] h-[40px]"
+            />
+            <span class="font-bold font-border text-lg"
+              >${{ currentLcc.lcc?.leftover.toLocaleString() }}</span
+            >
           </div>
         </template>
         <template #detail>
@@ -270,7 +334,9 @@ const showSubmitCompletion = computed(() =>
 
     <!-- Completions -->
     <div class="my-6">
-      <h2 class="text-center font-['Luckiest_Guy'] text-2xl mb-4">Completions</h2>
+      <h2 class="text-center font-['Luckiest_Guy'] text-2xl mb-4">
+        Completions
+      </h2>
       <div v-if="canCreateCompletion" class="flex justify-center mb-4">
         <LinkButton :to="`/map/${code}/insert-completion`">
           <i class="bi bi-plus-lg mr-0.5" /> Insert Completion
@@ -282,7 +348,9 @@ const showSubmitCompletion = computed(() =>
           deleted: 'exclude',
           pending: 'exclude',
         }"
-        :edit-url="canEditCompletion ? (id) => `/completions/${id}/edit` : undefined"
+        :edit-url="
+          canEditCompletion ? (id) => `/completions/${id}/edit` : undefined
+        "
       />
     </div>
   </div>

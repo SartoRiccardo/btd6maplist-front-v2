@@ -1,12 +1,15 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
-import { useAuthStore } from '@/stores/auth';
-import { useMapSubmissions, useDeleteMapSubmission } from '@/services/api/map-submissions/queries';
-import LinkButton from '@/components/ui/LinkButton.vue';
-import MapSubmissionRow from '@/components/map-submissions/MapSubmissionRow.vue';
-import Pagination from '@/components/ui/Pagination.vue';
-import Button from '@/components/ui/Button.vue';
-import ConfirmModal from '@/components/common/ConfirmModal.vue';
+import { computed, ref, watch } from "vue";
+import { useAuthStore } from "@/stores/auth";
+import {
+  useMapSubmissions,
+  useDeleteMapSubmission,
+} from "@/services/api/map-submissions/queries";
+import LinkButton from "@/components/ui/LinkButton.vue";
+import MapSubmissionRow from "@/components/map-submissions/MapSubmissionRow.vue";
+import Pagination from "@/components/ui/Pagination.vue";
+import Button from "@/components/ui/Button.vue";
+import ConfirmModal from "@/components/common/ConfirmModal.vue";
 
 const auth = useAuthStore();
 const page = ref(1);
@@ -25,9 +28,12 @@ const { data: submissions, isLoading } = useMapSubmissions(
 );
 
 const cachedMeta = ref(submissions.value?.meta);
-watch(() => submissions.value?.meta, (meta) => {
-  if (meta) cachedMeta.value = meta;
-});
+watch(
+  () => submissions.value?.meta,
+  (meta) => {
+    if (meta) cachedMeta.value = meta;
+  },
+);
 
 const deleteMutation = useDeleteMapSubmission();
 
@@ -40,7 +46,9 @@ async function confirmDelete(id: number) {
 
 <template>
   <div>
-    <h1 class="font-['Luckiest_Guy'] text-3xl md:text-4xl text-center mt-6 mb-4">
+    <h1
+      class="font-['Luckiest_Guy'] text-3xl md:text-4xl text-center mt-6 mb-4"
+    >
       My Submissions
     </h1>
 

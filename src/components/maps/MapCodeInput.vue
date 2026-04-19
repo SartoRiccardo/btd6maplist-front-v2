@@ -82,10 +82,7 @@ watch(
       <p v-else-if="nkError" class="text-red-400">
         {{ nkError }}
       </p>
-      <p
-        v-else-if="nkMap && maplistLoading"
-        class="text-(--color-text-muted)"
-      >
+      <p v-else-if="nkMap && maplistLoading" class="text-(--color-text-muted)">
         <i class="bi bi-arrow-repeat animate-spin inline-block" />
         Checking list status...
       </p>

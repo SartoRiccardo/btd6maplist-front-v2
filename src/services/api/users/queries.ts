@@ -1,15 +1,27 @@
-import { computed, toValue, type MaybeRefOrGetter } from 'vue';
-import { useQuery, useMutation, useQueryClient, type UseQueryOptions } from '@tanstack/vue-query';
-import { getUser, updateUser, updateCurrentUser, getMe, banUser, unbanUser } from './index';
-import type { User, UpdateUserRequest, GetUserParams } from './types';
+import { computed, toValue, type MaybeRefOrGetter } from "vue";
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  type UseQueryOptions,
+} from "@tanstack/vue-query";
+import {
+  getUser,
+  updateUser,
+  updateCurrentUser,
+  getMe,
+  banUser,
+  unbanUser,
+} from "./index";
+import type { User, UpdateUserRequest, GetUserParams } from "./types";
 
 // Query Keys
 export const userQueryKeys = {
-  all: ['users'] as const,
+  all: ["users"] as const,
   detail: (id: string, params?: GetUserParams) =>
-    params ? ['users', id, params] as const : ['users', id] as const,
+    params ? (["users", id, params] as const) : (["users", id] as const),
   me: (params?: GetUserParams) =>
-    params ? ['users', '@me', params] as const : ['users', '@me'] as const,
+    params ? (["users", "@me", params] as const) : (["users", "@me"] as const),
 } as const;
 
 /**
@@ -22,10 +34,12 @@ export const userQueryKeys = {
 export function useUser(
   id: MaybeRefOrGetter<string>,
   params?: MaybeRefOrGetter<GetUserParams | undefined>,
-  options?: Omit<UseQueryOptions<User>, 'queryKey' | 'queryFn'>
+  options?: Omit<UseQueryOptions<User>, "queryKey" | "queryFn">,
 ) {
   return useQuery({
-    queryKey: computed(() => userQueryKeys.detail(toValue(id), toValue(params))),
+    queryKey: computed(() =>
+      userQueryKeys.detail(toValue(id), toValue(params)),
+    ),
     queryFn: () => getUser(toValue(id), toValue(params)),
     ...options,
   });
@@ -39,7 +53,7 @@ export function useUser(
  */
 export function useMe(
   params?: GetUserParams,
-  options?: Omit<UseQueryOptions<User>, 'queryKey' | 'queryFn'>
+  options?: Omit<UseQueryOptions<User>, "queryKey" | "queryFn">,
 ) {
   return useQuery({
     queryKey: userQueryKeys.me(params),
@@ -63,7 +77,7 @@ export function useUpdateUser() {
       // Invalidate the specific user query to trigger refetch
       queryClient.invalidateQueries({
         queryKey:
-          variables.id === '@me'
+          variables.id === "@me"
             ? userQueryKeys.me()
             : userQueryKeys.detail(variables.id),
       });
@@ -74,7 +88,9 @@ export function useUpdateUser() {
 /**
  * Mutation hook to update the authenticated user (uses @me alias)
  */
-export function useUpdateCurrentUser(userId?: MaybeRefOrGetter<string | undefined>) {
+export function useUpdateCurrentUser(
+  userId?: MaybeRefOrGetter<string | undefined>,
+) {
   const queryClient = useQueryClient();
 
   return useMutation({

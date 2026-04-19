@@ -1,21 +1,21 @@
-import { ref, computed, watch } from 'vue';
-import { defineStore } from 'pinia';
-import { useQueryClient } from '@tanstack/vue-query';
-import { useMe, userQueryKeys } from '@/services/api/users/queries';
-import { setAuthToken, removeAuthToken } from '@/services/api/client';
+import { ref, computed, watch } from "vue";
+import { defineStore } from "pinia";
+import { useQueryClient } from "@tanstack/vue-query";
+import { useMe, userQueryKeys } from "@/services/api/users/queries";
+import { setAuthToken, removeAuthToken } from "@/services/api/client";
 
-export const useAuthStore = defineStore('auth', () => {
+export const useAuthStore = defineStore("auth", () => {
   // State
-  const token = ref<string | null>(localStorage.getItem('auth_token'));
+  const token = ref<string | null>(localStorage.getItem("auth_token"));
   const isAuthenticated = computed(() => !!token.value);
   const queryClient = useQueryClient();
 
   // User query
   const userQuery = useMe(
-    { include: ['flair', 'medals', 'permissions'] },
+    { include: ["flair", "medals", "permissions"] },
     {
       enabled: isAuthenticated,
-    }
+    },
   );
 
   const user = userQuery.data;
@@ -27,7 +27,7 @@ export const useAuthStore = defineStore('auth', () => {
   // Watch for errors and logout automatically
   watch(isError, (error) => {
     if (error) {
-      console.error('Auth error - logging out');
+      console.error("Auth error - logging out");
       logout();
     }
   });
@@ -57,14 +57,22 @@ export const useAuthStore = defineStore('auth', () => {
     if (!perms) return false;
     const formats = perms[perm];
     if (!formats) return false;
-    return formats.includes(null) || (format !== null && formats.includes(format));
+    return (
+      formats.includes(null) || (format !== null && formats.includes(format))
+    );
   }
 
-  function hasAnyPermission(perms: string[], format: number | null = null): boolean {
+  function hasAnyPermission(
+    perms: string[],
+    format: number | null = null,
+  ): boolean {
     return perms.some((p) => hasPermission(p, format));
   }
 
-  function hasAllPermissions(perms: string[], format: number | null = null): boolean {
+  function hasAllPermissions(
+    perms: string[],
+    format: number | null = null,
+  ): boolean {
     return perms.every((p) => hasPermission(p, format));
   }
 

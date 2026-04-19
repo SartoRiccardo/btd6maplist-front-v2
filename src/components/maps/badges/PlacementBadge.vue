@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import type { Config } from '@/services/api/config/types';
-import { calcMapPoints } from '@/utils/points';
+import { computed } from "vue";
+import type { Config } from "@/services/api/config/types";
+import { calcMapPoints } from "@/utils/points";
 
 const props = defineProps<{
   placement: number;
@@ -13,9 +13,7 @@ const points = computed(() => calcMapPoints(props.placement, props.config));
 
 <template>
   <div
-    class="absolute top-[7%] left-[-4%] w-14 h-14 md:w-[3.5rem] md:h-[3.5rem]
-           bg-(--color-contrast) shadow-[0_0_0.5rem_black] rounded-full
-           flex flex-col justify-center text-center font-['Luckiest_Guy'] font-border z-10"
+    class="absolute top-[7%] left-[-4%] w-14 h-14 md:w-[3.5rem] md:h-[3.5rem] bg-(--color-contrast) shadow-[0_0_0.5rem_black] rounded-full flex flex-col justify-center text-center font-['Luckiest_Guy'] font-border z-10"
   >
     <p class="relative text-2xl md:text-[2rem] my-0 leading-none pt-2">
       #{{ placement }}

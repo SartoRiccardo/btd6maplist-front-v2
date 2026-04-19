@@ -1,5 +1,5 @@
 // Token storage key
-const TOKEN_KEY = 'auth_token';
+const TOKEN_KEY = "auth_token";
 
 // Helper to get token from localStorage
 function getAuthToken(): string | null {
@@ -17,44 +17,44 @@ export function removeAuthToken(): void {
 }
 
 // Base API configuration
-const API_BASE_URL = import.meta.env['VITE_API_BASE_URL'] || '';
+const API_BASE_URL = import.meta.env["VITE_API_BASE_URL"] || "";
 
 export class ApiError extends Error {
   constructor(
     public status: number,
     public statusText: string,
-    public response: unknown
+    public response: unknown,
   ) {
     super(`API Error ${status}: ${statusText}`);
-    this.name = 'ApiError';
+    this.name = "ApiError";
   }
 }
 
 export async function apiRequest<T>(
   endpoint: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
 ): Promise<T> {
   const token = getAuthToken();
   const isFormData = options.body instanceof FormData;
 
   const headers: Record<string, string> = {
-    'Accept': 'application/json',
+    Accept: "application/json",
     ...(options.headers as Record<string, string>),
   };
 
   // Only set Content-Type for non-FormData requests
   if (!isFormData) {
-    headers['Content-Type'] = 'application/json';
+    headers["Content-Type"] = "application/json";
   }
 
   if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
+    headers["Authorization"] = `Bearer ${token}`;
   }
 
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     ...options,
     headers,
-    credentials: 'include',
+    credentials: "include",
   });
 
   if (!response.ok) {
@@ -62,7 +62,7 @@ export async function apiRequest<T>(
     throw new ApiError(
       response.status,
       response.statusText,
-      responseText ? JSON.parse(responseText) : null
+      responseText ? JSON.parse(responseText) : null,
     );
   }
 
@@ -72,25 +72,26 @@ export async function apiRequest<T>(
 
 // HTTP method helpers
 export const api = {
-  get: <T>(endpoint: string) => apiRequest<T>(endpoint, { method: 'GET' }),
+  get: <T>(endpoint: string) => apiRequest<T>(endpoint, { method: "GET" }),
 
   post: <T>(endpoint: string, data: unknown | FormData) =>
     apiRequest<T>(endpoint, {
-      method: 'POST',
+      method: "POST",
       body: data instanceof FormData ? data : JSON.stringify(data),
     }),
 
   put: <T>(endpoint: string, data: unknown | FormData) =>
     apiRequest<T>(endpoint, {
-      method: 'PUT',
+      method: "PUT",
       body: data instanceof FormData ? data : JSON.stringify(data),
     }),
 
   patch: <T>(endpoint: string, data: unknown | FormData) =>
     apiRequest<T>(endpoint, {
-      method: 'PATCH',
+      method: "PATCH",
       body: data instanceof FormData ? data : JSON.stringify(data),
     }),
 
-  delete: <T>(endpoint: string) => apiRequest<T>(endpoint, { method: 'DELETE' }),
+  delete: <T>(endpoint: string) =>
+    apiRequest<T>(endpoint, { method: "DELETE" }),
 };

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import MarkdownContent from '@/components/common/MarkdownContent.vue';
+import MarkdownContent from "@/components/common/MarkdownContent.vue";
 
 const cheatsheet = `
 ## Medals

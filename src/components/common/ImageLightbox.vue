@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch } from "vue";
 
 const open = ref(false);
-const currentSrc = ref('');
+const currentSrc = ref("");
 
 function show(src: string) {
   currentSrc.value = src;
@@ -14,14 +14,14 @@ function close() {
 }
 
 function onKeydown(e: KeyboardEvent) {
-  if (e.key === 'Escape') close();
+  if (e.key === "Escape") close();
 }
 
 watch(open, (isOpen) => {
   if (isOpen) {
-    document.addEventListener('keydown', onKeydown);
+    document.addEventListener("keydown", onKeydown);
   } else {
-    document.removeEventListener('keydown', onKeydown);
+    document.removeEventListener("keydown", onKeydown);
   }
 });
 

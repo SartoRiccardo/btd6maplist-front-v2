@@ -1,24 +1,30 @@
-import { computed, toValue, type MaybeRefOrGetter } from 'vue';
-import { useQuery, useMutation, useQueryClient, type UseQueryOptions } from '@tanstack/vue-query';
+import { computed, toValue, type MaybeRefOrGetter } from "vue";
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  type UseQueryOptions,
+} from "@tanstack/vue-query";
 import {
   getRetroMaps,
   getRetroMap,
   createRetroMap,
   updateRetroMap,
   deleteRetroMap,
-} from './index';
-import type { RetroMap } from '@/services/api/maps/types';
+} from "./index";
+import type { RetroMap } from "@/services/api/maps/types";
 import type {
   GetRetroMapsParams,
   CreateRetroMapRequest,
   UpdateRetroMapRequest,
-} from './types';
-import type { PaginatedResponse } from '@/services/api/common/types';
+} from "./types";
+import type { PaginatedResponse } from "@/services/api/common/types";
 
 export const retroMapQueryKeys = {
-  all: ['retro-maps'] as const,
-  list: (params?: GetRetroMapsParams) => ['retro-maps', 'list', params] as const,
-  detail: (id: number) => ['retro-maps', id] as const,
+  all: ["retro-maps"] as const,
+  list: (params?: GetRetroMapsParams) =>
+    ["retro-maps", "list", params] as const,
+  detail: (id: number) => ["retro-maps", id] as const,
 } as const;
 
 /**
@@ -26,7 +32,10 @@ export const retroMapQueryKeys = {
  */
 export function useRetroMaps(
   params?: MaybeRefOrGetter<GetRetroMapsParams | undefined>,
-  options?: Omit<UseQueryOptions<PaginatedResponse<RetroMap>>, 'queryKey' | 'queryFn'>,
+  options?: Omit<
+    UseQueryOptions<PaginatedResponse<RetroMap>>,
+    "queryKey" | "queryFn"
+  >,
 ) {
   return useQuery({
     queryKey: computed(() => retroMapQueryKeys.list(toValue(params))),
@@ -40,7 +49,7 @@ export function useRetroMaps(
  */
 export function useRetroMap(
   id: MaybeRefOrGetter<number>,
-  options?: Omit<UseQueryOptions<RetroMap>, 'queryKey' | 'queryFn'>,
+  options?: Omit<UseQueryOptions<RetroMap>, "queryKey" | "queryFn">,
 ) {
   return useQuery({
     queryKey: computed(() => retroMapQueryKeys.detail(toValue(id))),

@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { RouterLink } from 'vue-router';
-import type { Completion } from '@/services/api/completions/types';
-import UserEntry from '@/components/users/UserEntry.vue';
-import { fromNow } from '@/utils/dates';
-import { useFormats } from '@/services/api/formats/queries';
-import Tooltip from '@/components/ui/Tooltip.vue';
+import { computed } from "vue";
+import { RouterLink } from "vue-router";
+import type { Completion } from "@/services/api/completions/types";
+import UserEntry from "@/components/users/UserEntry.vue";
+import { fromNow } from "@/utils/dates";
+import { useFormats } from "@/services/api/formats/queries";
+import Tooltip from "@/components/ui/Tooltip.vue";
 
 const props = defineProps<{
   completion: Completion;
@@ -14,7 +14,9 @@ const props = defineProps<{
 const { data: formats } = useFormats();
 
 const hideNoGeraldo = computed(() => {
-  const fmt = formats.value?.data.find((f) => f.id === props.completion.format_id);
+  const fmt = formats.value?.data.find(
+    (f) => f.id === props.completion.format_id,
+  );
   return fmt?.is_no_geraldo_enabled === false;
 });
 </script>
@@ -43,20 +45,25 @@ const hideNoGeraldo = computed(() => {
     <div class="flex items-center justify-between mt-2">
       <div>
         <div v-for="player in completion.players" :key="player.discord_id">
-          <UserEntry
-            :user="player"
-            :label="fromNow(completion.submitted_on)"
-          />
+          <UserEntry :user="player" :label="fromNow(completion.submitted_on)" />
         </div>
       </div>
 
       <!-- Medals -->
       <div class="flex gap-2 shrink-0">
-        <Tooltip :text="completion.black_border ? 'CHIMPS (Black Border)' : 'CHIMPS completion'">
+        <Tooltip
+          :text="
+            completion.black_border
+              ? 'CHIMPS (Black Border)'
+              : 'CHIMPS completion'
+          "
+        >
           <img
-            :src="completion.black_border
-              ? '/images/medals/medal_bb.webp'
-              : '/images/medals/medal_win.webp'"
+            :src="
+              completion.black_border
+                ? '/images/medals/medal_bb.webp'
+                : '/images/medals/medal_win.webp'
+            "
             class="w-[45px] h-[45px]"
           />
         </Tooltip>
@@ -68,10 +75,7 @@ const hideNoGeraldo = computed(() => {
           />
         </Tooltip>
         <Tooltip v-if="completion.is_current_lcc" text="Current LCC">
-          <img
-            src="/images/medals/medal_lcc.webp"
-            class="w-[45px] h-[45px]"
-          />
+          <img src="/images/medals/medal_lcc.webp" class="w-[45px] h-[45px]" />
         </Tooltip>
       </div>
     </div>
@@ -80,6 +84,7 @@ const hideNoGeraldo = computed(() => {
 
 <style scoped>
 .medal-blocked {
-  filter: brightness(0%) drop-shadow(1px 1px 0 white) drop-shadow(-1px -1px 0 white);
+  filter: brightness(0%) drop-shadow(1px 1px 0 white)
+    drop-shadow(-1px -1px 0 white);
 }
 </style>

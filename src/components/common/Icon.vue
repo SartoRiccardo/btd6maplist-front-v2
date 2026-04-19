@@ -5,7 +5,7 @@ interface Props {
 }
 
 withDefaults(defineProps<Props>(), {
-  alt: 'Icon',
+  alt: "Icon",
 });
 </script>
 

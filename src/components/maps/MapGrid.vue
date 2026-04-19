@@ -1,18 +1,21 @@
 <script setup lang="ts">
-import { RouterLink } from 'vue-router';
-import type { MapWithMetadata, MaybeGhostMap } from '@/services/api/maps/types';
-import Btd6Map from '@/components/maps/Btd6Map.vue';
-import Btd6MapPlaceholder from '@/components/maps/Btd6MapPlaceholder.vue';
+import { RouterLink } from "vue-router";
+import type { MapWithMetadata, MaybeGhostMap } from "@/services/api/maps/types";
+import Btd6Map from "@/components/maps/Btd6Map.vue";
+import Btd6MapPlaceholder from "@/components/maps/Btd6MapPlaceholder.vue";
 
-withDefaults(defineProps<{
-  maps?: MaybeGhostMap[] | undefined;
-  btd6Version?: number | undefined;
-  burning?: ((map: MapWithMetadata) => boolean) | undefined;
-  border?: ((map: MapWithMetadata) => 'none' | 'black' | 'gold') | undefined;
-  skeletonCount?: number;
-}>(), {
-  skeletonCount: 12,
-});
+withDefaults(
+  defineProps<{
+    maps?: MaybeGhostMap[] | undefined;
+    btd6Version?: number | undefined;
+    burning?: ((map: MapWithMetadata) => boolean) | undefined;
+    border?: ((map: MapWithMetadata) => "none" | "black" | "gold") | undefined;
+    skeletonCount?: number;
+  }>(),
+  {
+    skeletonCount: 12,
+  },
+);
 
 defineSlots<{
   badge?: (props: { map: MapWithMetadata }) => unknown;
@@ -33,7 +36,12 @@ defineSlots<{
           :to="`/map/${map.code}`"
           class="group no-underline! text-(--color-text)!"
         >
-          <Btd6Map :map="map" :btd6-version="btd6Version" :burning="burning?.(map)" :border="border?.(map)">
+          <Btd6Map
+            :map="map"
+            :btd6-version="btd6Version"
+            :burning="burning?.(map)"
+            :border="border?.(map)"
+          >
             <template v-if="$slots['badge']" #badge>
               <slot name="badge" :map="map" />
             </template>

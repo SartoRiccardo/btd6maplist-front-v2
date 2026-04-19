@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { RouterLink } from 'vue-router';
+import { RouterLink } from "vue-router";
 
 const currentYear = new Date().getFullYear();
-const copyrightYears = currentYear > 2024 ? `2024 - ${currentYear}` : '2024';
+const copyrightYears = currentYear > 2024 ? `2024 - ${currentYear}` : "2024";
 </script>
 
 <template>
@@ -11,7 +11,9 @@ const copyrightYears = currentYear > 2024 ? `2024 - ${currentYear}` : '2024';
     <p class="mb-2">
       <RouterLink to="/maps/maplist/map-rules">Map Submission Rules</RouterLink>
       {{ " | " }}
-      <RouterLink to="/maps/maplist/completion-rules">Completion Submission Rules</RouterLink>
+      <RouterLink to="/maps/maplist/completion-rules"
+        >Completion Submission Rules</RouterLink
+      >
       {{ " | " }}
       <a href="https://ko-fi.com/sarto" target="_blank">
         <i class="bi bi-cup-hot-fill" />&nbsp;Donate

@@ -2,10 +2,10 @@ import type {
   DiscordLoginResponse,
   DiscordCallbackRequest,
   DiscordCallbackSuccessResponse,
-} from './types';
-import { apiRequest } from '../client';
+} from "./types";
+import { apiRequest } from "../client";
 
-const BASE_PATH = '/web/oauth2/discord';
+const BASE_PATH = "/web/oauth2/discord";
 
 /**
  * POST /web/oauth2/discord/login
@@ -18,7 +18,7 @@ const BASE_PATH = '/web/oauth2/discord';
  */
 export async function getDiscordLoginUrl(): Promise<DiscordLoginResponse> {
   return apiRequest<DiscordLoginResponse>(`${BASE_PATH}/login`, {
-    method: 'POST',
+    method: "POST",
   });
 }
 
@@ -35,10 +35,10 @@ export async function getDiscordLoginUrl(): Promise<DiscordLoginResponse> {
  * Returns token and user info on success.
  */
 export async function handleDiscordCallback(
-  data: DiscordCallbackRequest
+  data: DiscordCallbackRequest,
 ): Promise<DiscordCallbackSuccessResponse> {
   return apiRequest<DiscordCallbackSuccessResponse>(`${BASE_PATH}/callback`, {
-    method: 'POST',
+    method: "POST",
     body: JSON.stringify(data),
   });
 }

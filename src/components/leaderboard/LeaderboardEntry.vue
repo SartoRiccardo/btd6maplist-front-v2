@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import type { User } from '@/services/api/users/types';
-import Icon from '@/components/common/Icon.vue';
-import UserEntry from '@/components/users/UserEntry.vue';
+import { computed } from "vue";
+import type { User } from "@/services/api/users/types";
+import Icon from "@/components/common/Icon.vue";
+import UserEntry from "@/components/users/UserEntry.vue";
 
 const props = defineProps<{
   placement: number;
@@ -13,9 +13,9 @@ const props = defineProps<{
 }>();
 
 const positionColor = computed(() => {
-  if (props.placement === 1) return '#ffd54f';
-  if (props.placement === 2) return '#e0e0e0';
-  if (props.placement === 3) return '#cd7f32';
+  if (props.placement === 1) return "#ffd54f";
+  if (props.placement === 2) return "#e0e0e0";
+  if (props.placement === 3) return "#cd7f32";
   return undefined;
 });
 

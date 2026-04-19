@@ -1,7 +1,12 @@
 <template>
-  <div class="bg-(--color-secondary) rounded-(--radius-panel) my-2 py-2 px-3 animate-pulse">
+  <div
+    class="bg-(--color-secondary) rounded-(--radius-panel) my-2 py-2 px-3 animate-pulse"
+  >
     <!-- Large screens -->
-    <div class="hidden md:grid items-center gap-2" style="grid-template-columns: 1fr 9rem 10rem auto">
+    <div
+      class="hidden md:grid items-center gap-2"
+      style="grid-template-columns: 1fr 9rem 10rem auto"
+    >
       <div class="min-w-0">
         <slot />
       </div>
@@ -29,7 +34,9 @@
         <div class="flex-1 min-w-0">
           <slot />
         </div>
-        <div class="w-8 h-8 bg-(--color-primary) rounded-(--radius-btn) shrink-0" />
+        <div
+          class="w-8 h-8 bg-(--color-primary) rounded-(--radius-btn) shrink-0"
+        />
       </div>
 
       <div class="flex items-center gap-2 mt-2">

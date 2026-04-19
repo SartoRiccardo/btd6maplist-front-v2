@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import type { User } from '@/services/api/users/types';
-import { useAuthStore } from '@/stores/auth';
-import { usePlatformRoles } from '@/services/api/platform-roles/queries';
-import { intToHex } from '@/utils/colors';
-import Tooltip from '@/components/ui/Tooltip.vue';
+import { computed } from "vue";
+import type { User } from "@/services/api/users/types";
+import { useAuthStore } from "@/stores/auth";
+import { usePlatformRoles } from "@/services/api/platform-roles/queries";
+import { intToHex } from "@/utils/colors";
+import Tooltip from "@/components/ui/Tooltip.vue";
 
 const props = defineProps<{ user: User }>();
 
@@ -25,13 +25,15 @@ const grantableIds = computed(() => {
 });
 
 const visiblePlatformRoles = computed(() =>
-  (props.user.roles ?? []).filter((r) =>
-    !r.internal || grantableIds.value.has(r.id)
-  )
+  (props.user.roles ?? []).filter(
+    (r) => !r.internal || grantableIds.value.has(r.id),
+  ),
 );
 
-const hasRoles = computed(() =>
-  (props.user.achievement_roles?.length ?? 0) > 0 || visiblePlatformRoles.value.length > 0
+const hasRoles = computed(
+  () =>
+    (props.user.achievement_roles?.length ?? 0) > 0 ||
+    visiblePlatformRoles.value.length > 0,
 );
 </script>
 
@@ -44,7 +46,10 @@ const hasRoles = computed(() =>
     >
       <div
         class="px-2 py-0.5 rounded-[0.3rem] border-2 border-solid font-border text-sm"
-        :style="{ backgroundColor: intToHex(role.clr_inner), borderColor: intToHex(role.clr_border) }"
+        :style="{
+          backgroundColor: intToHex(role.clr_inner),
+          borderColor: intToHex(role.clr_border),
+        }"
       >
         {{ role.name }}
       </div>

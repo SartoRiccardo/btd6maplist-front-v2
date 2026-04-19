@@ -1,6 +1,6 @@
-import type { FilterOption } from '@/services/api/common/types';
-import type { RetroGame } from '@/services/api/retro-games/types';
-import type { User } from '@/services/api/users/types';
+import type { FilterOption } from "@/services/api/common/types";
+import type { RetroGame } from "@/services/api/retro-games/types";
+import type { User } from "@/services/api/users/types";
 
 export interface Map {
   code: string;
@@ -42,7 +42,7 @@ export interface MapWithMetadata extends Map {
 }
 
 /** A backfilled retro map that hasn't been remade yet */
-export interface GhostMap extends Omit<MapWithMetadata, 'code' | 'retro_map'> {
+export interface GhostMap extends Omit<MapWithMetadata, "code" | "retro_map"> {
   code: null;
   retro_map: RetroMap;
 }
@@ -117,7 +117,7 @@ export interface CreateMapRequest {
   aliases?: string[];
 }
 
-export type UpdateMapRequest = Omit<CreateMapRequest, 'code'>;
+export type UpdateMapRequest = Omit<CreateMapRequest, "code">;
 
 export interface CreateMapResponse {
   code: string;

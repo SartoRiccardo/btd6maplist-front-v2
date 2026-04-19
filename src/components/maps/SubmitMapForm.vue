@@ -215,7 +215,9 @@ function fieldError(field: string): string | undefined {
         {{ fieldError("format_id") }}
       </p>
       <p v-if="selectedFormat" class="text-(--color-text-muted) text-sm mt-2">
-        Make sure to check{{ selectedFormat.name.toLowerCase().startsWith('the') ? '' : ' the' }}
+        Make sure to check{{
+          selectedFormat.name.toLowerCase().startsWith("the") ? "" : " the"
+        }}
         <RouterLink
           :to="`/maps/${selectedFormat.slug}/map-rules`"
           class="text-(--color-highlight) hover:text-(--color-active)"

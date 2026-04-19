@@ -24,9 +24,8 @@ function updateAt(index: number, partial: Partial<AdditionalCode>) {
 }
 
 function fieldError(index: number, field: string): string | undefined {
-  return props.externalErrors.find(
-    (e) => e.path === `${index}.${field}`,
-  )?.message;
+  return props.externalErrors.find((e) => e.path === `${index}.${field}`)
+    ?.message;
 }
 </script>
 
@@ -60,7 +59,9 @@ function fieldError(index: number, field: string): string | undefined {
             :disabled="disabled"
             placeholder="Description"
             class="flex-1 px-3 py-2 rounded-(--radius-btn) bg-(--color-primary) text-(--color-text) border border-(--color-contrast) focus:outline-none focus:border-(--color-active)"
-            :class="{ 'border-(--color-danger)!': fieldError(index, 'description') }"
+            :class="{
+              'border-(--color-danger)!': fieldError(index, 'description'),
+            }"
             @input="
               updateAt(index, {
                 description: ($event.target as HTMLInputElement).value,

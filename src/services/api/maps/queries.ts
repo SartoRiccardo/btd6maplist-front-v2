@@ -1,17 +1,28 @@
-import { computed, toValue, type MaybeRefOrGetter } from 'vue';
-import { useQuery, useMutation, useQueryClient, type UseQueryOptions } from '@tanstack/vue-query';
-import { getMaps, getMap, createMap, updateMap, deleteMap } from './index';
+import { computed, toValue, type MaybeRefOrGetter } from "vue";
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  type UseQueryOptions,
+} from "@tanstack/vue-query";
+import { getMaps, getMap, createMap, updateMap, deleteMap } from "./index";
 import type {
-  MapWithMetadata, MapDetail, MaybeGhostMap,
-  GetMapsParams, GetMapParams,
-  CreateMapRequest, UpdateMapRequest, CreateMapResponse,
-} from './types';
-import type { PaginatedResponse } from '@/services/api/common/types';
+  MapWithMetadata,
+  MapDetail,
+  MaybeGhostMap,
+  GetMapsParams,
+  GetMapParams,
+  CreateMapRequest,
+  UpdateMapRequest,
+  CreateMapResponse,
+} from "./types";
+import type { PaginatedResponse } from "@/services/api/common/types";
 
 export const mapQueryKeys = {
-  all: ['maps'] as const,
-  list: (params?: GetMapsParams) => ['maps', 'list', params] as const,
-  detail: (code: string, params?: GetMapParams) => ['maps', code, params] as const,
+  all: ["maps"] as const,
+  list: (params?: GetMapsParams) => ["maps", "list", params] as const,
+  detail: (code: string, params?: GetMapParams) =>
+    ["maps", code, params] as const,
 } as const;
 
 /**
@@ -20,16 +31,27 @@ export const mapQueryKeys = {
  * When fill_missing_retro is true, returns MaybeGhostMap[].
  */
 export function useMaps(
-  params: MaybeRefOrGetter<(GetMapsParams & { fill_missing_retro: true }) | undefined>,
-  options?: Omit<UseQueryOptions<PaginatedResponse<MaybeGhostMap>>, 'queryKey' | 'queryFn'>
+  params: MaybeRefOrGetter<
+    (GetMapsParams & { fill_missing_retro: true }) | undefined
+  >,
+  options?: Omit<
+    UseQueryOptions<PaginatedResponse<MaybeGhostMap>>,
+    "queryKey" | "queryFn"
+  >,
 ): ReturnType<typeof useQuery<PaginatedResponse<MaybeGhostMap>>>;
 export function useMaps(
   params?: MaybeRefOrGetter<GetMapsParams | undefined>,
-  options?: Omit<UseQueryOptions<PaginatedResponse<MapWithMetadata>>, 'queryKey' | 'queryFn'>
+  options?: Omit<
+    UseQueryOptions<PaginatedResponse<MapWithMetadata>>,
+    "queryKey" | "queryFn"
+  >,
 ): ReturnType<typeof useQuery<PaginatedResponse<MapWithMetadata>>>;
 export function useMaps(
   params?: MaybeRefOrGetter<GetMapsParams | undefined>,
-  options?: Omit<UseQueryOptions<PaginatedResponse<MapWithMetadata | MaybeGhostMap>>, 'queryKey' | 'queryFn'>
+  options?: Omit<
+    UseQueryOptions<PaginatedResponse<MapWithMetadata | MaybeGhostMap>>,
+    "queryKey" | "queryFn"
+  >,
 ) {
   return useQuery({
     queryKey: computed(() => mapQueryKeys.list(toValue(params))),
@@ -44,10 +66,12 @@ export function useMaps(
 export function useMap(
   code: MaybeRefOrGetter<string>,
   params?: MaybeRefOrGetter<GetMapParams | undefined>,
-  options?: Omit<UseQueryOptions<MapDetail>, 'queryKey' | 'queryFn'>
+  options?: Omit<UseQueryOptions<MapDetail>, "queryKey" | "queryFn">,
 ) {
   return useQuery({
-    queryKey: computed(() => mapQueryKeys.detail(toValue(code), toValue(params))),
+    queryKey: computed(() =>
+      mapQueryKeys.detail(toValue(code), toValue(params)),
+    ),
     queryFn: () => getMap(toValue(code), toValue(params)),
     ...options,
   });
@@ -61,7 +85,7 @@ export function useCreateMap() {
   return useMutation<CreateMapResponse, Error, CreateMapRequest>({
     mutationFn: createMap,
     onSuccess: (result) => {
-      queryClient.invalidateQueries({ queryKey: ['maps', result.code] });
+      queryClient.invalidateQueries({ queryKey: ["maps", result.code] });
     },
   });
 }
@@ -74,7 +98,7 @@ export function useUpdateMap() {
   return useMutation<void, Error, { code: string; data: UpdateMapRequest }>({
     mutationFn: ({ code, data }) => updateMap(code, data),
     onSuccess: (_data, { code }) => {
-      queryClient.invalidateQueries({ queryKey: ['maps', code] });
+      queryClient.invalidateQueries({ queryKey: ["maps", code] });
     },
   });
 }
@@ -87,7 +111,7 @@ export function useDeleteMap() {
   return useMutation<void, Error, string>({
     mutationFn: deleteMap,
     onSuccess: (_data, code) => {
-      queryClient.invalidateQueries({ queryKey: ['maps', code] });
+      queryClient.invalidateQueries({ queryKey: ["maps", code] });
     },
   });
 }

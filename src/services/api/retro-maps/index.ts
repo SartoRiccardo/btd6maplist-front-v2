@@ -1,28 +1,31 @@
-import type { RetroMap } from '@/services/api/maps/types';
+import type { RetroMap } from "@/services/api/maps/types";
 import type {
   GetRetroMapsParams,
   CreateRetroMapRequest,
   CreateRetroMapResponse,
   UpdateRetroMapRequest,
-} from './types';
-import type { PaginatedResponse } from '@/services/api/common/types';
-import { apiRequest } from '../client';
+} from "./types";
+import type { PaginatedResponse } from "@/services/api/common/types";
+import { apiRequest } from "../client";
 
-const BASE_PATH = '/api/maps/retro';
+const BASE_PATH = "/api/maps/retro";
 
 function buildListParams(params?: GetRetroMapsParams): string {
-  if (!params) return '';
+  if (!params) return "";
 
   const searchParams = new URLSearchParams();
 
-  if (params.page != null) searchParams.set('page', params.page.toString());
-  if (params.per_page != null) searchParams.set('per_page', params.per_page.toString());
-  if (params.game_id != null) searchParams.set('game_id', params.game_id.toString());
-  if (params.category_id != null) searchParams.set('category_id', params.category_id.toString());
-  if (params.search != null) searchParams.set('search', params.search);
+  if (params.page != null) searchParams.set("page", params.page.toString());
+  if (params.per_page != null)
+    searchParams.set("per_page", params.per_page.toString());
+  if (params.game_id != null)
+    searchParams.set("game_id", params.game_id.toString());
+  if (params.category_id != null)
+    searchParams.set("category_id", params.category_id.toString());
+  if (params.search != null) searchParams.set("search", params.search);
 
   const queryString = searchParams.toString();
-  return queryString ? `?${queryString}` : '';
+  return queryString ? `?${queryString}` : "";
 }
 
 /**
@@ -49,7 +52,7 @@ export async function createRetroMap(
   data: CreateRetroMapRequest,
 ): Promise<CreateRetroMapResponse> {
   return apiRequest<CreateRetroMapResponse>(BASE_PATH, {
-    method: 'POST',
+    method: "POST",
     body: JSON.stringify(data),
   });
 }
@@ -62,7 +65,7 @@ export async function updateRetroMap(
   data: UpdateRetroMapRequest,
 ): Promise<void> {
   return apiRequest<void>(`${BASE_PATH}/${id}`, {
-    method: 'PUT',
+    method: "PUT",
     body: JSON.stringify(data),
   });
 }
@@ -71,5 +74,5 @@ export async function updateRetroMap(
  * DELETE /maps/retro/{id}
  */
 export async function deleteRetroMap(id: number): Promise<void> {
-  return apiRequest<void>(`${BASE_PATH}/${id}`, { method: 'DELETE' });
+  return apiRequest<void>(`${BASE_PATH}/${id}`, { method: "DELETE" });
 }

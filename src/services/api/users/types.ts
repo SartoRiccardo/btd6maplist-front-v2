@@ -1,5 +1,5 @@
-import type { PlatformRole } from '@/services/api/platform-roles/types';
-import type { AchievementRole } from '@/services/api/achievement-roles/types';
+import type { PlatformRole } from "@/services/api/platform-roles/types";
+import type { AchievementRole } from "@/services/api/achievement-roles/types";
 
 export interface UserMedals {
   wins: number;
@@ -47,7 +47,9 @@ export interface UpdateUserRequest {
   nk_oak?: string | null; // optional - Ninja Kiwi OpenAPI Key
 }
 
-export type UserIncludeParams = Array<'flair' | 'medals' | 'achievement_roles' | 'permissions' | 'ranks'>;
+export type UserIncludeParams = Array<
+  "flair" | "medals" | "achievement_roles" | "permissions" | "ranks"
+>;
 
 export interface GetUserParams {
   include?: UserIncludeParams;

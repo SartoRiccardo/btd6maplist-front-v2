@@ -1,36 +1,38 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { useAuthStore } from '@/stores/auth';
-import { useMap } from '@/services/api/maps/queries';
-import { useFormats } from '@/services/api/formats/queries';
-import { useSubmitCompletion } from '@/services/api/completions/queries';
-import type { SubmitCompletionRequest } from '@/services/api/completions/types';
-import { ApiError } from '@/services/api/client';
-import { parseApiErrors, type FormFieldError } from '@/services/api/formErrors';
-import { getFormatsMapIsIn } from '@/utils/formatBadges';
-import { permissions } from '@/constants/permissions';
-import { FORMAT_EXPERT_LIST } from '@/constants/formats';
-import Panel from '@/components/ui/Panel.vue';
-import Button from '@/components/ui/Button.vue';
-import LinkButton from '@/components/ui/LinkButton.vue';
-import DiscordLoginButton from '@/components/navbar/DiscordLoginButton.vue';
+import { ref, computed, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { useAuthStore } from "@/stores/auth";
+import { useMap } from "@/services/api/maps/queries";
+import { useFormats } from "@/services/api/formats/queries";
+import { useSubmitCompletion } from "@/services/api/completions/queries";
+import type { SubmitCompletionRequest } from "@/services/api/completions/types";
+import { ApiError } from "@/services/api/client";
+import { parseApiErrors, type FormFieldError } from "@/services/api/formErrors";
+import { getFormatsMapIsIn } from "@/utils/formatBadges";
+import { permissions } from "@/constants/permissions";
+import { FORMAT_EXPERT_LIST } from "@/constants/formats";
+import Panel from "@/components/ui/Panel.vue";
+import Button from "@/components/ui/Button.vue";
+import LinkButton from "@/components/ui/LinkButton.vue";
+import DiscordLoginButton from "@/components/navbar/DiscordLoginButton.vue";
 import SubmitCompletionForm, {
   type CompletionFormModel,
-} from '@/components/completions/SubmitCompletionForm.vue';
-import SubmitCompletionFormSkeleton from '@/components/completions/SubmitCompletionFormSkeleton.vue';
+} from "@/components/completions/SubmitCompletionForm.vue";
+import SubmitCompletionFormSkeleton from "@/components/completions/SubmitCompletionFormSkeleton.vue";
 
 const route = useRoute();
 const router = useRouter();
 const auth = useAuthStore();
 
-const code = computed(() => route.params['code'] as string);
+const code = computed(() => route.params["code"] as string);
 const mapUrl = computed(() => `/map/${code.value}`);
 
 const { data: mapData, isLoading: mapLoading } = useMap(code);
 const { data: formatsResponse, isLoading: formatsLoading } = useFormats();
 
-const isLoading = computed(() => mapLoading.value || formatsLoading.value || auth.isLoading);
+const isLoading = computed(
+  () => mapLoading.value || formatsLoading.value || auth.isLoading,
+);
 
 // --- Format resolution ---
 
@@ -38,7 +40,7 @@ const eligibleFormats = computed(() => {
   if (!mapData.value || !formatsResponse.value) return [];
   const mapFormatIds = getFormatsMapIsIn(mapData.value);
   return formatsResponse.value.data.filter(
-    (f) => mapFormatIds.includes(f.id) && f.run_submission_status !== 'closed',
+    (f) => mapFormatIds.includes(f.id) && f.run_submission_status !== "closed",
   );
 });
 
@@ -49,7 +51,8 @@ const canSubmit = computed(() =>
 const videoRequired = computed(() => {
   const model = formModel.value;
 
-  if (auth.hasPermission(permissions.completionSubmission.requireRecording)) return true;
+  if (auth.hasPermission(permissions.completionSubmission.requireRecording))
+    return true;
   if (model.black_border) return true;
   if (model.lcc_enabled) return true;
   if (model.no_geraldo) {
@@ -69,29 +72,35 @@ const formModel = ref<CompletionFormModel>({
   proof_images: [],
   black_border: false,
   no_geraldo: false,
-  subm_notes: '',
-  proof_videos: [''],
+  subm_notes: "",
+  proof_videos: [""],
   lcc_enabled: false,
   lcc_leftover: null,
 });
 
 // Auto-select when only one eligible format
-watch(eligibleFormats, (fmts) => {
-  if (fmts.length === 1 && formModel.value.format_id !== fmts[0]!.id) {
-    formModel.value = { ...formModel.value, format_id: fmts[0]!.id };
-  }
-}, { immediate: true });
-
-const selectedFormat = computed(() =>
-  eligibleFormats.value.find((f) => f.id === formModel.value.format_id) ?? null,
+watch(
+  eligibleFormats,
+  (fmts) => {
+    if (fmts.length === 1 && formModel.value.format_id !== fmts[0]!.id) {
+      formModel.value = { ...formModel.value, format_id: fmts[0]!.id };
+    }
+  },
+  { immediate: true },
 );
 
-const isLccOnly = computed(() =>
-  selectedFormat.value?.run_submission_status === 'lcc_only',
+const selectedFormat = computed(
+  () =>
+    eligibleFormats.value.find((f) => f.id === formModel.value.format_id) ??
+    null,
 );
 
-const noGeraldoEnabled = computed(() =>
-  selectedFormat.value?.is_no_geraldo_enabled ?? false,
+const isLccOnly = computed(
+  () => selectedFormat.value?.run_submission_status === "lcc_only",
+);
+
+const noGeraldoEnabled = computed(
+  () => selectedFormat.value?.is_no_geraldo_enabled ?? false,
 );
 
 // Force LCC enabled when format is lcc_only
@@ -127,10 +136,11 @@ async function handleSubmit() {
     black_border: model.black_border,
     no_geraldo: model.no_geraldo,
     subm_notes: model.subm_notes || undefined,
-    proof_videos: model.proof_videos.filter((v) => v.trim() !== ''),
-    lcc: model.lcc_enabled && model.lcc_leftover != null
-      ? { leftover: model.lcc_leftover }
-      : undefined,
+    proof_videos: model.proof_videos.filter((v) => v.trim() !== ""),
+    lcc:
+      model.lcc_enabled && model.lcc_leftover != null
+        ? { leftover: model.lcc_leftover }
+        : undefined,
   };
 
   try {
@@ -141,10 +151,10 @@ async function handleSubmit() {
       apiErrors.value = parseApiErrors(error);
       await formRef.value.clearTouched();
       if (apiErrors.value.length === 0) {
-        submitError.value = 'Something went wrong. Please try again.';
+        submitError.value = "Something went wrong. Please try again.";
       }
     } else {
-      submitError.value = 'Something went wrong. Please try again.';
+      submitError.value = "Something went wrong. Please try again.";
     }
   }
 }
@@ -163,8 +173,13 @@ async function handleSubmit() {
     </Panel>
 
     <!-- Not authenticated -->
-    <Panel v-else-if="!auth.isAuthenticated" class="flex flex-col items-center gap-4">
-      <p class="text-(--color-text-muted)">You must be logged in to submit a completion.</p>
+    <Panel
+      v-else-if="!auth.isAuthenticated"
+      class="flex flex-col items-center gap-4"
+    >
+      <p class="text-(--color-text-muted)">
+        You must be logged in to submit a completion.
+      </p>
       <DiscordLoginButton />
     </Panel>
 
@@ -202,9 +217,7 @@ async function handleSubmit() {
 
       <div class="flex justify-end gap-2 mt-6">
         <LinkButton :to="mapUrl" :disabled="busy">Cancel</LinkButton>
-        <Button :disabled="busy" @click="handleSubmit">
-          Submit
-        </Button>
+        <Button :disabled="busy" @click="handleSubmit"> Submit </Button>
       </div>
     </Panel>
   </div>

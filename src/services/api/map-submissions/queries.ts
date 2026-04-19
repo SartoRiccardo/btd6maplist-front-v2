@@ -1,24 +1,31 @@
-import { computed, toValue, type MaybeRefOrGetter } from 'vue';
-import { useQuery, useMutation, useQueryClient, type UseQueryOptions } from '@tanstack/vue-query';
+import { computed, toValue, type MaybeRefOrGetter } from "vue";
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  type UseQueryOptions,
+} from "@tanstack/vue-query";
 import {
   getMapSubmissions,
   getMapSubmission,
   createMapSubmission,
   deleteMapSubmission,
   rejectMapSubmission,
-} from './index';
+} from "./index";
 import type {
   MapSubmission,
   GetMapSubmissionsParams,
   GetMapSubmissionParams,
   CreateMapSubmissionRequest,
-} from './types';
-import type { PaginatedResponse } from '@/services/api/common/types';
+} from "./types";
+import type { PaginatedResponse } from "@/services/api/common/types";
 
 export const mapSubmissionQueryKeys = {
-  all: ['map-submissions'] as const,
-  list: (params?: GetMapSubmissionsParams) => ['map-submissions', params] as const,
-  detail: (id: number, params?: GetMapSubmissionParams) => ['map-submissions', id, params] as const,
+  all: ["map-submissions"] as const,
+  list: (params?: GetMapSubmissionsParams) =>
+    ["map-submissions", params] as const,
+  detail: (id: number, params?: GetMapSubmissionParams) =>
+    ["map-submissions", id, params] as const,
 } as const;
 
 /**
@@ -26,7 +33,10 @@ export const mapSubmissionQueryKeys = {
  */
 export function useMapSubmissions(
   params?: MaybeRefOrGetter<GetMapSubmissionsParams | undefined>,
-  options?: Omit<UseQueryOptions<PaginatedResponse<MapSubmission>>, 'queryKey' | 'queryFn'>,
+  options?: Omit<
+    UseQueryOptions<PaginatedResponse<MapSubmission>>,
+    "queryKey" | "queryFn"
+  >,
 ) {
   return useQuery({
     queryKey: computed(() => mapSubmissionQueryKeys.list(toValue(params))),
@@ -41,10 +51,12 @@ export function useMapSubmissions(
 export function useMapSubmission(
   id: MaybeRefOrGetter<number>,
   params?: MaybeRefOrGetter<GetMapSubmissionParams | undefined>,
-  options?: Omit<UseQueryOptions<MapSubmission>, 'queryKey' | 'queryFn'>,
+  options?: Omit<UseQueryOptions<MapSubmission>, "queryKey" | "queryFn">,
 ) {
   return useQuery({
-    queryKey: computed(() => mapSubmissionQueryKeys.detail(toValue(id), toValue(params))),
+    queryKey: computed(() =>
+      mapSubmissionQueryKeys.detail(toValue(id), toValue(params)),
+    ),
     queryFn: () => getMapSubmission(toValue(id), toValue(params)),
     ...options,
   });

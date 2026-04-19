@@ -1,4 +1,4 @@
-export type { RetroMap } from '@/services/api/maps/types';
+export type { RetroMap } from "@/services/api/maps/types";
 
 export interface GetRetroMapsParams {
   page?: number;

@@ -1,4 +1,4 @@
-import type { Map } from '@/services/api/maps/types';
+import type { Map } from "@/services/api/maps/types";
 
 export interface Format {
   id: number;
@@ -10,8 +10,8 @@ export interface Format {
   completion_submission_rules: string;
   discord_server_url: string | null;
   hidden: boolean;
-  run_submission_status: 'closed' | 'open' | 'lcc_only';
-  map_submission_status: 'closed' | 'open' | 'open_chimps';
+  run_submission_status: "closed" | "open" | "lcc_only";
+  map_submission_status: "closed" | "open" | "open_chimps";
   is_no_geraldo_enabled: boolean;
   proposed_difficulties: string[] | null;
   preview_map1: Map | null;

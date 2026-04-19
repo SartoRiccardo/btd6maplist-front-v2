@@ -143,13 +143,12 @@ function fieldError(field: string): string | undefined {
           :disabled="disabled"
           class="flex-1 sm:w-36 sm:flex-none px-3 py-2 rounded-(--radius-btn) bg-(--color-primary) text-(--color-text) border border-(--color-contrast) focus:outline-none focus:border-(--color-active)"
           :class="{
-            'border-(--color-danger)!': fieldError(`verifiers.${index}.version`),
+            'border-(--color-danger)!': fieldError(
+              `verifiers.${index}.version`,
+            ),
           }"
           @change="
-            onVersionChange(
-              index,
-              ($event.target as HTMLSelectElement).value,
-            )
+            onVersionChange(index, ($event.target as HTMLSelectElement).value)
           "
         >
           <option value="alltime">All Time</option>

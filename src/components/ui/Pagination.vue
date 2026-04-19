@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Button from './Button.vue';
+import Button from "./Button.vue";
 
 const props = defineProps<{
   currentPage: number;
@@ -8,12 +8,12 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  'update:currentPage': [page: number];
+  "update:currentPage": [page: number];
 }>();
 
 function goTo(page: number) {
   if (page >= 1 && page <= props.lastPage && page !== props.currentPage) {
-    emit('update:currentPage', page);
+    emit("update:currentPage", page);
   }
 }
 </script>
@@ -24,7 +24,10 @@ function goTo(page: number) {
       <i class="bi bi-chevron-double-left" />
     </Button>
 
-    <Button :disabled="disabled || currentPage === 1" @click="goTo(currentPage - 1)">
+    <Button
+      :disabled="disabled || currentPage === 1"
+      @click="goTo(currentPage - 1)"
+    >
       <i class="bi bi-chevron-left" />
     </Button>
 
@@ -32,11 +35,17 @@ function goTo(page: number) {
       {{ currentPage }} / {{ lastPage }}
     </span>
 
-    <Button :disabled="disabled || currentPage === lastPage" @click="goTo(currentPage + 1)">
+    <Button
+      :disabled="disabled || currentPage === lastPage"
+      @click="goTo(currentPage + 1)"
+    >
       <i class="bi bi-chevron-right" />
     </Button>
 
-    <Button :disabled="disabled || currentPage === lastPage" @click="goTo(lastPage)">
+    <Button
+      :disabled="disabled || currentPage === lastPage"
+      @click="goTo(lastPage)"
+    >
       <i class="bi bi-chevron-double-right" />
     </Button>
   </nav>

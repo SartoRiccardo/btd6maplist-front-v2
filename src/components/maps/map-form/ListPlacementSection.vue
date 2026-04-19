@@ -160,20 +160,24 @@ function onRetroMapSelect(option: RetroMapOption | null) {
 
 const prefilledRetroMapId = computed(() => props.prefilledRetroMapId);
 
-watch(prefilledRetroMapId, async (retroMapId) => {
-  if (!retroMapId) return;
+watch(
+  prefilledRetroMapId,
+  async (retroMapId) => {
+    if (!retroMapId) return;
 
-  const map: RetroMap = await getRetroMap(retroMapId);
-  pendingGameId.value = map.game.game_id;
-  update({
-    remake_of: {
-      game_id: map.game.game_id,
-      game_name: map.game.game_name,
-      map_id: map.id,
-      map_name: map.name,
-    },
-  });
-}, { immediate: true });
+    const map: RetroMap = await getRetroMap(retroMapId);
+    pendingGameId.value = map.game.game_id;
+    update({
+      remake_of: {
+        game_id: map.game.game_id,
+        game_name: map.game.game_name,
+        map_id: map.id,
+        map_name: map.name,
+      },
+    });
+  },
+  { immediate: true },
+);
 
 // --- Validation ---
 

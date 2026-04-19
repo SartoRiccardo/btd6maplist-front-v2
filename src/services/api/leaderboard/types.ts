@@ -1,6 +1,10 @@
-import type { User } from '@/services/api/users/types';
+import type { User } from "@/services/api/users/types";
 
-export type LeaderboardValue = 'points' | 'lccs' | 'no_geraldo' | 'black_border';
+export type LeaderboardValue =
+  | "points"
+  | "lccs"
+  | "no_geraldo"
+  | "black_border";
 
 export interface LeaderboardEntry {
   score: number;

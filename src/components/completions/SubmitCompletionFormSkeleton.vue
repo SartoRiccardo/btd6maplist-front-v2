@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import DropZoneSkeleton from '@/components/ui/DropZoneSkeleton.vue';
-import BoxedCheckboxSkeleton from '@/components/ui/BoxedCheckboxSkeleton.vue';
-import UrlListInputSkeleton from './UrlListInputSkeleton.vue';
+import DropZoneSkeleton from "@/components/ui/DropZoneSkeleton.vue";
+import BoxedCheckboxSkeleton from "@/components/ui/BoxedCheckboxSkeleton.vue";
+import UrlListInputSkeleton from "./UrlListInputSkeleton.vue";
 </script>
 
 <template>

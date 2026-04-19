@@ -1,23 +1,26 @@
-import { ref } from 'vue';
-import { getDiscordLoginUrl } from '@/services/api/auth';
+import { ref } from "vue";
+import { getDiscordLoginUrl } from "@/services/api/auth";
 
 export interface DiscordAuthSuccess {
-  type: 'success';
+  type: "success";
   token: string;
 }
 
 export interface DiscordAuthError {
-  type: 'error';
+  type: "error";
   error: string;
   description?: string;
   message?: string;
 }
 
 export interface DiscordAuthCanceled {
-  type: 'canceled';
+  type: "canceled";
 }
 
-export type DiscordAuthResult = DiscordAuthSuccess | DiscordAuthError | DiscordAuthCanceled;
+export type DiscordAuthResult =
+  | DiscordAuthSuccess
+  | DiscordAuthError
+  | DiscordAuthCanceled;
 
 const POPUP_WIDTH = 500;
 const POPUP_HEIGHT = 700;
@@ -48,16 +51,16 @@ export function useDiscordAuth() {
         // Open popup window
         const popup = window.open(
           url,
-          'discord-oauth2',
-          `width=${POPUP_WIDTH},height=${POPUP_HEIGHT},left=${left},top=${top},resizable=yes,scrollbars=yes`
+          "discord-oauth2",
+          `width=${POPUP_WIDTH},height=${POPUP_HEIGHT},left=${left},top=${top},resizable=yes,scrollbars=yes`,
         );
 
         if (!popup) {
           isLoading.value = false;
           resolve({
-            type: 'error',
-            error: 'popup_blocked',
-            message: 'Popup was blocked. Please allow popups for this site.',
+            type: "error",
+            error: "popup_blocked",
+            message: "Popup was blocked. Please allow popups for this site.",
           });
           return;
         }
@@ -70,9 +73,9 @@ export function useDiscordAuth() {
           }
           isLoading.value = false;
           resolve({
-            type: 'error',
-            error: 'timeout',
-            message: 'Authentication timed out. Please try again.',
+            type: "error",
+            error: "timeout",
+            message: "Authentication timed out. Please try again.",
           });
         }, POPUP_TIMEOUT_MS);
 
@@ -84,7 +87,7 @@ export function useDiscordAuth() {
           }
 
           // Check if this is our auth message
-          if (event.data?.type === 'discord-auth-result') {
+          if (event.data?.type === "discord-auth-result") {
             cleanup();
             isLoading.value = false;
             resolve(event.data.result);
@@ -96,7 +99,7 @@ export function useDiscordAuth() {
           if (popup.closed) {
             cleanup();
             isLoading.value = false;
-            resolve({ type: 'canceled' });
+            resolve({ type: "canceled" });
           }
         }, 500);
 
@@ -104,21 +107,22 @@ export function useDiscordAuth() {
         function cleanup() {
           clearTimeout(timeoutId);
           clearInterval(checkClosed);
-          window.removeEventListener('message', messageHandler);
+          window.removeEventListener("message", messageHandler);
           if (!popup?.closed) {
             popup?.close();
           }
         }
 
         // Set up message listener
-        window.addEventListener('message', messageHandler);
+        window.addEventListener("message", messageHandler);
       });
     } catch (error) {
       isLoading.value = false;
       return {
-        type: 'error',
-        error: 'unknown',
-        message: error instanceof Error ? error.message : 'An unknown error occurred',
+        type: "error",
+        error: "unknown",
+        message:
+          error instanceof Error ? error.message : "An unknown error occurred",
       };
     }
   }

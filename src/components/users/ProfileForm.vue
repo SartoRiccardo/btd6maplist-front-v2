@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { computed } from 'vue';
-import { useTouchedProvider } from '@/composables/useTouchedFields';
-import { useEmitOnChange } from '@/composables/useEmitOnChange';
-import type { FormFieldError } from '@/services/api/formErrors';
+import { computed } from "vue";
+import { useTouchedProvider } from "@/composables/useTouchedFields";
+import { useEmitOnChange } from "@/composables/useEmitOnChange";
+import type { FormFieldError } from "@/services/api/formErrors";
 
 export interface ProfileFormModel {
   name: string;
@@ -19,8 +19,8 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', value: ProfileFormModel): void;
-  (e: 'errors', value: FormFieldError[]): void;
+  (e: "update:modelValue", value: ProfileFormModel): void;
+  (e: "errors", value: FormFieldError[]): void;
 }>();
 
 const { touchAll, clearTouched, isTouched, touch } = useTouchedProvider();
@@ -28,15 +28,23 @@ defineExpose({ touchAll, clearTouched });
 
 function update(partial: Partial<ProfileFormModel>) {
   for (const key of Object.keys(partial)) touch(key);
-  emit('update:modelValue', { ...props.modelValue, ...partial });
+  emit("update:modelValue", { ...props.modelValue, ...partial });
 }
 
 const ownErrors = computed<FormFieldError[]>(() => {
   const errors: FormFieldError[] = [];
   if (!props.modelValue.name.trim()) {
-    errors.push({ path: 'name', message: 'Display name is required.', source: 'validation' });
+    errors.push({
+      path: "name",
+      message: "Display name is required.",
+      source: "validation",
+    });
   } else if (props.modelValue.name.length > 50) {
-    errors.push({ path: 'name', message: 'Display name must be 50 characters or less.', source: 'validation' });
+    errors.push({
+      path: "name",
+      message: "Display name must be 50 characters or less.",
+      source: "validation",
+    });
   }
   return errors;
 });
@@ -44,15 +52,15 @@ const ownErrors = computed<FormFieldError[]>(() => {
 const activeErrors = computed<FormFieldError[]>(() => {
   const validation = ownErrors.value.filter((e) => isTouched(e.path));
   const externalValidation = (props.externalErrors ?? []).filter(
-    (e) => e.source === 'validation' && isTouched(e.path),
+    (e) => e.source === "validation" && isTouched(e.path),
   );
   const externalApi = (props.externalErrors ?? []).filter(
-    (e) => e.source === 'api' && !isTouched(e.path),
+    (e) => e.source === "api" && !isTouched(e.path),
   );
   return [...validation, ...externalValidation, ...externalApi];
 });
 
-useEmitOnChange(activeErrors, (errors) => emit('errors', errors));
+useEmitOnChange(activeErrors, (errors) => emit("errors", errors));
 
 function fieldError(field: string): string | undefined {
   return activeErrors.value.find((e) => e.path === field)?.message;
@@ -63,7 +71,9 @@ function fieldError(field: string): string | undefined {
   <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
     <!-- Display Name -->
     <div>
-      <label for="profile-name" class="block font-bold mb-1">Display Name</label>
+      <label for="profile-name" class="block font-bold mb-1"
+        >Display Name</label
+      >
       <input
         id="profile-name"
         type="text"
@@ -75,13 +85,15 @@ function fieldError(field: string): string | undefined {
         @input="update({ name: ($event.target as HTMLInputElement).value })"
       />
       <p v-if="fieldError('name')" class="text-red-400 text-sm mt-1">
-        {{ fieldError('name') }}
+        {{ fieldError("name") }}
       </p>
     </div>
 
     <!-- Ninja Kiwi Open API Key -->
     <div>
-      <label for="profile-nk-oak" class="block font-bold mb-1">Ninja Kiwi Open API Key</label>
+      <label for="profile-nk-oak" class="block font-bold mb-1"
+        >Ninja Kiwi Open API Key</label
+      >
       <input
         id="profile-nk-oak"
         type="text"
@@ -92,7 +104,7 @@ function fieldError(field: string): string | undefined {
         @input="update({ nk_oak: ($event.target as HTMLInputElement).value })"
       />
       <p v-if="fieldError('nk_oak')" class="text-red-400 text-sm mt-1">
-        {{ fieldError('nk_oak') }}
+        {{ fieldError("nk_oak") }}
       </p>
     </div>
   </div>
