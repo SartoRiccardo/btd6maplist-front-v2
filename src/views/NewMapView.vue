@@ -12,6 +12,7 @@ import {
 import { permissions } from "@/constants/permissions";
 import { ApiError } from "@/services/api/client";
 import { parseApiErrors, type FormFieldError } from "@/services/api/formErrors";
+import { toast } from "vue-sonner";
 import { useCreateMap } from "@/services/api/maps/queries";
 import Panel from "@/components/ui/Panel.vue";
 import Button from "@/components/ui/Button.vue";
@@ -148,13 +149,11 @@ const createMutation = useCreateMap();
 const formRef = ref<InstanceType<typeof MapForm> | null>(null);
 const apiErrors = ref<FormFieldError[]>([]);
 const activeErrors = ref<FormFieldError[]>([]);
-const submitError = ref<string | null>(null);
 const busy = computed(() => createMutation.isPending.value);
 
 async function handleSubmit() {
   if (!formRef.value) return;
 
-  submitError.value = null;
   await formRef.value.touchAll();
 
   if (activeErrors.value.length > 0) return;
@@ -196,10 +195,10 @@ async function handleSubmit() {
       apiErrors.value = parseApiErrors(error);
       await formRef.value.clearTouched();
       if (apiErrors.value.length === 0) {
-        submitError.value = "Something went wrong. Please try again.";
+        toast.error("Something went wrong. Please try again.");
       }
     } else {
-      submitError.value = "Something went wrong. Please try again.";
+      toast.error("Something went wrong. Please try again.");
     }
   }
 }
@@ -274,10 +273,6 @@ async function handleSubmit() {
         :initial-format-placement="prefilledDifficulty ?? undefined"
         @errors="activeErrors = $event"
       />
-
-      <p v-if="submitError" class="text-(--color-danger) text-sm mt-3">
-        {{ submitError }}
-      </p>
 
       <div class="flex justify-end gap-2 mt-15">
         <Button :disabled="busy" @click="handleSubmit"> Create Map </Button>

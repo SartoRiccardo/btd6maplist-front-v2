@@ -2,6 +2,7 @@
 import { ref, watch } from "vue";
 import { ApiError } from "@/services/api/client";
 import { parseApiErrors, type FormFieldError } from "@/services/api/formErrors";
+import { toast } from "vue-sonner";
 import { useCreateUser } from "@/services/api/users/queries";
 import Button from "@/components/ui/Button.vue";
 import UserForm, { type UserFormModel } from "./UserForm.vue";
@@ -14,7 +15,6 @@ const open = ref(false);
 const formModel = ref<UserFormModel>({ discord_id: "", name: "" });
 const apiErrors = ref<FormFieldError[]>([]);
 const activeErrors = ref<FormFieldError[]>([]);
-const submitError = ref<string | null>(null);
 const formRef = ref<InstanceType<typeof UserForm> | null>(null);
 
 const createMutation = useCreateUser();
@@ -23,7 +23,6 @@ const busy = ref(false);
 function openModal() {
   formModel.value = { discord_id: "", name: "" };
   apiErrors.value = [];
-  submitError.value = null;
   open.value = true;
 }
 
@@ -33,7 +32,6 @@ function close() {
 
 async function handleSubmit() {
   if (!formRef.value) return;
-  submitError.value = null;
 
   await formRef.value.touchAll();
   if (activeErrors.value.length > 0) return;
@@ -48,10 +46,10 @@ async function handleSubmit() {
       apiErrors.value = parseApiErrors(error);
       await formRef.value.clearTouched();
       if (apiErrors.value.length === 0) {
-        submitError.value = "Something went wrong. Please try again.";
+        toast.error("Something went wrong. Please try again.");
       }
     } else {
-      submitError.value = "Something went wrong. Please try again.";
+      toast.error("Something went wrong. Please try again.");
     }
   } finally {
     busy.value = false;
@@ -91,10 +89,6 @@ defineExpose({ open: openModal });
           :external-errors="apiErrors"
           @errors="activeErrors = $event"
         />
-
-        <p v-if="submitError" class="text-red-400 text-sm mt-3">
-          {{ submitError }}
-        </p>
 
         <div class="flex justify-end gap-2 mt-4">
           <Button :disabled="busy" @click="close">Cancel</Button>

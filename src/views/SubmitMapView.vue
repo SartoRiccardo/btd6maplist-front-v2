@@ -8,6 +8,7 @@ import { getFormatsMapIsIn } from "@/utils/formatBadges";
 import { permissions } from "@/constants/permissions";
 import { ApiError } from "@/services/api/client";
 import { parseApiErrors, type FormFieldError } from "@/services/api/formErrors";
+import { toast } from "vue-sonner";
 import Panel from "@/components/ui/Panel.vue";
 import Button from "@/components/ui/Button.vue";
 import DiscordLoginButton from "@/components/navbar/DiscordLoginButton.vue";
@@ -133,7 +134,6 @@ const submitMutation = useCreateMapSubmission();
 const formRef = ref<InstanceType<typeof SubmitMapForm> | null>(null);
 const apiErrors = ref<FormFieldError[]>([]);
 const activeErrors = ref<FormFieldError[]>([]);
-const submitError = ref<string | null>(null);
 const busy = computed(
   () =>
     submitMutation.isPending.value ||
@@ -145,7 +145,6 @@ const busy = computed(
 async function handleSubmit() {
   if (!formRef.value) return;
 
-  submitError.value = null;
   await formRef.value.touchAll();
 
   if (activeErrors.value.length > 0) return;
@@ -166,10 +165,10 @@ async function handleSubmit() {
       apiErrors.value = parseApiErrors(error);
       await formRef.value.clearTouched();
       if (apiErrors.value.length === 0) {
-        submitError.value = "Something went wrong. Please try again.";
+        toast.error("Something went wrong. Please try again.");
       }
     } else {
-      submitError.value = "Something went wrong. Please try again.";
+      toast.error("Something went wrong. Please try again.");
     }
   }
 }
@@ -267,10 +266,6 @@ async function handleSubmit() {
             :proposed-difficulties="proposedDifficulties"
             @errors="activeErrors = $event"
           />
-
-          <p v-if="submitError" class="text-red-400 text-sm mt-3">
-            {{ submitError }}
-          </p>
 
           <div class="flex justify-end gap-2 mt-6">
             <Button :disabled="busy" @click="handleSubmit"> Submit </Button>

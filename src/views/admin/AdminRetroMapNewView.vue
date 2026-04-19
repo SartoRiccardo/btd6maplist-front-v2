@@ -3,6 +3,7 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { ApiError } from "@/services/api/client";
 import { parseApiErrors, type FormFieldError } from "@/services/api/formErrors";
+import { toast } from "vue-sonner";
 import { useCreateRetroMap } from "@/services/api/retro-maps/queries";
 import Panel from "@/components/ui/Panel.vue";
 import Button from "@/components/ui/Button.vue";
@@ -23,14 +24,12 @@ const formModel = ref<RetroMapFormModel>({
 const formRef = ref<InstanceType<typeof RetroMapForm> | null>(null);
 const apiErrors = ref<FormFieldError[]>([]);
 const activeErrors = ref<FormFieldError[]>([]);
-const submitError = ref<string | null>(null);
 const isBusy = ref(false);
 
 const createMutation = useCreateRetroMap();
 
 async function handleSave() {
   if (!formRef.value) return;
-  submitError.value = null;
   await formRef.value.touchAll();
   if (activeErrors.value.length > 0) return;
 
@@ -49,10 +48,10 @@ async function handleSave() {
       apiErrors.value = parseApiErrors(error);
       await formRef.value.clearTouched();
       if (apiErrors.value.length === 0) {
-        submitError.value = "Something went wrong. Please try again.";
+        toast.error("Something went wrong. Please try again.");
       }
     } else {
-      submitError.value = "Something went wrong. Please try again.";
+      toast.error("Something went wrong. Please try again.");
     }
   } finally {
     isBusy.value = false;
@@ -77,9 +76,6 @@ async function handleSave() {
         @errors="activeErrors = $event"
       />
 
-      <p v-if="submitError" class="text-(--color-danger) text-sm mt-4">
-        {{ submitError }}
-      </p>
     </Panel>
 
     <div class="flex justify-between items-center mt-8">

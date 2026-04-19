@@ -5,6 +5,7 @@ import { useAuthStore } from "@/stores/auth";
 import { useUpdateCurrentUser } from "@/services/api/users/queries";
 import { ApiError } from "@/services/api/client";
 import { parseApiErrors, type FormFieldError } from "@/services/api/formErrors";
+import { toast } from "vue-sonner";
 import ProfileForm, {
   type ProfileFormModel,
 } from "@/components/users/ProfileForm.vue";
@@ -23,7 +24,6 @@ const updateMutation = useUpdateCurrentUser(
 const formRef = ref<InstanceType<typeof ProfileForm> | null>(null);
 const apiErrors = ref<FormFieldError[]>([]);
 const activeErrors = ref<FormFieldError[]>([]);
-const saveError = ref<string | null>(null);
 const busy = computed(() => updateMutation.isPending.value || auth.isFetching);
 
 const formModel = ref<ProfileFormModel>({
@@ -38,7 +38,6 @@ const profileUrl = computed(() =>
 async function handleSave() {
   if (!formRef.value) return;
 
-  saveError.value = null;
   await formRef.value.touchAll();
 
   if (activeErrors.value.length > 0) return;
@@ -54,10 +53,10 @@ async function handleSave() {
       apiErrors.value = parseApiErrors(error);
       await formRef.value.clearTouched();
       if (apiErrors.value.length === 0) {
-        saveError.value = "Something went wrong. Please try again.";
+        toast.error("Something went wrong. Please try again.");
       }
     } else {
-      saveError.value = "Something went wrong. Please try again.";
+      toast.error("Something went wrong. Please try again.");
     }
   }
 }
@@ -77,10 +76,6 @@ async function handleSave() {
         :external-errors="apiErrors"
         @errors="activeErrors = $event"
       />
-
-      <p v-if="saveError" class="text-red-400 text-sm mt-3">
-        {{ saveError }}
-      </p>
 
       <div class="flex justify-end gap-2 mt-6">
         <LinkButton :to="profileUrl" :disabled="busy">Cancel</LinkButton>

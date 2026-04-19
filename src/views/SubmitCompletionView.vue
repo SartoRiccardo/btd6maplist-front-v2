@@ -8,6 +8,7 @@ import { useSubmitCompletion } from "@/services/api/completions/queries";
 import type { SubmitCompletionRequest } from "@/services/api/completions/types";
 import { ApiError } from "@/services/api/client";
 import { parseApiErrors, type FormFieldError } from "@/services/api/formErrors";
+import { toast } from "vue-sonner";
 import { getFormatsMapIsIn } from "@/utils/formatBadges";
 import { permissions } from "@/constants/permissions";
 import { FORMAT_EXPERT_LIST } from "@/constants/formats";
@@ -116,13 +117,11 @@ const submitMutation = useSubmitCompletion();
 const formRef = ref<InstanceType<typeof SubmitCompletionForm> | null>(null);
 const apiErrors = ref<FormFieldError[]>([]);
 const activeErrors = ref<FormFieldError[]>([]);
-const submitError = ref<string | null>(null);
 const busy = computed(() => submitMutation.isPending.value);
 
 async function handleSubmit() {
   if (!formRef.value || !mapData.value || !auth.user) return;
 
-  submitError.value = null;
   await formRef.value.touchAll();
 
   if (activeErrors.value.length > 0) return;
@@ -151,10 +150,10 @@ async function handleSubmit() {
       apiErrors.value = parseApiErrors(error);
       await formRef.value.clearTouched();
       if (apiErrors.value.length === 0) {
-        submitError.value = "Something went wrong. Please try again.";
+        toast.error("Something went wrong. Please try again.");
       }
     } else {
-      submitError.value = "Something went wrong. Please try again.";
+      toast.error("Something went wrong. Please try again.");
     }
   }
 }
@@ -210,10 +209,6 @@ async function handleSubmit() {
         :no-geraldo-enabled="noGeraldoEnabled"
         @errors="activeErrors = $event"
       />
-
-      <p v-if="submitError" class="text-red-400 text-sm mt-3">
-        {{ submitError }}
-      </p>
 
       <div class="flex justify-end gap-2 mt-6">
         <LinkButton :to="mapUrl" :disabled="busy">Cancel</LinkButton>

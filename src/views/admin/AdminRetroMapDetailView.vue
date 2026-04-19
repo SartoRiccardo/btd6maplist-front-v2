@@ -3,6 +3,7 @@ import { ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { ApiError } from "@/services/api/client";
 import { parseApiErrors, type FormFieldError } from "@/services/api/formErrors";
+import { toast } from "vue-sonner";
 import {
   useRetroMap,
   useUpdateRetroMap,
@@ -53,7 +54,6 @@ const formRef = ref<InstanceType<typeof RetroMapForm> | null>(null);
 const deleteModal = ref<InstanceType<typeof ConfirmModal> | null>(null);
 const apiErrors = ref<FormFieldError[]>([]);
 const activeErrors = ref<FormFieldError[]>([]);
-const submitError = ref<string | null>(null);
 
 const updateMutation = useUpdateRetroMap();
 const deleteMutation = useDeleteRetroMap();
@@ -62,7 +62,6 @@ const isBusy = ref(false);
 
 async function handleSave() {
   if (!formRef.value || !retroMap.value) return;
-  submitError.value = null;
   await formRef.value.touchAll();
   if (activeErrors.value.length > 0) return;
 
@@ -84,10 +83,10 @@ async function handleSave() {
       apiErrors.value = parseApiErrors(error);
       await formRef.value.clearTouched();
       if (apiErrors.value.length === 0) {
-        submitError.value = "Something went wrong. Please try again.";
+        toast.error("Something went wrong. Please try again.");
       }
     } else {
-      submitError.value = "Something went wrong. Please try again.";
+      toast.error("Something went wrong. Please try again.");
     }
   } finally {
     isBusy.value = false;
@@ -101,7 +100,7 @@ async function handleDelete() {
     await deleteMutation.mutateAsync(id);
     router.push("/admin/retro-maps");
   } catch {
-    submitError.value = "Failed to delete. Please try again.";
+    toast.error("Failed to delete. Please try again.");
   } finally {
     isBusy.value = false;
   }
@@ -129,9 +128,6 @@ async function handleDelete() {
         @errors="activeErrors = $event"
       />
 
-      <p v-if="submitError" class="text-(--color-danger) text-sm mt-4">
-        {{ submitError }}
-      </p>
     </Panel>
 
     <div class="flex justify-between items-center mt-4">

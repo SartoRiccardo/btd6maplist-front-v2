@@ -12,6 +12,7 @@ import {
 import { permissions } from "@/constants/permissions";
 import { ApiError } from "@/services/api/client";
 import { parseApiErrors, type FormFieldError } from "@/services/api/formErrors";
+import { toast } from "vue-sonner";
 import {
   useMap,
   useUpdateMap,
@@ -112,7 +113,6 @@ const deleteMutation = useDeleteMap();
 const formRef = ref<InstanceType<typeof MapForm> | null>(null);
 const apiErrors = ref<FormFieldError[]>([]);
 const activeErrors = ref<FormFieldError[]>([]);
-const submitError = ref<string | null>(null);
 const busy = computed(
   () => updateMutation.isPending.value || deleteMutation.isPending.value,
 );
@@ -120,7 +120,6 @@ const busy = computed(
 async function handleSave() {
   if (!formRef.value || !formModel.value) return;
 
-  submitError.value = null;
   await formRef.value.touchAll();
 
   if (activeErrors.value.length > 0) return;
@@ -164,10 +163,10 @@ async function handleSave() {
       apiErrors.value = parseApiErrors(error);
       await formRef.value.clearTouched();
       if (apiErrors.value.length === 0) {
-        submitError.value = "Something went wrong. Please try again.";
+        toast.error("Something went wrong. Please try again.");
       }
     } else {
-      submitError.value = "Something went wrong. Please try again.";
+      toast.error("Something went wrong. Please try again.");
     }
   }
 }
@@ -179,7 +178,7 @@ async function handleDelete() {
     await deleteMutation.mutateAsync(code.value);
     router.push("/");
   } catch {
-    submitError.value = "Failed to delete map. Please try again.";
+    toast.error("Failed to delete map. Please try again.");
   }
 }
 </script>
@@ -207,10 +206,6 @@ async function handleDelete() {
         :initial-verifier-users="initialVerifierUsers"
         @errors="activeErrors = $event"
       />
-
-      <p v-if="submitError" class="text-(--color-danger) text-sm mt-3">
-        {{ submitError }}
-      </p>
 
       <div class="flex items-center mt-15">
         <router-link
