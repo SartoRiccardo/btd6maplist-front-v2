@@ -18,6 +18,7 @@ import { toast } from "vue-sonner";
 import Button from "@/components/ui/Button.vue";
 import ConfirmModal from "@/components/common/ConfirmModal.vue";
 import AchievementRoleModal from "@/components/formats/AchievementRoleModal.vue";
+import Icon from "@/components/common/Icon.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -36,6 +37,9 @@ const { mutateAsync: updateRole } = useUpdateAchievementRole();
 const { mutateAsync: deleteRole } = useDeleteAchievementRole();
 
 const KNOWN_LB_TYPES = LEADERBOARD_VALUES.map((lv) => lv.key);
+const LB_TYPE_ICONS: Record<string, string> = {
+  points: "/images/medals/medal_win.webp",
+};
 
 const groups = computed(() => {
   const roles = rolesData.value?.data ?? [];
@@ -43,12 +47,13 @@ const groups = computed(() => {
   const sortRoles = (list: AchievementRole[]) =>
     [...list].sort((a, b) => {
       if (a.for_first !== b.for_first) return a.for_first ? -1 : 1;
-      return a.threshold - b.threshold;
+      return b.threshold - a.threshold;
     });
 
   const known = LEADERBOARD_VALUES.map((lv) => ({
     key: lv.key,
     label: lv.label,
+    icon: lv.icon ?? LB_TYPE_ICONS[lv.key] ?? null,
     roles: sortRoles(roles.filter((r) => r.lb_type === lv.key)),
   }));
 
@@ -62,6 +67,7 @@ const groups = computed(() => {
   const unknown = unknownTypes.map((type) => ({
     key: type,
     label: type,
+    icon: null as string | null,
     roles: sortRoles(roles.filter((r) => r.lb_type === type)),
   }));
 
@@ -148,7 +154,14 @@ async function handleDelete(role: AchievementRole) {
         :class="gi > 0 ? 'pt-10' : ''"
       >
         <div class="flex items-center justify-between mb-2">
-          <h2 class="font-['Luckiest_Guy'] text-2xl">{{ group.label }}</h2>
+          <div class="flex items-center gap-2">
+            <Icon
+              v-if="group.icon"
+              :src="group.icon"
+              class="text-xl mr-1 -translate-y-0.5"
+            />
+            <h2 class="font-['Luckiest_Guy'] text-2xl">{{ group.label }}</h2>
+          </div>
           <Button :disabled="isBusy" @click="handleAdd(group.key)">
             <i class="bi bi-plus-lg" /> Add
           </Button>
@@ -166,7 +179,7 @@ async function handleDelete(role: AchievementRole) {
           <div
             v-for="role in group.roles"
             :key="role.id"
-            class="flex items-center gap-3 bg-(--color-primary) rounded-(--radius-btn) px-3 py-2"
+            class="bg-(--color-secondary) rounded-(--radius-panel) py-2 px-3 flex items-center gap-3"
           >
             <!-- Badge preview -->
             <div
