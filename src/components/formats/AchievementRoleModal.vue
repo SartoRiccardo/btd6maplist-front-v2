@@ -50,7 +50,7 @@ function toRequest(): UpsertAchievementRoleRequest {
   return {
     lb_format: props.formatId,
     lb_type: f.lb_type,
-    threshold: parseInt(f.threshold) || 0,
+    threshold: f.for_first ? 0 : parseInt(f.threshold) || 0,
     for_first: f.for_first,
     name: f.name.trim(),
     clr_border: hexToInt(f.clr_border),
