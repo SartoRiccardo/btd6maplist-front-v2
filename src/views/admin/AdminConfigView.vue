@@ -3,6 +3,7 @@ import { ref, computed, watch } from "vue";
 import { useAuthStore } from "@/stores/auth";
 import { useConfig, useUpdateConfig } from "@/services/api/config/queries";
 import { ApiError } from "@/services/api/client";
+import { toast } from "vue-sonner";
 import { permissions } from "@/constants/permissions";
 import {
   FORMAT_MAPLIST,
@@ -153,22 +154,18 @@ const visibleCategories = computed<ConfigCategoryDef[]>(() => {
 });
 
 const isBusy = ref(false);
-const submitError = ref<string | null>(null);
-const submitSuccess = ref(false);
 
 async function handleSave() {
-  submitError.value = null;
-  submitSuccess.value = false;
   isBusy.value = true;
   try {
     await saveConfig(formModel.value as never);
-    submitSuccess.value = true;
+    toast.success("Config saved successfully.");
   } catch (error: unknown) {
-    if (error instanceof ApiError) {
-      submitError.value = "Failed to save config. Please try again.";
-    } else {
-      submitError.value = "Something went wrong. Please try again.";
-    }
+    toast.error(
+      error instanceof ApiError
+        ? "Failed to save config. Please try again."
+        : "Something went wrong. Please try again.",
+    );
   } finally {
     isBusy.value = false;
   }
@@ -232,15 +229,7 @@ async function handleSave() {
         </div>
       </Panel>
 
-      <div class="flex justify-between items-center mt-4">
-        <div>
-          <p v-if="submitError" class="text-(--color-danger) text-sm">
-            {{ submitError }}
-          </p>
-          <p v-else-if="submitSuccess" class="text-green-400 text-sm">
-            Config saved successfully.
-          </p>
-        </div>
+      <div class="flex justify-end mt-4">
         <Button :disabled="isBusy" @click="handleSave">Save</Button>
       </div>
     </template>

@@ -3,6 +3,7 @@ import { RouterView, useRoute } from "vue-router";
 import Navbar from "@/components/navbar/Navbar.vue";
 import Footer from "@/components/layout/Footer.vue";
 import { useThemeStore } from "@/stores/theme";
+import { Toaster } from "vue-sonner";
 
 const route = useRoute();
 // Initialize theme store so saved theme is applied on load
@@ -19,4 +20,5 @@ useThemeStore();
     </main>
     <Footer v-if="!route.meta['standalone']" />
   </div>
+  <Toaster rich-colors close-button />
 </template>
