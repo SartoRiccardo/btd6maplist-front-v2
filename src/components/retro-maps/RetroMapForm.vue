@@ -39,21 +39,31 @@ function update(partial: Partial<RetroMapFormModel>) {
 const { data: retroGamesResponse } = useRetroGames({ per_page: 100 });
 
 const retroGameOptions = computed(() =>
-  (retroGamesResponse.value?.data ?? []).slice().sort(
-    (a, b) =>
-      a.game_id - b.game_id ||
-      a.category_id - b.category_id ||
-      a.subcategory_id - b.subcategory_id,
-  ),
+  (retroGamesResponse.value?.data ?? [])
+    .slice()
+    .sort(
+      (a, b) =>
+        a.game_id - b.game_id ||
+        a.category_id - b.category_id ||
+        a.subcategory_id - b.subcategory_id,
+    ),
 );
 
 const ownErrors = computed<FormFieldError[]>(() => {
   const errors: FormFieldError[] = [];
   if (!props.modelValue.name.trim()) {
-    errors.push({ path: "name", message: "Name is required.", source: "validation" });
+    errors.push({
+      path: "name",
+      message: "Name is required.",
+      source: "validation",
+    });
   }
   if (props.modelValue.retro_game_id === null) {
-    errors.push({ path: "retro_game_id", message: "Retro game is required.", source: "validation" });
+    errors.push({
+      path: "retro_game_id",
+      message: "Retro game is required.",
+      source: "validation",
+    });
   }
   return errors;
 });
@@ -75,7 +85,9 @@ function fieldError(field: string): string | undefined {
   return activeErrors.value.find((e) => e.path === field)?.message;
 }
 
-function formatGameOption(game: (typeof retroGameOptions.value)[number]): string {
+function formatGameOption(
+  game: (typeof retroGameOptions.value)[number],
+): string {
   const sub = game.subcategory_name ? ` (${game.subcategory_name})` : "";
   return `${game.game_name} – ${game.category_name}${sub}`;
 }
@@ -105,7 +117,9 @@ function formatGameOption(game: (typeof retroGameOptions.value)[number]): string
 
       <!-- Sort Order -->
       <div>
-        <label for="retro-map-sort-order" class="block font-bold mb-2">Sort Order</label>
+        <label for="retro-map-sort-order" class="block font-bold mb-2"
+          >Sort Order</label
+        >
         <input
           id="retro-map-sort-order"
           type="number"
@@ -113,9 +127,16 @@ function formatGameOption(game: (typeof retroGameOptions.value)[number]): string
           :disabled="disabled"
           class="w-full px-3 py-2 rounded-(--radius-btn) bg-(--color-primary) text-(--color-text) border border-(--color-contrast) focus:outline-none focus:border-(--color-active)"
           :class="{ 'border-(--color-danger)!': fieldError('sort_order') }"
-          @input="update({ sort_order: Number(($event.target as HTMLInputElement).value) })"
+          @input="
+            update({
+              sort_order: Number(($event.target as HTMLInputElement).value),
+            })
+          "
         />
-        <p v-if="fieldError('sort_order')" class="text-(--color-danger) text-sm mt-1">
+        <p
+          v-if="fieldError('sort_order')"
+          class="text-(--color-danger) text-sm mt-1"
+        >
           {{ fieldError("sort_order") }}
         </p>
         <p v-else class="text-(--color-text-muted) text-sm mt-1">
@@ -142,7 +163,11 @@ function formatGameOption(game: (typeof retroGameOptions.value)[number]): string
           "
         >
           <option value="">Select a game...</option>
-          <option v-for="game in retroGameOptions" :key="game.id" :value="game.id">
+          <option
+            v-for="game in retroGameOptions"
+            :key="game.id"
+            :value="game.id"
+          >
             {{ formatGameOption(game) }}
           </option>
         </select>
@@ -166,7 +191,10 @@ function formatGameOption(game: (typeof retroGameOptions.value)[number]): string
         @update:model-value="update({ preview_file: $event })"
         @clear-initial-url="update({ preview_url: '' })"
       />
-      <p v-if="fieldError('preview_url') || fieldError('preview_file')" class="text-(--color-danger) text-sm mt-1">
+      <p
+        v-if="fieldError('preview_url') || fieldError('preview_file')"
+        class="text-(--color-danger) text-sm mt-1"
+      >
         {{ fieldError("preview_url") ?? fieldError("preview_file") }}
       </p>
     </div>

@@ -38,7 +38,10 @@ const allAdminLinks = [
   {
     name: "Map Lists",
     url: "/admin/lists",
-    perms: [permissions.formatPresentation.edit, permissions.achievementRoles.edit],
+    perms: [
+      permissions.formatPresentation.edit,
+      permissions.achievementRoles.edit,
+    ],
   },
   {
     name: "Retro Maps",

@@ -27,7 +27,9 @@ function iconFor(formatId: number) {
 
 <template>
   <div>
-    <h1 class="font-['Luckiest_Guy'] text-3xl md:text-4xl text-center mt-6 mb-6">
+    <h1
+      class="font-['Luckiest_Guy'] text-3xl md:text-4xl text-center mt-6 mb-6"
+    >
       Lists
     </h1>
 
@@ -35,8 +37,13 @@ function iconFor(formatId: number) {
       <p class="text-(--color-text-muted)">Loading...</p>
     </div>
 
-    <div v-else-if="visibleFormats.length === 0" class="flex justify-center py-12">
-      <p class="text-(--color-text-muted)">You don't have permission to manage any lists.</p>
+    <div
+      v-else-if="visibleFormats.length === 0"
+      class="flex justify-center py-12"
+    >
+      <p class="text-(--color-text-muted)">
+        You don't have permission to manage any lists.
+      </p>
     </div>
 
     <div v-else>
@@ -51,7 +58,10 @@ function iconFor(formatId: number) {
             :src="iconFor(fmt.id)!.image"
             :alt="fmt.name"
           />
-          <span class="font-['Luckiest_Guy'] text-(--color-text) font-border text-base">{{ fmt.name }}</span>
+          <span
+            class="font-['Luckiest_Guy'] text-(--color-text) font-border text-base"
+            >{{ fmt.name }}</span
+          >
         </div>
 
         <div class="flex justify-end gap-2">
@@ -62,7 +72,9 @@ function iconFor(formatId: number) {
             Achievement Roles
           </LinkButton>
           <LinkButton
-            v-if="auth.hasPermission(permissions.formatPresentation.edit, fmt.id)"
+            v-if="
+              auth.hasPermission(permissions.formatPresentation.edit, fmt.id)
+            "
             :to="`/admin/lists/${fmt.id}`"
           >
             List Info

@@ -94,7 +94,7 @@ async function handleSave() {
 }
 
 async function handleDelete() {
-  if (!await deleteModal.value?.confirm()) return;
+  if (!(await deleteModal.value?.confirm())) return;
   isBusy.value = true;
   try {
     await deleteMutation.mutateAsync(id);
@@ -127,7 +127,6 @@ async function handleDelete() {
         :external-errors="apiErrors"
         @errors="activeErrors = $event"
       />
-
     </Panel>
 
     <div class="flex justify-between items-center mt-4">

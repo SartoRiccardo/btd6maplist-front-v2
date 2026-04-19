@@ -12,6 +12,9 @@ export async function getFormat(id: number): Promise<Format> {
   return api.get<Format>(`${BASE_PATH}/${id}`);
 }
 
-export async function updateFormat(id: number, data: UpdateFormatRequest): Promise<void> {
+export async function updateFormat(
+  id: number,
+  data: UpdateFormatRequest,
+): Promise<void> {
   return api.put<void>(`${BASE_PATH}/${id}`, data);
 }

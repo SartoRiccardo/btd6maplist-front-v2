@@ -21,9 +21,12 @@ export function useAchievementRoles(formatId: number) {
 export function useCreateAchievementRole() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: UpsertAchievementRoleRequest) => createAchievementRole(data),
+    mutationFn: (data: UpsertAchievementRoleRequest) =>
+      createAchievementRole(data),
     onSuccess: (_data, vars) => {
-      queryClient.invalidateQueries({ queryKey: achievementRoleQueryKeys.list(vars.lb_format) });
+      queryClient.invalidateQueries({
+        queryKey: achievementRoleQueryKeys.list(vars.lb_format),
+      });
     },
   });
 }
@@ -31,10 +34,17 @@ export function useCreateAchievementRole() {
 export function useUpdateAchievementRole() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: UpsertAchievementRoleRequest }) =>
-      updateAchievementRole(id, data),
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: number;
+      data: UpsertAchievementRoleRequest;
+    }) => updateAchievementRole(id, data),
     onSuccess: (_data, vars) => {
-      queryClient.invalidateQueries({ queryKey: achievementRoleQueryKeys.list(vars.data.lb_format) });
+      queryClient.invalidateQueries({
+        queryKey: achievementRoleQueryKeys.list(vars.data.lb_format),
+      });
     },
   });
 }
@@ -42,9 +52,12 @@ export function useUpdateAchievementRole() {
 export function useDeleteAchievementRole() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id }: { id: number; formatId: number }) => deleteAchievementRole(id),
+    mutationFn: ({ id }: { id: number; formatId: number }) =>
+      deleteAchievementRole(id),
     onSuccess: (_data, { formatId }) => {
-      queryClient.invalidateQueries({ queryKey: achievementRoleQueryKeys.list(formatId) });
+      queryClient.invalidateQueries({
+        queryKey: achievementRoleQueryKeys.list(formatId),
+      });
     },
   });
 }

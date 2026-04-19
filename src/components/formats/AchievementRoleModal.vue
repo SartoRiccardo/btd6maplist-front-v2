@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
-import type { AchievementRole, UpsertAchievementRoleRequest } from "@/services/api/achievement-roles/types";
+import type {
+  AchievementRole,
+  UpsertAchievementRoleRequest,
+} from "@/services/api/achievement-roles/types";
 import type { FormFieldError } from "@/services/api/formErrors";
 import { intToHex, hexToInt } from "@/utils/colors";
 import Button from "@/components/ui/Button.vue";
@@ -12,7 +15,9 @@ const props = defineProps<{ formatId: number }>();
 
 const open = ref(false);
 const isEdit = ref(false);
-const resolvePromise = ref<((value: UpsertAchievementRoleRequest | null) => void) | null>(null);
+const resolvePromise = ref<
+  ((value: UpsertAchievementRoleRequest | null) => void) | null
+>(null);
 
 const formRef = ref<InstanceType<typeof AchievementRoleForm> | null>(null);
 const formModel = ref<AchievementRoleFormModel>(emptyModel());
@@ -60,7 +65,10 @@ function toRequest(): UpsertAchievementRoleRequest {
   };
 }
 
-function openModal(role?: AchievementRole, defaultLbType = ""): Promise<UpsertAchievementRoleRequest | null> {
+function openModal(
+  role?: AchievementRole,
+  defaultLbType = "",
+): Promise<UpsertAchievementRoleRequest | null> {
   isEdit.value = !!role;
   formModel.value = role ? fromRole(role) : emptyModel(defaultLbType);
   apiErrors.value = [];

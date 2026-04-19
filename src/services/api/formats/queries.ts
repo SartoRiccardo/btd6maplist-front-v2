@@ -1,4 +1,9 @@
-import { useQuery, useMutation, useQueryClient, type UseQueryOptions } from "@tanstack/vue-query";
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  type UseQueryOptions,
+} from "@tanstack/vue-query";
 import { getFormats, getFormat, updateFormat } from "./index";
 import type { Format, UpdateFormatRequest } from "./types";
 import type { PaginatedResponse } from "@/services/api/common/types";
@@ -9,7 +14,10 @@ export const formatQueryKeys = {
 } as const;
 
 export function useFormats(
-  options?: Omit<UseQueryOptions<PaginatedResponse<Format>>, "queryKey" | "queryFn">,
+  options?: Omit<
+    UseQueryOptions<PaginatedResponse<Format>>,
+    "queryKey" | "queryFn"
+  >,
 ) {
   return useQuery({
     queryKey: formatQueryKeys.all,

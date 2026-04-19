@@ -1,4 +1,9 @@
-import { useQuery, useMutation, useQueryClient, type UseQueryOptions } from "@tanstack/vue-query";
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  type UseQueryOptions,
+} from "@tanstack/vue-query";
 import { getConfig, updateConfig } from "./index";
 import type { Config } from "./types";
 

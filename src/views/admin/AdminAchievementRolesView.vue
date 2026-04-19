@@ -24,7 +24,9 @@ const router = useRouter();
 const auth = useAuthStore();
 
 const id = Number(route.params["id"]);
-const canEdit = computed(() => auth.hasPermission(permissions.achievementRoles.edit, id));
+const canEdit = computed(() =>
+  auth.hasPermission(permissions.achievementRoles.edit, id),
+);
 
 const { data: format } = useFormat(id);
 const { data: rolesData, isLoading } = useAchievementRoles(id);
@@ -50,7 +52,13 @@ const groups = computed(() => {
     roles: sortRoles(roles.filter((r) => r.lb_type === lv.key)),
   }));
 
-  const unknownTypes = [...new Set(roles.filter((r) => !KNOWN_LB_TYPES.includes(r.lb_type)).map((r) => r.lb_type))];
+  const unknownTypes = [
+    ...new Set(
+      roles
+        .filter((r) => !KNOWN_LB_TYPES.includes(r.lb_type))
+        .map((r) => r.lb_type),
+    ),
+  ];
   const unknown = unknownTypes.map((type) => ({
     key: type,
     label: type,
@@ -72,7 +80,11 @@ async function handleAdd(lbType: string) {
     await createRole(request);
     toast.success("Role created.");
   } catch (e) {
-    toast.error(e instanceof ApiError ? "Failed to create role." : "Something went wrong.");
+    toast.error(
+      e instanceof ApiError
+        ? "Failed to create role."
+        : "Something went wrong.",
+    );
   } finally {
     isBusy.value = false;
   }
@@ -86,7 +98,11 @@ async function handleEdit(role: AchievementRole) {
     await updateRole({ id: role.id, data: request });
     toast.success("Role updated.");
   } catch (e) {
-    toast.error(e instanceof ApiError ? "Failed to update role." : "Something went wrong.");
+    toast.error(
+      e instanceof ApiError
+        ? "Failed to update role."
+        : "Something went wrong.",
+    );
   } finally {
     isBusy.value = false;
   }
@@ -109,7 +125,9 @@ async function handleDelete(role: AchievementRole) {
 
 <template>
   <div>
-    <h1 class="font-['Luckiest_Guy'] text-3xl md:text-4xl text-center mt-6 mb-4">
+    <h1
+      class="font-['Luckiest_Guy'] text-3xl md:text-4xl text-center mt-6 mb-4"
+    >
       {{ format ? format.name : "Achievement Roles" }}
     </h1>
 
@@ -118,11 +136,17 @@ async function handleDelete(role: AchievementRole) {
     </div>
 
     <div v-else-if="!canEdit" class="flex justify-center py-12">
-      <p class="text-(--color-text-muted)">You don't have permission to edit achievement roles.</p>
+      <p class="text-(--color-text-muted)">
+        You don't have permission to edit achievement roles.
+      </p>
     </div>
 
     <template v-else>
-      <div v-for="(group, gi) in groups" :key="group.key" :class="gi > 0 ? 'pt-10' : ''">
+      <div
+        v-for="(group, gi) in groups"
+        :key="group.key"
+        :class="gi > 0 ? 'pt-10' : ''"
+      >
         <div class="flex items-center justify-between mb-2">
           <h2 class="font-['Luckiest_Guy'] text-2xl">{{ group.label }}</h2>
           <Button :disabled="isBusy" @click="handleAdd(group.key)">
@@ -131,7 +155,10 @@ async function handleDelete(role: AchievementRole) {
         </div>
         <hr class="border-(--color-contrast) mb-4" />
 
-        <p v-if="group.roles.length === 0" class="text-(--color-text-muted) text-sm mb-2">
+        <p
+          v-if="group.roles.length === 0"
+          class="text-(--color-text-muted) text-sm mb-2"
+        >
           No roles yet.
         </p>
 
@@ -155,13 +182,25 @@ async function handleDelete(role: AchievementRole) {
             <!-- Details -->
             <div class="flex-1 min-w-0">
               <p class="text-sm">
-                <span v-if="role.for_first" class="text-(--color-text-muted)">1st place</span>
-                <span v-else class="text-(--color-text-muted)">Threshold: {{ role.threshold }}</span>
-                <span v-if="role.discord_roles.length" class="ml-2 text-xs text-(--color-text-muted)">
-                  · {{ role.discord_roles.length }} Discord role{{ role.discord_roles.length !== 1 ? "s" : "" }}
+                <span v-if="role.for_first" class="text-(--color-text-muted)"
+                  >1st place</span
+                >
+                <span v-else class="text-(--color-text-muted)"
+                  >Threshold: {{ role.threshold }}</span
+                >
+                <span
+                  v-if="role.discord_roles.length"
+                  class="ml-2 text-xs text-(--color-text-muted)"
+                >
+                  · {{ role.discord_roles.length }} Discord role{{
+                    role.discord_roles.length !== 1 ? "s" : ""
+                  }}
                 </span>
               </p>
-              <p v-if="role.tooltip_description" class="text-xs text-(--color-text-muted) truncate">
+              <p
+                v-if="role.tooltip_description"
+                class="text-xs text-(--color-text-muted) truncate"
+              >
                 {{ role.tooltip_description }}
               </p>
             </div>

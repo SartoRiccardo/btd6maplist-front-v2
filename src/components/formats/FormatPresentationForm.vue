@@ -10,23 +10,75 @@ import { MARKDOWN_ICONS } from "@/utils/markdownIcons";
 const ICON_GROUPS = [
   {
     label: "Medals",
-    names: ["completion", "no_geraldo", "no_optimal_hero", "black_border", "lcc"],
+    names: [
+      "completion",
+      "no_geraldo",
+      "no_optimal_hero",
+      "black_border",
+      "lcc",
+    ],
   },
   {
     label: "Formats",
-    names: ["maplist", "maplist_all_versions", "expert_list", "explist", "best_of_the_best", "botb", "nostalgia_pack", "np"],
+    names: [
+      "maplist",
+      "maplist_all_versions",
+      "expert_list",
+      "explist",
+      "best_of_the_best",
+      "botb",
+      "nostalgia_pack",
+      "np",
+    ],
   },
   {
     label: "Expert List difficulties",
-    names: ["explist_casual", "expert_list_casual", "explist_medium", "expert_list_medium", "explist_hard", "expert_list_hard", "explist_true", "expert_list_true", "explist_extreme", "expert_list_extreme"],
+    names: [
+      "explist_casual",
+      "expert_list_casual",
+      "explist_medium",
+      "expert_list_medium",
+      "explist_hard",
+      "expert_list_hard",
+      "explist_true",
+      "expert_list_true",
+      "explist_extreme",
+      "expert_list_extreme",
+    ],
   },
   {
     label: "BotB difficulties",
-    names: ["botb_beginner", "best_of_the_best_beginner", "botb_intermediate", "best_of_the_best_intermediate", "botb_advanced", "best_of_the_best_advanced", "botb_expert", "best_of_the_best_expert"],
+    names: [
+      "botb_beginner",
+      "best_of_the_best_beginner",
+      "botb_intermediate",
+      "best_of_the_best_intermediate",
+      "botb_advanced",
+      "best_of_the_best_advanced",
+      "botb_expert",
+      "best_of_the_best_expert",
+    ],
   },
   {
     label: "Nostalgia Pack games",
-    names: ["np_btd1", "nostalgia_pack_btd1", "np_ios", "nostalgia_pack_ios", "np_btd4", "nostalgia_pack_btd4", "np_btd5", "nostalgia_pack_btd5", "np_btdb1", "nostalgia_pack_btdb1", "np_bmc", "nostalgia_pack_bmc", "np_battd", "nostalgia_pack_battd", "np_btdb2", "nostalgia_pack_btdb2"],
+    names: [
+      "np_btd1",
+      "nostalgia_pack_btd1",
+      "np_ios",
+      "nostalgia_pack_ios",
+      "np_btd4",
+      "nostalgia_pack_btd4",
+      "np_btd5",
+      "nostalgia_pack_btd5",
+      "np_btdb1",
+      "nostalgia_pack_btdb1",
+      "np_bmc",
+      "nostalgia_pack_bmc",
+      "np_battd",
+      "nostalgia_pack_battd",
+      "np_btdb2",
+      "nostalgia_pack_btdb2",
+    ],
   },
 ] as const;
 import PreviewMapsInput, {
@@ -95,7 +147,11 @@ const previewMapsValue = computed<PreviewMapsValue>(() => ({
 const ownErrors = computed<FormFieldError[]>(() => {
   const errors: FormFieldError[] = [];
   if (!props.modelValue.name.trim()) {
-    errors.push({ path: "name", message: "Name is required.", source: "validation" });
+    errors.push({
+      path: "name",
+      message: "Name is required.",
+      source: "validation",
+    });
   }
   const slug = props.modelValue.slug.trim();
   if (slug && !/^[a-z0-9-]+$/.test(slug)) {
@@ -145,9 +201,14 @@ const errorClass = "border-(--color-danger)!";
               :value="modelValue.name"
               :disabled="disabled"
               :class="[inputClass, fieldError('name') ? errorClass : '']"
-              @input="update({ name: ($event.target as HTMLInputElement).value })"
+              @input="
+                update({ name: ($event.target as HTMLInputElement).value })
+              "
             />
-            <p v-if="fieldError('name')" class="text-(--color-danger) text-sm mt-1">
+            <p
+              v-if="fieldError('name')"
+              class="text-(--color-danger) text-sm mt-1"
+            >
               {{ fieldError("name") }}
             </p>
           </div>
@@ -160,9 +221,14 @@ const errorClass = "border-(--color-danger)!";
               :disabled="disabled"
               placeholder="e.g. maplist"
               :class="[inputClass, fieldError('slug') ? errorClass : '']"
-              @input="update({ slug: ($event.target as HTMLInputElement).value })"
+              @input="
+                update({ slug: ($event.target as HTMLInputElement).value })
+              "
             />
-            <p v-if="fieldError('slug')" class="text-(--color-danger) text-sm mt-1">
+            <p
+              v-if="fieldError('slug')"
+              class="text-(--color-danger) text-sm mt-1"
+            >
               {{ fieldError("slug") }}
             </p>
           </div>
@@ -182,10 +248,14 @@ const errorClass = "border-(--color-danger)!";
           <select
             :value="modelValue.map_submission_status"
             :disabled="disabled"
-            :class="[inputClass, fieldError('map_submission_status') ? errorClass : '']"
+            :class="[
+              inputClass,
+              fieldError('map_submission_status') ? errorClass : '',
+            ]"
             @change="
               update({
-                map_submission_status: ($event.target as HTMLSelectElement).value as FormatPresentationFormModel['map_submission_status'],
+                map_submission_status: ($event.target as HTMLSelectElement)
+                  .value as FormatPresentationFormModel['map_submission_status'],
               })
             "
           >
@@ -193,7 +263,10 @@ const errorClass = "border-(--color-danger)!";
             <option value="open">Open</option>
             <option value="open_chimps">Open (CHIMPS only)</option>
           </select>
-          <p v-if="fieldError('map_submission_status')" class="text-(--color-danger) text-sm mt-1">
+          <p
+            v-if="fieldError('map_submission_status')"
+            class="text-(--color-danger) text-sm mt-1"
+          >
             {{ fieldError("map_submission_status") }}
           </p>
         </div>
@@ -203,10 +276,14 @@ const errorClass = "border-(--color-danger)!";
           <select
             :value="modelValue.run_submission_status"
             :disabled="disabled"
-            :class="[inputClass, fieldError('run_submission_status') ? errorClass : '']"
+            :class="[
+              inputClass,
+              fieldError('run_submission_status') ? errorClass : '',
+            ]"
             @change="
               update({
-                run_submission_status: ($event.target as HTMLSelectElement).value as FormatPresentationFormModel['run_submission_status'],
+                run_submission_status: ($event.target as HTMLSelectElement)
+                  .value as FormatPresentationFormModel['run_submission_status'],
               })
             "
           >
@@ -214,7 +291,10 @@ const errorClass = "border-(--color-danger)!";
             <option value="open">Open</option>
             <option value="lcc_only">LCC only</option>
           </select>
-          <p v-if="fieldError('run_submission_status')" class="text-(--color-danger) text-sm mt-1">
+          <p
+            v-if="fieldError('run_submission_status')"
+            class="text-(--color-danger) text-sm mt-1"
+          >
             {{ fieldError("run_submission_status") }}
           </p>
         </div>
@@ -226,9 +306,14 @@ const errorClass = "border-(--color-danger)!";
             :value="modelValue.button_text"
             :disabled="disabled"
             :class="[inputClass, fieldError('button_text') ? errorClass : '']"
-            @input="update({ button_text: ($event.target as HTMLInputElement).value })"
+            @input="
+              update({ button_text: ($event.target as HTMLInputElement).value })
+            "
           />
-          <p v-if="fieldError('button_text')" class="text-(--color-danger) text-sm mt-1">
+          <p
+            v-if="fieldError('button_text')"
+            class="text-(--color-danger) text-sm mt-1"
+          >
             {{ fieldError("button_text") }}
           </p>
         </div>
@@ -239,10 +324,20 @@ const errorClass = "border-(--color-danger)!";
             type="url"
             :value="modelValue.discord_server_url"
             :disabled="disabled"
-            :class="[inputClass, fieldError('discord_server_url') ? errorClass : '']"
-            @input="update({ discord_server_url: ($event.target as HTMLInputElement).value })"
+            :class="[
+              inputClass,
+              fieldError('discord_server_url') ? errorClass : '',
+            ]"
+            @input="
+              update({
+                discord_server_url: ($event.target as HTMLInputElement).value,
+              })
+            "
           />
-          <p v-if="fieldError('discord_server_url')" class="text-(--color-danger) text-sm mt-1">
+          <p
+            v-if="fieldError('discord_server_url')"
+            class="text-(--color-danger) text-sm mt-1"
+          >
             {{ fieldError("discord_server_url") }}
           </p>
         </div>
@@ -253,10 +348,21 @@ const errorClass = "border-(--color-danger)!";
             :value="modelValue.description"
             :disabled="disabled"
             rows="3"
-            :class="[inputClass, 'resize-y', fieldError('description') ? errorClass : '']"
-            @input="update({ description: ($event.target as HTMLTextAreaElement).value })"
+            :class="[
+              inputClass,
+              'resize-y',
+              fieldError('description') ? errorClass : '',
+            ]"
+            @input="
+              update({
+                description: ($event.target as HTMLTextAreaElement).value,
+              })
+            "
           />
-          <p v-if="fieldError('description')" class="text-(--color-danger) text-sm mt-1">
+          <p
+            v-if="fieldError('description')"
+            class="text-(--color-danger) text-sm mt-1"
+          >
             {{ fieldError("description") }}
           </p>
         </div>
@@ -290,51 +396,97 @@ const errorClass = "border-(--color-danger)!";
             :value="modelValue.map_submission_rules"
             :disabled="disabled"
             rows="4"
-            :class="[inputClass, 'resize-y', fieldError('map_submission_rules') ? errorClass : '']"
-            @input="update({ map_submission_rules: ($event.target as HTMLTextAreaElement).value })"
+            :class="[
+              inputClass,
+              'resize-y',
+              fieldError('map_submission_rules') ? errorClass : '',
+            ]"
+            @input="
+              update({
+                map_submission_rules: ($event.target as HTMLTextAreaElement)
+                  .value,
+              })
+            "
           />
-          <p v-if="fieldError('map_submission_rules')" class="text-(--color-danger) text-sm mt-1">
+          <p
+            v-if="fieldError('map_submission_rules')"
+            class="text-(--color-danger) text-sm mt-1"
+          >
             {{ fieldError("map_submission_rules") }}
           </p>
         </div>
 
         <div>
-          <label class="block font-bold mb-1">Completion Submission Rules</label>
+          <label class="block font-bold mb-1"
+            >Completion Submission Rules</label
+          >
           <textarea
             :value="modelValue.completion_submission_rules"
             :disabled="disabled"
             rows="4"
-            :class="[inputClass, 'resize-y', fieldError('completion_submission_rules') ? errorClass : '']"
-            @input="update({ completion_submission_rules: ($event.target as HTMLTextAreaElement).value })"
+            :class="[
+              inputClass,
+              'resize-y',
+              fieldError('completion_submission_rules') ? errorClass : '',
+            ]"
+            @input="
+              update({
+                completion_submission_rules: (
+                  $event.target as HTMLTextAreaElement
+                ).value,
+              })
+            "
           />
-          <p v-if="fieldError('completion_submission_rules')" class="text-(--color-danger) text-sm mt-1">
+          <p
+            v-if="fieldError('completion_submission_rules')"
+            class="text-(--color-danger) text-sm mt-1"
+          >
             {{ fieldError("completion_submission_rules") }}
           </p>
         </div>
 
-        <details class="rounded-(--radius-btn) bg-(--color-primary) px-4 py-2 text-sm">
-          <summary class="cursor-pointer font-bold text-(--color-text-muted) select-none">
+        <details
+          class="rounded-(--radius-btn) bg-(--color-primary) px-4 py-2 text-sm"
+        >
+          <summary
+            class="cursor-pointer font-bold text-(--color-text-muted) select-none"
+          >
             Markdown reference
           </summary>
-          <div class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 text-(--color-text-muted)">
+          <div
+            class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 text-(--color-text-muted)"
+          >
             <div class="contents font-mono">
               <span># Heading 1</span><span>H1 heading</span>
               <span>## Heading 2</span><span>H2 heading</span>
-              <span>**bold**</span><span>Bold text</span>
-              <span>*italic*</span><span>Italic text</span>
-              <span>`code`</span><span>Inline code</span>
-              <span>[text](url)</span><span>Link</span>
-              <span>- item</span><span>Unordered list</span>
+              <span>**bold**</span><span>Bold text</span> <span>*italic*</span
+              ><span>Italic text</span> <span>`code`</span
+              ><span>Inline code</span> <span>[text](url)</span
+              ><span>Link</span> <span>- item</span><span>Unordered list</span>
               <span>1. item</span><span>Ordered list</span>
               <span>&gt; text</span><span>Blockquote</span>
             </div>
-            <div class="sm:col-span-2 mt-2 border-t border-(--color-contrast) pt-2 flex flex-col gap-1">
-              <p><code class="bg-(--color-secondary) px-1 rounded">:icon_name:</code> — inline icon (no border)</p>
-              <p><code class="bg-(--color-secondary) px-1 rounded">:(icon_name):</code> — icon with badge border</p>
+            <div
+              class="sm:col-span-2 mt-2 border-t border-(--color-contrast) pt-2 flex flex-col gap-1"
+            >
+              <p>
+                <code class="bg-(--color-secondary) px-1 rounded"
+                  >:icon_name:</code
+                >
+                — inline icon (no border)
+              </p>
+              <p>
+                <code class="bg-(--color-secondary) px-1 rounded"
+                  >:(icon_name):</code
+                >
+                — icon with badge border
+              </p>
             </div>
           </div>
 
-          <div class="mt-3 border-t border-(--color-contrast) pt-3 flex flex-col gap-3">
+          <div
+            class="mt-3 border-t border-(--color-contrast) pt-3 flex flex-col gap-3"
+          >
             <div v-for="group in ICON_GROUPS" :key="group.label">
               <p class="font-bold mb-1">{{ group.label }}</p>
               <div class="flex flex-wrap gap-x-4 gap-y-1">
@@ -343,8 +495,14 @@ const errorClass = "border-(--color-danger)!";
                   :key="name"
                   class="flex items-center gap-1"
                 >
-                  <img :src="MARKDOWN_ICONS[name]" :alt="name" class="w-4 h-4 object-cover inline-block" />
-                  <code class="bg-(--color-secondary) px-1 rounded">{{ name }}</code>
+                  <img
+                    :src="MARKDOWN_ICONS[name]"
+                    :alt="name"
+                    class="w-4 h-4 object-cover inline-block"
+                  />
+                  <code class="bg-(--color-secondary) px-1 rounded">{{
+                    name
+                  }}</code>
                 </span>
               </div>
             </div>

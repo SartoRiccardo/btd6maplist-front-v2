@@ -19,7 +19,9 @@ const router = useRouter();
 const auth = useAuthStore();
 
 const id = Number(route.params["id"]);
-const canEdit = computed(() => auth.hasPermission(permissions.formatPresentation.edit, id));
+const canEdit = computed(() =>
+  auth.hasPermission(permissions.formatPresentation.edit, id),
+);
 
 const { data: format, isLoading } = useFormat(id);
 const { mutateAsync: saveFormat } = useUpdateFormat();
@@ -96,7 +98,8 @@ async function handleSave() {
         preview_map_2_code: formModel.value.preview_map_2_code || null,
         preview_map_3_code: formModel.value.preview_map_3_code || null,
         map_submission_rules: formModel.value.map_submission_rules || null,
-        completion_submission_rules: formModel.value.completion_submission_rules || null,
+        completion_submission_rules:
+          formModel.value.completion_submission_rules || null,
         discord_server_url: formModel.value.discord_server_url || null,
       },
     });
@@ -117,7 +120,9 @@ async function handleSave() {
 
 <template>
   <div>
-    <h1 class="font-['Luckiest_Guy'] text-3xl md:text-4xl text-center mt-6 mb-4">
+    <h1
+      class="font-['Luckiest_Guy'] text-3xl md:text-4xl text-center mt-6 mb-4"
+    >
       {{ format ? format.name : "List Info" }}
     </h1>
 
@@ -126,7 +131,9 @@ async function handleSave() {
     </div>
 
     <div v-else-if="!canEdit" class="flex justify-center py-12">
-      <p class="text-(--color-text-muted)">You don't have permission to edit this list.</p>
+      <p class="text-(--color-text-muted)">
+        You don't have permission to edit this list.
+      </p>
     </div>
 
     <Panel v-else-if="format">
@@ -134,7 +141,11 @@ async function handleSave() {
         ref="formRef"
         v-model="formModel"
         :format-id="id"
-        :initial-maps="[format.preview_map1, format.preview_map2, format.preview_map3]"
+        :initial-maps="[
+          format.preview_map1,
+          format.preview_map2,
+          format.preview_map3,
+        ]"
         :disabled="isBusy"
         :external-errors="apiErrors"
         @errors="activeErrors = $event"
@@ -143,7 +154,9 @@ async function handleSave() {
 
     <div class="flex justify-between items-center mt-4">
       <Button @click="router.push('/admin/lists')">← Back</Button>
-      <Button v-if="canEdit && format" :disabled="isBusy" @click="handleSave">Save</Button>
+      <Button v-if="canEdit && format" :disabled="isBusy" @click="handleSave"
+        >Save</Button
+      >
     </div>
   </div>
 </template>

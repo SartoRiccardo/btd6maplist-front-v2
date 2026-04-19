@@ -75,7 +75,6 @@ async function handleSave() {
         :external-errors="apiErrors"
         @errors="activeErrors = $event"
       />
-
     </Panel>
 
     <div class="flex justify-between items-center mt-8">
