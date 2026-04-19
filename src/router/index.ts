@@ -90,6 +90,11 @@ const routes: RouteRecordRaw[] = [
     path: "/admin/lists",
   },
   {
+    component: () => import("@/views/admin/AdminRetroMapsView.vue"),
+    name: "AdminRetroMaps",
+    path: "/admin/retro-maps",
+  },
+  {
     component: () => import("@/views/admin/AdminMapSubmissionsView.vue"),
     name: "AdminMapSubmissions",
     path: "/admin/submissions/maps",
