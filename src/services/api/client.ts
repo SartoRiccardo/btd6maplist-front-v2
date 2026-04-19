@@ -2,7 +2,7 @@
 const TOKEN_KEY = "auth_token";
 
 // Helper to get token from localStorage
-function getAuthToken(): string | null {
+export function getAuthToken(): string | null {
   return localStorage.getItem(TOKEN_KEY);
 }
 
