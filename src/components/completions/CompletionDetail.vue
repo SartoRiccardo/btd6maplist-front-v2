@@ -2,18 +2,38 @@
 import { computed, ref } from "vue";
 import type { CompletionDetail } from "@/services/api/completions/types";
 import type { User } from "@/services/api/users/types";
+import { useAuthStore } from "@/stores/auth";
+import { permissions } from "@/constants/permissions";
+import { useCompletionActions } from "@/composables/useCompletionActions";
 import UserEntry from "@/components/users/UserEntry.vue";
 import ImageLightbox from "@/components/common/ImageLightbox.vue";
+import LinkButton from "@/components/ui/LinkButton.vue";
+import Button from "@/components/ui/Button.vue";
 
 const props = defineProps<{
   completion: CompletionDetail;
 }>();
+
+const auth = useAuthStore();
+const actions = useCompletionActions();
 
 const acceptedByUser = computed<User | null>(() => {
   const ab = props.completion.accepted_by;
   if (ab != null && typeof ab === "object") return ab;
   return null;
 });
+
+const isPending = computed(() => props.completion.accepted_by == null);
+
+const isOwnCompletion = computed(() =>
+  props.completion.players.some((p) => p.discord_id === auth.user?.discord_id),
+);
+
+const canEdit = computed(
+  () =>
+    !isOwnCompletion.value &&
+    auth.hasPermission(permissions.completion.edit, props.completion.format_id),
+);
 
 const lightbox = ref<InstanceType<typeof ImageLightbox>>();
 
@@ -88,6 +108,34 @@ function youtubeEmbedUrl(url: string): string | null {
         </template>
       </div>
     </div>
+
+    <!-- Admin actions -->
+    <div
+      v-if="
+        canEdit ||
+        (isPending &&
+          !isOwnCompletion &&
+          (actions.onApprove || actions.onReject))
+      "
+      class="flex justify-end gap-2 mb-4"
+    >
+      <Button
+        v-if="isPending && !isOwnCompletion && actions.onReject"
+        @click="actions.onReject!(completion.id)"
+      >
+        Reject
+      </Button>
+      <Button
+        v-if="isPending && !isOwnCompletion && actions.onApprove"
+        @click="actions.onApprove!(completion.id)"
+      >
+        Approve
+      </Button>
+      <LinkButton v-if="canEdit" :to="`/completions/${completion.id}/edit`">
+        Edit
+      </LinkButton>
+    </div>
+
     <ImageLightbox ref="lightbox" />
   </div>
 </template>
