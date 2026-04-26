@@ -61,6 +61,27 @@ export interface SubmitCompletionResponse {
   id: number;
 }
 
+export interface SaveCompletionRequest {
+  map: string;
+  format_id: number;
+  players: string[];
+  proof_images: File[];
+  black_border: boolean | null;
+  no_geraldo: boolean | null;
+  subm_notes: string | null;
+  proof_videos: string[];
+  lcc: { leftover: number } | null;
+}
+
+export interface UpdateCompletionRequest {
+  format_id: number;
+  players: string[];
+  black_border: boolean | null;
+  no_geraldo: boolean | null;
+  lcc: { leftover: number } | null;
+  accept: boolean;
+}
+
 export interface GetCompletionsParams {
   timestamp?: number;
   format_id?: number | number[];

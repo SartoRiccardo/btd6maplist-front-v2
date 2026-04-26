@@ -3,8 +3,10 @@ import type {
   CompletionDetail,
   GetCompletionParams,
   GetCompletionsParams,
+  SaveCompletionRequest,
   SubmitCompletionRequest,
   SubmitCompletionResponse,
+  UpdateCompletionRequest,
 } from "./types";
 import type { PaginatedResponse } from "@/services/api/common/types";
 import { apiRequest } from "../client";
@@ -116,4 +118,76 @@ export async function submitCompletion(
     method: "POST",
     body: formData,
   });
+}
+
+function buildCompletionFormData(data: SaveCompletionRequest): FormData {
+  const formData = new FormData();
+  formData.append("map", data.map);
+  formData.append("format_id", data.format_id.toString());
+  for (const player of data.players) {
+    formData.append("players[]", player);
+  }
+  for (const image of data.proof_images) {
+    formData.append("proof_images[]", image);
+  }
+  formData.append("black_border", data.black_border ? "1" : "0");
+  formData.append("no_geraldo", data.no_geraldo ? "1" : "0");
+  if (data.subm_notes != null) formData.append("subm_notes", data.subm_notes);
+  if (data.proof_videos) {
+    for (const video of data.proof_videos) {
+      formData.append("proof_videos[]", video);
+    }
+  }
+  if (data.lcc != null)
+    formData.append("lcc[leftover]", data.lcc.leftover.toString());
+  return formData;
+}
+
+/**
+ * POST /completions
+ *
+ * Admin-create a completion (auto-accepted). Requires edit:completion.
+ */
+export async function saveCompletion(
+  data: SaveCompletionRequest,
+): Promise<SubmitCompletionResponse> {
+  return apiRequest<SubmitCompletionResponse>(BASE_PATH, {
+    method: "POST",
+    body: buildCompletionFormData(data),
+  });
+}
+
+/**
+ * PUT /completions/:id
+ *
+ * Update a completion. Requires edit:completion.
+ * `accept` is silently ignored if already accepted.
+ */
+export async function updateCompletion(
+  id: number,
+  data: UpdateCompletionRequest,
+): Promise<void> {
+  const formData = new FormData();
+  formData.append("format_id", data.format_id.toString());
+  for (const player of data.players) {
+    formData.append("players[]", player);
+  }
+  formData.append("black_border", data.black_border ? "1" : "0");
+  formData.append("no_geraldo", data.no_geraldo ? "1" : "0");
+  if (data.lcc != null)
+    formData.append("lcc[leftover]", data.lcc.leftover.toString());
+  formData.append("accept", data.accept ? "1" : "0");
+  return apiRequest<void>(`${BASE_PATH}/${id}`, {
+    method: "PUT",
+    body: formData,
+  });
+}
+
+/**
+ * DELETE /completions/:id
+ *
+ * Soft-delete (reject) a completion. Requires edit:completion. Idempotent.
+ */
+export async function deleteCompletion(id: number): Promise<void> {
+  return apiRequest<void>(`${BASE_PATH}/${id}`, { method: "DELETE" });
 }

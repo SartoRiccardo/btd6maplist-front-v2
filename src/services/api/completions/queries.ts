@@ -5,13 +5,22 @@ import {
   useQueryClient,
   type UseQueryOptions,
 } from "@tanstack/vue-query";
-import { getCompletion, getCompletions, submitCompletion } from "./index";
+import {
+  deleteCompletion,
+  getCompletion,
+  getCompletions,
+  saveCompletion,
+  submitCompletion,
+  updateCompletion,
+} from "./index";
 import type {
   Completion,
   CompletionDetail,
   GetCompletionParams,
   GetCompletionsParams,
+  SaveCompletionRequest,
   SubmitCompletionRequest,
+  UpdateCompletionRequest,
 } from "./types";
 import type { PaginatedResponse } from "@/services/api/common/types";
 
@@ -66,6 +75,51 @@ export function useSubmitCompletion() {
   return useMutation({
     mutationFn: (data: SubmitCompletionRequest) => submitCompletion(data),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: completionQueryKeys.all });
+    },
+  });
+}
+
+/**
+ * Mutation hook to admin-create (auto-accept) a completion.
+ */
+export function useSaveCompletion() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: SaveCompletionRequest) => saveCompletion(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: completionQueryKeys.all });
+    },
+  });
+}
+
+/**
+ * Mutation hook to update a completion.
+ */
+export function useUpdateCompletion() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: number; data: UpdateCompletionRequest }) =>
+      updateCompletion(id, data),
+    onSuccess: (_data, { id }) => {
+      queryClient.invalidateQueries({ queryKey: completionQueryKeys.detail(id) });
+      queryClient.invalidateQueries({ queryKey: completionQueryKeys.all });
+    },
+  });
+}
+
+/**
+ * Mutation hook to delete (reject) a completion.
+ */
+export function useDeleteCompletion() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: number) => deleteCompletion(id),
+    onSuccess: (_data, id) => {
+      queryClient.invalidateQueries({ queryKey: completionQueryKeys.detail(id) });
       queryClient.invalidateQueries({ queryKey: completionQueryKeys.all });
     },
   });
