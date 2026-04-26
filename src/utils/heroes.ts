@@ -1,5 +1,7 @@
 const HERO_ALIASES: Record<string, string> = {
   benjamin: "ben",
+  gwendolyn: "gwen",
+  gwendolin: "gwen",
 };
 
 export function heroId(name: string): string {

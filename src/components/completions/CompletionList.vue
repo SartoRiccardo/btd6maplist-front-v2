@@ -20,13 +20,12 @@ const props = withDefaults(
     editUrl?: (completionId: number) => string;
     emptyMessage?: string;
     showFilters?: boolean;
-    showMap?: boolean;
+    mapDisplay?: "hidden" | "minimal" | "detail";
   }>(),
   {
     perPage: 25,
     emptyMessage: "No completions yet.",
     showFilters: true,
-    showMap: false,
   },
 );
 
@@ -60,7 +59,7 @@ const { data: response, isLoading } = useCompletions(
     ...props.params,
     page: page.value,
     per_page: props.perPage,
-    include: "players.flair",
+    include: props.mapDisplay === "detail" ? "players.flair,map.metadata" : "players.flair",
     black_border: filterBB.value,
     no_geraldo: filterNoGeraldo.value,
     lcc: filterLCC.value,
@@ -138,7 +137,7 @@ function toggleDetail(id: number) {
       :key="completion.id"
       :completion="completion"
       :expanded="expandedIds.has(completion.id)"
-      :show-map="showMap"
+      :map-display="mapDisplay"
       v-bind="editUrl ? { editUrl: editUrl(completion.id) } : {}"
       @toggle-detail="toggleDetail(completion.id)"
     >

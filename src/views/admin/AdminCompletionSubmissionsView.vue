@@ -20,8 +20,10 @@ const { data: formatsResponse } = useFormats();
 const rejectModal = ref<InstanceType<typeof ConfirmModal>>();
 const approveModal = ref<InstanceType<typeof ConfirmModal>>();
 
-const { mutateAsync: rejectCompletion, isPending: isRejecting } = useDeleteCompletion();
-const { mutateAsync: updateCompletion, isPending: isApproving } = useUpdateCompletion();
+const { mutateAsync: rejectCompletion, isPending: isRejecting } =
+  useDeleteCompletion();
+const { mutateAsync: updateCompletion, isPending: isApproving } =
+  useUpdateCompletion();
 const isFetching = useIsFetching({ queryKey: completionQueryKeys.all });
 const isDisabled = computed(
   () => isRejecting.value || isApproving.value || isFetching.value > 0,
@@ -81,7 +83,7 @@ const allowedFormatIds = computed(() => {
         deleted: 'any',
       }"
       :show-filters="false"
-      show-map
+      map-display="detail"
       empty-message="No pending completions."
     />
     <p

@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import type { Completion } from "@/services/api/completions/types";
+import type { MapWithMetadata } from "@/services/api/maps/types";
 import { FORMAT_ICONS } from "@/constants/formats";
+import { FORMAT_DIFFICULTIES } from "@/constants/difficulties";
 import { useFormats } from "@/services/api/formats/queries";
 import { useAuthStore } from "@/stores/auth";
+import { heroId } from "@/utils/heroes";
 import { RouterLink } from "vue-router";
 import Badge from "@/components/common/Badge.vue";
 import Button from "@/components/ui/Button.vue";
@@ -13,7 +16,7 @@ const props = defineProps<{
   completion: Completion;
   expanded?: boolean;
   editUrl?: string;
-  showMap?: boolean;
+  mapDisplay?: "hidden" | "minimal" | "detail";
 }>();
 
 const emit = defineEmits<{
@@ -54,6 +57,23 @@ const statusPill = computed(() => {
     return { label: "Pending", class: "bg-(--color-pending)" };
   return null;
 });
+
+const mapMeta = computed(() => {
+  if (props.mapDisplay !== "detail") return null;
+  return props.completion.map as unknown as MapWithMetadata;
+});
+
+const difficultyInfo = computed(() => {
+  if (!mapMeta.value || mapMeta.value.difficulty == null) return null;
+  const difficulties = FORMAT_DIFFICULTIES[props.completion.format_id];
+  if (!difficulties) return null;
+  const val = mapMeta.value.difficulty;
+  return (
+    difficulties.find((d) =>
+      Array.isArray(d.value) ? d.value.includes(val) : d.value === val,
+    ) ?? null
+  );
+});
 </script>
 
 <template>
@@ -70,7 +90,7 @@ const statusPill = computed(() => {
 
     <!-- Map header -->
     <RouterLink
-      v-if="showMap"
+      v-if="mapDisplay && mapDisplay !== 'hidden'"
       :to="`/map/${completion.map.code}`"
       class="no-underline! text-(--color-text)! hover:text-(--color-active)! flex items-center mb-2"
     >
@@ -80,9 +100,33 @@ const statusPill = computed(() => {
         alt=""
         loading="lazy"
       />
-      <p class="mb-0 pl-3 font-['Luckiest_Guy'] font-border text-lg">
-        {{ completion.map.name }}
-      </p>
+      <div class="pl-3">
+        <p class="mb-0 font-['Luckiest_Guy'] font-border text-lg">
+          {{ completion.map.name }}
+        </p>
+        <div
+          v-if="
+            mapDisplay === 'detail' &&
+            (difficultyInfo || mapMeta?.optimal_heros?.length)
+          "
+          class="flex items-center gap-1.5 mt-0.5 text-sm text-(--color-text-muted)"
+        >
+          <template v-if="difficultyInfo">
+            <Badge :src="difficultyInfo.image" :alt="difficultyInfo.name" />
+            {{ difficultyInfo.name }}
+            <template v-if="mapMeta?.optimal_heros?.length"
+              >&mdash;&nbsp;</template
+            >
+          </template>
+          <img
+            v-for="hero in mapMeta?.optimal_heros"
+            :key="hero"
+            :src="`/images/heros/hero_${heroId(hero)}.webp`"
+            :alt="hero"
+            class="w-[18px] h-[18px] scale-150 mx-0.5"
+          />
+        </div>
+      </div>
     </RouterLink>
 
     <!-- Large screens: grid with fixed columns for medals/format/button -->
