@@ -3,8 +3,11 @@ import { computed, ref } from "vue";
 import { useIsFetching } from "@tanstack/vue-query";
 import { useAuthStore } from "@/stores/auth";
 import { useFormats } from "@/services/api/formats/queries";
-import { useDeleteCompletion } from "@/services/api/completions/queries";
-import { completionQueryKeys } from "@/services/api/completions/queries";
+import {
+  useDeleteCompletion,
+  useUpdateCompletion,
+  completionQueryKeys,
+} from "@/services/api/completions/queries";
 import { permissions } from "@/constants/permissions";
 import { provideCompletionActions } from "@/composables/useCompletionActions";
 import CompletionList from "@/components/completions/CompletionList.vue";
@@ -15,17 +18,33 @@ const auth = useAuthStore();
 const { data: formatsResponse } = useFormats();
 
 const rejectModal = ref<InstanceType<typeof ConfirmModal>>();
-const { mutateAsync: rejectCompletion, isPending: isRejecting } =
-  useDeleteCompletion();
+const approveModal = ref<InstanceType<typeof ConfirmModal>>();
+
+const { mutateAsync: rejectCompletion, isPending: isRejecting } = useDeleteCompletion();
+const { mutateAsync: updateCompletion, isPending: isApproving } = useUpdateCompletion();
 const isFetching = useIsFetching({ queryKey: completionQueryKeys.all });
-const isDisabled = computed(() => isRejecting.value || isFetching.value > 0);
+const isDisabled = computed(
+  () => isRejecting.value || isApproving.value || isFetching.value > 0,
+);
 
 provideCompletionActions({
   disabled: isDisabled,
   shouldShowActions: (completion) =>
     completion.accepted_by == null && completion.deleted_on == null,
-  onApprove: (completion: CompletionDetail) => {
-    console.log("approve", completion);
+  onApprove: async (completion: CompletionDetail) => {
+    const confirmed = await approveModal.value!.confirm();
+    if (!confirmed) return;
+    await updateCompletion({
+      id: completion.id,
+      data: {
+        format_id: completion.format_id,
+        players: completion.players.map((p) => p.discord_id),
+        black_border: completion.black_border,
+        no_geraldo: completion.no_geraldo,
+        lcc: completion.lcc,
+        accept: true,
+      },
+    });
   },
   onReject: async (completion: CompletionDetail) => {
     const confirmed = await rejectModal.value!.confirm();
@@ -71,6 +90,9 @@ const allowedFormatIds = computed(() => {
       You don't have permission to review completions for any format.
     </p>
 
+    <ConfirmModal ref="approveModal" confirm-label="Accept">
+      Do you want to accept this completion?
+    </ConfirmModal>
     <ConfirmModal ref="rejectModal" confirm-label="Reject" danger>
       Do you want to reject this completion?
     </ConfirmModal>
