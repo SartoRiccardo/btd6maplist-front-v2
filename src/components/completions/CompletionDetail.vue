@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed, ref, toValue } from "vue";
 import type { CompletionDetail } from "@/services/api/completions/types";
 import type { User } from "@/services/api/users/types";
 import { useAuthStore } from "@/stores/auth";
@@ -33,6 +33,11 @@ const canEdit = computed(
   () =>
     !isOwnCompletion.value &&
     auth.hasPermission(permissions.completion.edit, props.completion.format_id),
+);
+
+const isActionsDisabled = computed(() => toValue(actions.disabled) ?? false);
+const showActions = computed(
+  () => actions.shouldShowActions == null || actions.shouldShowActions(props.completion),
 );
 
 const lightbox = ref<InstanceType<typeof ImageLightbox>>();
@@ -112,26 +117,33 @@ function youtubeEmbedUrl(url: string): string | null {
     <!-- Admin actions -->
     <div
       v-if="
-        canEdit ||
-        (isPending &&
-          !isOwnCompletion &&
-          (actions.onApprove || actions.onReject))
+        showActions &&
+        (canEdit ||
+          (isPending &&
+            !isOwnCompletion &&
+            (actions.onApprove || actions.onReject)))
       "
       class="flex justify-end gap-2 mb-4"
     >
       <Button
         v-if="isPending && !isOwnCompletion && actions.onReject"
-        @click="actions.onReject!(completion.id)"
+        :disabled="isActionsDisabled"
+        @click="actions.onReject!(completion)"
       >
         Reject
       </Button>
       <Button
         v-if="isPending && !isOwnCompletion && actions.onApprove"
-        @click="actions.onApprove!(completion.id)"
+        :disabled="isActionsDisabled"
+        @click="actions.onApprove!(completion)"
       >
         Approve
       </Button>
-      <LinkButton v-if="canEdit" :to="`/completions/${completion.id}/edit`">
+      <LinkButton
+        v-if="canEdit"
+        :to="`/completions/${completion.id}/edit`"
+        :disabled="isActionsDisabled"
+      >
         Edit
       </LinkButton>
     </div>

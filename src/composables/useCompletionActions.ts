@@ -1,8 +1,11 @@
-import { inject, provide } from "vue";
+import { inject, provide, type MaybeRefOrGetter } from "vue";
+import type { CompletionDetail } from "@/services/api/completions/types";
 
 export interface CompletionActions {
-  onApprove?: (id: number) => void;
-  onReject?: (id: number) => void;
+  disabled?: MaybeRefOrGetter<boolean>;
+  shouldShowActions?: (completion: CompletionDetail) => boolean;
+  onApprove?: (completion: CompletionDetail) => void;
+  onReject?: (completion: CompletionDetail) => void;
 }
 
 const COMPLETION_ACTIONS_KEY = Symbol("completionActions");

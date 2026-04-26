@@ -2,6 +2,14 @@
 import { ref, watch } from "vue";
 import Button from "@/components/ui/Button.vue";
 
+const props = withDefaults(
+  defineProps<{
+    confirmLabel?: string;
+    danger?: boolean;
+  }>(),
+  { confirmLabel: "Confirm", danger: false },
+);
+
 const open = ref(false);
 const resolvePromise = ref<((value: boolean) => void) | null>(null);
 
@@ -52,7 +60,7 @@ defineExpose({ confirm });
 
           <div class="flex justify-center gap-3 mt-4">
             <Button @click="respond(false)">Cancel</Button>
-            <Button active @click="respond(true)">Confirm</Button>
+            <Button :active="!props.danger" :danger="props.danger" @click="respond(true)">{{ props.confirmLabel }}</Button>
           </div>
         </div>
       </div>
