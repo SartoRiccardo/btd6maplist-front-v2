@@ -81,6 +81,7 @@ const allowedFormatIds = computed(() => {
         deleted: 'any',
       }"
       :show-filters="false"
+      show-map
       empty-message="No pending completions."
     />
     <p

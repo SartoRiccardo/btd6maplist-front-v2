@@ -4,6 +4,7 @@ import type { Completion } from "@/services/api/completions/types";
 import { FORMAT_ICONS } from "@/constants/formats";
 import { useFormats } from "@/services/api/formats/queries";
 import { useAuthStore } from "@/stores/auth";
+import { RouterLink } from "vue-router";
 import Badge from "@/components/common/Badge.vue";
 import Button from "@/components/ui/Button.vue";
 import Tooltip from "@/components/ui/Tooltip.vue";
@@ -12,6 +13,7 @@ const props = defineProps<{
   completion: Completion;
   expanded?: boolean;
   editUrl?: string;
+  showMap?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -65,6 +67,23 @@ const statusPill = computed(() => {
     >
       {{ statusPill.label }}
     </span>
+
+    <!-- Map header -->
+    <RouterLink
+      v-if="showMap"
+      :to="`/map/${completion.map.code}`"
+      class="no-underline! text-(--color-text)! hover:text-(--color-active)! flex items-center mb-2"
+    >
+      <img
+        class="w-24 h-auto aspect-[3/2] bg-(--color-primary) rounded-sm shrink-0"
+        :src="completion.map.map_preview_url"
+        alt=""
+        loading="lazy"
+      />
+      <p class="mb-0 pl-3 font-['Luckiest_Guy'] font-border text-lg">
+        {{ completion.map.name }}
+      </p>
+    </RouterLink>
 
     <!-- Large screens: grid with fixed columns for medals/format/button -->
     <div

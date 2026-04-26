@@ -20,11 +20,13 @@ const props = withDefaults(
     editUrl?: (completionId: number) => string;
     emptyMessage?: string;
     showFilters?: boolean;
+    showMap?: boolean;
   }>(),
   {
     perPage: 25,
     emptyMessage: "No completions yet.",
     showFilters: true,
+    showMap: false,
   },
 );
 
@@ -136,6 +138,7 @@ function toggleDetail(id: number) {
       :key="completion.id"
       :completion="completion"
       :expanded="expandedIds.has(completion.id)"
+      :show-map="showMap"
       v-bind="editUrl ? { editUrl: editUrl(completion.id) } : {}"
       @toggle-detail="toggleDetail(completion.id)"
     >
