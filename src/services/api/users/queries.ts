@@ -14,6 +14,8 @@ import {
   getMe,
   banUser,
   unbanUser,
+  addUserRole,
+  removeUserRole,
 } from "./index";
 import type {
   User,
@@ -139,6 +141,30 @@ export function useUpdateCurrentUser(
       if (id) {
         queryClient.invalidateQueries({ queryKey: userQueryKeys.detail(id) });
       }
+    },
+  });
+}
+
+/**
+ * Mutation hook to add or remove a platform role from a user
+ */
+export function useSetUserRole() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      userId,
+      roleId,
+      grant,
+    }: {
+      userId: string;
+      roleId: number;
+      grant: boolean;
+    }) => (grant ? addUserRole(userId, roleId) : removeUserRole(userId, roleId)),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: userQueryKeys.detail(variables.userId),
+      });
     },
   });
 }

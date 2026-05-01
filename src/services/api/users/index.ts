@@ -125,3 +125,27 @@ export async function banUser(id: string): Promise<void> {
 export async function unbanUser(id: string): Promise<void> {
   return apiRequest(`${BASE_PATH}/${id}/unban`, { method: "PUT" });
 }
+
+/**
+ * PUT /users/{id}/roles/{roleId}
+ */
+export async function addUserRole(
+  userId: string,
+  roleId: number,
+): Promise<void> {
+  return apiRequest(`${BASE_PATH}/${userId}/roles/${roleId}`, {
+    method: "PUT",
+  });
+}
+
+/**
+ * DELETE /users/{id}/roles/{roleId}
+ */
+export async function removeUserRole(
+  userId: string,
+  roleId: number,
+): Promise<void> {
+  return apiRequest(`${BASE_PATH}/${userId}/roles/${roleId}`, {
+    method: "DELETE",
+  });
+}

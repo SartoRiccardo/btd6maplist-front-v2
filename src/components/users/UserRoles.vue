@@ -3,6 +3,7 @@ import { computed } from "vue";
 import type { User } from "@/services/api/users/types";
 import { useAuthStore } from "@/stores/auth";
 import { usePlatformRoles } from "@/services/api/platform-roles/queries";
+import { useRoleActions } from "@/composables/useRoleActions";
 import { intToHex } from "@/utils/colors";
 import Tooltip from "@/components/ui/Tooltip.vue";
 
@@ -30,6 +31,8 @@ const visiblePlatformRoles = computed(() =>
   ),
 );
 
+const roleActions = useRoleActions();
+
 const hasRoles = computed(
   () =>
     (props.user.achievement_roles?.length ?? 0) > 0 ||
@@ -42,7 +45,7 @@ const hasRoles = computed(
     <Tooltip
       v-for="role in user.achievement_roles"
       :key="`achievement-${role.id}`"
-      :text="role.tooltip_description"
+      :text="role.tooltip_description ?? ''"
     >
       <div
         class="px-2 py-0.5 rounded-[0.3rem] border-2 border-solid font-border text-sm"
@@ -58,8 +61,20 @@ const hasRoles = computed(
     <div
       v-for="role in visiblePlatformRoles"
       :key="`platform-${role.id}`"
-      class="px-2 py-0.5 rounded-[0.3rem] border-2 border-black/40 font-border text-sm bg-black/30"
+      :class="[
+        roleActions?.isRevocable(role) ? 'pl-1' : 'pl-2',
+        roleActions?.isRevoking(role) ? 'opacity-50' : '',
+      ]"
+      class="flex items-center gap-1 pr-2 py-0.5 rounded-[0.3rem] border-2 border-black/40 font-border text-sm bg-black/30"
     >
+      <button
+        v-if="roleActions?.isRevocable(role)"
+        @click="roleActions.onRoleRevoke(role)"
+        :disabled="roleActions.isRevoking(role)"
+        class="leading-none hover:text-(--color-danger) transition-colors cursor-pointer font-border disabled:cursor-not-allowed"
+      >
+        <i class="bi bi-x" />
+      </button>
       {{ role.name }}
     </div>
   </div>

@@ -12,6 +12,7 @@ import { formatDate } from "@/utils/dates";
 import { getMapFormatBadges } from "@/utils/formatBadges";
 import { permissions } from "@/constants/permissions";
 import { useAuthStore } from "@/stores/auth";
+import { provideRoleActions } from "@/composables/useRoleActions";
 import Badge from "@/components/common/Badge.vue";
 import Button from "@/components/ui/Button.vue";
 import LinkButton from "@/components/ui/LinkButton.vue";
@@ -29,6 +30,8 @@ const {
 } = useUser(userId, {
   include: ["achievement_roles", "flair", "medals", "ranks"],
 });
+
+provideRoleActions(userId, userFetching);
 
 const canBan = computed(
   () =>
