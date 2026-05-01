@@ -5,6 +5,7 @@ import { useAuthStore } from "@/stores/auth";
 import {
   useCompletion,
   useUpdateCompletion,
+  useDeleteCompletion,
 } from "@/services/api/completions/queries";
 import { useFormats } from "@/services/api/formats/queries";
 import type {
@@ -78,11 +79,26 @@ watch(
   { immediate: true },
 );
 
+const isDeleted = computed(() => completionData.value?.deleted_on != null);
+
 const updateMutation = useUpdateCompletion();
+const deleteMutation = useDeleteCompletion();
+
+async function handleDelete() {
+  try {
+    await deleteMutation.mutateAsync(id.value);
+    toast.success("Completion deleted.");
+    router.back();
+  } catch {
+    toast.error("Something went wrong. Please try again.");
+  }
+}
 const formRef = ref<InstanceType<typeof CompletionForm> | null>(null);
 const apiErrors = ref<FormFieldError[]>([]);
 const activeErrors = ref<FormFieldError[]>([]);
-const busy = computed(() => updateMutation.isPending.value);
+const busy = computed(
+  () => updateMutation.isPending.value || deleteMutation.isPending.value,
+);
 
 async function handleSave() {
   if (!formRef.value || !completionData.value) return;
@@ -112,7 +128,6 @@ async function handleSave() {
   try {
     await updateMutation.mutateAsync({ id: id.value, data: request });
     toast.success("Completion updated.");
-    router.push("/admin/submissions/completions");
   } catch (error: unknown) {
     if (error instanceof ApiError) {
       apiErrors.value = parseApiErrors(error);
@@ -168,18 +183,33 @@ async function handleSave() {
       <CompletionForm
         ref="formRef"
         v-model="formModel"
-        :disabled="busy"
+        :disabled="busy || isDeleted"
         :external-errors="apiErrors"
         :formats="formats"
         :initial-players="completionData.players"
         @errors="activeErrors = $event"
       />
 
-      <div class="flex justify-end gap-2 mt-6">
-        <LinkButton to="/admin/submissions/completions" :disabled="busy">
+      <p
+        v-if="isDeleted"
+        class="mt-6 px-4 py-3 rounded-(--radius-panel) border border-red-500/50 bg-red-500/10 text-red-400 text-sm"
+      >
+        This completion was deleted.
+      </p>
+
+      <div class="flex justify-between mt-6">
+        <template v-if="!isDeleted">
+          <Button :disabled="busy" @click="handleDelete">Delete</Button>
+          <div class="flex gap-2">
+            <LinkButton to="/admin/submissions/completions" :disabled="busy">
+              Cancel
+            </LinkButton>
+            <Button :disabled="busy" @click="handleSave">Save</Button>
+          </div>
+        </template>
+        <LinkButton v-else to="/admin/submissions/completions">
           Cancel
         </LinkButton>
-        <Button :disabled="busy" @click="handleSave">Save</Button>
       </div>
     </Panel>
   </div>
