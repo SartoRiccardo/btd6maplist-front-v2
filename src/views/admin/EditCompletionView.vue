@@ -81,6 +81,18 @@ watch(
 
 const isDeleted = computed(() => completionData.value?.deleted_on != null);
 
+const cancelUrl = computed(() => `/map/${completionData.value?.map_code ?? ''}`);
+
+function handleCancel(e: MouseEvent) {
+  if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) return;
+  e.preventDefault();
+  if (window.history.state?.back) {
+    router.back();
+  } else {
+    router.push(cancelUrl.value);
+  }
+}
+
 const updateMutation = useUpdateCompletion();
 const deleteMutation = useDeleteCompletion();
 
@@ -201,15 +213,11 @@ async function handleSave() {
         <template v-if="!isDeleted">
           <Button :disabled="busy" @click="handleDelete">Delete</Button>
           <div class="flex gap-2">
-            <LinkButton to="/admin/submissions/completions" :disabled="busy">
-              Cancel
-            </LinkButton>
+            <LinkButton :to="cancelUrl" :disabled="busy" @click="handleCancel">Cancel</LinkButton>
             <Button :disabled="busy" @click="handleSave">Save</Button>
           </div>
         </template>
-        <LinkButton v-else to="/admin/submissions/completions">
-          Cancel
-        </LinkButton>
+        <LinkButton v-else :to="cancelUrl" @click="handleCancel">Cancel</LinkButton>
       </div>
     </Panel>
   </div>
