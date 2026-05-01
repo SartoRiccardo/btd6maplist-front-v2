@@ -26,8 +26,10 @@ const PERMISSION_MANAGE_ROLES = BigInt(0x10000000);
 
 export function canManageRoles(guild: DiscordGuild): boolean {
   const perms = BigInt(guild.permissions);
-  return (perms & PERMISSION_ADMINISTRATOR) !== BigInt(0) ||
-    (perms & PERMISSION_MANAGE_ROLES) !== BigInt(0);
+  return (
+    (perms & PERMISSION_ADMINISTRATOR) !== BigInt(0) ||
+    (perms & PERMISSION_MANAGE_ROLES) !== BigInt(0)
+  );
 }
 
 export interface DiscordRole {

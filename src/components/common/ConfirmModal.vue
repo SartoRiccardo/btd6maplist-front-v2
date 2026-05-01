@@ -60,7 +60,12 @@ defineExpose({ confirm });
 
           <div class="flex justify-center gap-3 mt-4">
             <Button @click="respond(false)">Cancel</Button>
-            <Button :active="!props.danger" :danger="props.danger" @click="respond(true)">{{ props.confirmLabel }}</Button>
+            <Button
+              :active="!props.danger"
+              :danger="props.danger"
+              @click="respond(true)"
+              >{{ props.confirmLabel }}</Button
+            >
           </div>
         </div>
       </div>

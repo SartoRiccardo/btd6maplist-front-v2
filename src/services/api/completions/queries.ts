@@ -104,7 +104,9 @@ export function useUpdateCompletion() {
     mutationFn: ({ id, data }: { id: number; data: UpdateCompletionRequest }) =>
       updateCompletion(id, data),
     onSuccess: (_data, { id }) => {
-      queryClient.invalidateQueries({ queryKey: completionQueryKeys.detail(id) });
+      queryClient.invalidateQueries({
+        queryKey: completionQueryKeys.detail(id),
+      });
       queryClient.invalidateQueries({ queryKey: completionQueryKeys.all });
     },
   });
@@ -119,7 +121,9 @@ export function useDeleteCompletion() {
   return useMutation({
     mutationFn: (id: number) => deleteCompletion(id),
     onSuccess: (_data, id) => {
-      queryClient.invalidateQueries({ queryKey: completionQueryKeys.detail(id) });
+      queryClient.invalidateQueries({
+        queryKey: completionQueryKeys.detail(id),
+      });
       queryClient.invalidateQueries({ queryKey: completionQueryKeys.all });
     },
   });

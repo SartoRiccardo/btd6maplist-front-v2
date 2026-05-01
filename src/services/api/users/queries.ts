@@ -32,8 +32,13 @@ export const userQueryKeys = {
   list: (params?: GetUsersParams) => ["users", "list", params] as const,
   detail: (id: string, params?: GetUserParams) =>
     params ? (["users", id, params] as const) : (["users", id] as const),
-  me: (params?: GetUserParams): readonly ["users", "@me", GetUserParams | undefined] =>
-    ["users", "@me", params],
+  me: (
+    params?: GetUserParams,
+  ): readonly ["users", "@me", GetUserParams | undefined] => [
+    "users",
+    "@me",
+    params,
+  ],
 } as const;
 
 /**
@@ -160,7 +165,8 @@ export function useSetUserRole() {
       userId: string;
       roleId: number;
       grant: boolean;
-    }) => (grant ? addUserRole(userId, roleId) : removeUserRole(userId, roleId)),
+    }) =>
+      grant ? addUserRole(userId, roleId) : removeUserRole(userId, roleId),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: userQueryKeys.detail(variables.userId),

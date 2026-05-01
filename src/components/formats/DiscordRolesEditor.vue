@@ -29,13 +29,17 @@ const guilds = computed(() => (guildsRaw.value ?? []).filter(canManageRoles));
 const hiddenRoles = computed(() => {
   if (!guildsRaw.value) return [];
   const knownIds = new Set(guildsRaw.value.map((g) => g.id));
-  return props.modelValue.filter((r) => r.guild_id && !knownIds.has(r.guild_id));
+  return props.modelValue.filter(
+    (r) => r.guild_id && !knownIds.has(r.guild_id),
+  );
 });
 
 const visibleRoles = computed(() => {
   if (!guildsRaw.value) return props.modelValue;
   const knownIds = new Set(guildsRaw.value.map((g) => g.id));
-  return props.modelValue.filter((r) => !r.guild_id || knownIds.has(r.guild_id));
+  return props.modelValue.filter(
+    (r) => !r.guild_id || knownIds.has(r.guild_id),
+  );
 });
 
 function emitVisible(visible: DiscordRoleEntry[]) {
@@ -71,9 +75,15 @@ const inputClass =
         :value="entry.guild_id"
         :disabled="disabled || guildsLoading"
         :class="[inputClass, 'flex-1']"
-        @change="updateEntry(i, { guild_id: ($event.target as HTMLSelectElement).value })"
+        @change="
+          updateEntry(i, {
+            guild_id: ($event.target as HTMLSelectElement).value,
+          })
+        "
       >
-        <option value="" disabled>{{ guildsLoading ? "Loading..." : "Select server..." }}</option>
+        <option value="" disabled>
+          {{ guildsLoading ? "Loading..." : "Select server..." }}
+        </option>
         <option v-for="guild in guilds" :key="guild.id" :value="guild.id">
           {{ guild.name }}
         </option>
@@ -96,7 +106,8 @@ const inputClass =
     </div>
 
     <p v-if="hiddenRoles.length" class="text-(--color-text-muted) text-sm">
-      +{{ hiddenRoles.length }} role{{ hiddenRoles.length !== 1 ? "s" : "" }} in servers you are not in
+      +{{ hiddenRoles.length }} role{{ hiddenRoles.length !== 1 ? "s" : "" }} in
+      servers you are not in
     </p>
 
     <Button v-if="!disabled" @click="add">

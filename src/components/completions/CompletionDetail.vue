@@ -37,10 +37,10 @@ const canEdit = computed(
 
 const isActionsDisabled = computed(() => toValue(actions.disabled) ?? false);
 const showActions = computed(
-  () => actions.shouldShowActions == null || actions.shouldShowActions(props.completion),
+  () =>
+    actions.shouldShowActions == null ||
+    actions.shouldShowActions(props.completion),
 );
-
-
 </script>
 
 <template>
@@ -91,6 +91,5 @@ const showActions = computed(
         Edit
       </LinkButton>
     </div>
-
   </div>
 </template>

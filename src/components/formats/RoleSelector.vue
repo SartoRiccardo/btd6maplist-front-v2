@@ -15,7 +15,11 @@ const emit = defineEmits<{
   (e: "update:modelValue", value: string): void;
 }>();
 
-const { data: roles, isLoading, isError } = useGuildRoles(toRef(props, "guildId"));
+const {
+  data: roles,
+  isLoading,
+  isError,
+} = useGuildRoles(toRef(props, "guildId"));
 
 const inputClass =
   "w-full px-3 py-2 rounded-(--radius-btn) bg-(--color-primary) text-(--color-text) border border-(--color-contrast) focus:outline-none focus:border-(--color-active)";
@@ -27,12 +31,26 @@ const inputClass =
       :value="modelValue"
       :disabled="disabled || !guildId || isLoading || isError"
       :class="inputClass"
-      @change="emit('update:modelValue', ($event.target as HTMLSelectElement).value)"
+      @change="
+        emit('update:modelValue', ($event.target as HTMLSelectElement).value)
+      "
     >
       <option value="" disabled>
-        {{ !guildId ? "Select a server first" : isLoading ? "Loading..." : isError ? "Failed to load roles" : "Select role..." }}
+        {{
+          !guildId
+            ? "Select a server first"
+            : isLoading
+              ? "Loading..."
+              : isError
+                ? "Failed to load roles"
+                : "Select role..."
+        }}
       </option>
-      <option v-for="role in roles?.filter(r => r.name !== '@everyone')" :key="role.id" :value="role.id">
+      <option
+        v-for="role in roles?.filter((r) => r.name !== '@everyone')"
+        :key="role.id"
+        :value="role.id"
+      >
         {{ role.name }}
       </option>
     </select>

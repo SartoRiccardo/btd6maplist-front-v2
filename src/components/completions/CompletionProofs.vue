@@ -48,7 +48,14 @@ function youtubeEmbedUrl(url: string): string | null {
             :src="youtubeEmbedUrl(url)!"
             class="w-full aspect-video rounded-(--radius-panel)"
             frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allow="
+              accelerometer;
+              autoplay;
+              clipboard-write;
+              encrypted-media;
+              gyroscope;
+              picture-in-picture;
+            "
             allowfullscreen
           />
           <a
