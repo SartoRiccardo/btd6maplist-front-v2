@@ -19,7 +19,7 @@ function youtubeEmbedUrl(url: string): string | null {
 
 <template>
   <div>
-    <div v-if="submNotes" class="mb-6">
+    <div v-if="submNotes || $slots['notes-footer']" class="mb-6">
       <h3 class="font-['Luckiest_Guy'] text-xl mb-3">Submission Notes</h3>
       <p class="whitespace-pre-wrap">{{ submNotes }}</p>
       <slot name="notes-footer" />

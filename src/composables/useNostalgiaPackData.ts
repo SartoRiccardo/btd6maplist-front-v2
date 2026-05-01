@@ -30,7 +30,7 @@ export function useNostalgiaPackData(
   );
 
   const categories = computed(() => {
-    if (!retroGamesResponse.value || !selectedDifficulty.value) return null;
+    if (!enabled.value || !retroGamesResponse.value || !selectedDifficulty.value) return null;
     const gameId = selectedDifficulty.value.value;
     const matching = retroGamesResponse.value.data.filter(
       (rg) => rg.game_id === gameId,
@@ -83,7 +83,7 @@ export function useNostalgiaPackData(
   }
 
   const progress = computed(() => {
-    if (!retroGamesResponse.value || !selectedDifficulty.value) return null;
+    if (!enabled.value || !retroGamesResponse.value || !selectedDifficulty.value) return null;
     const gameId = selectedDifficulty.value.value;
     const matching = retroGamesResponse.value.data.filter(
       (rg) => rg.game_id === gameId,
