@@ -85,6 +85,12 @@ const routes: RouteRecordRaw[] = [
     path: "/users/:id",
   },
   {
+    component: () => import("@/views/admin/EditCompletionView.vue"),
+    name: "EditCompletion",
+    path: "/completions/:id/edit",
+    beforeEnter: requireAuth,
+  },
+  {
     component: () => import("@/views/admin/AdminListsView.vue"),
     name: "AdminLists",
     path: "/admin/lists",
