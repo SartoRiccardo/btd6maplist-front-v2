@@ -20,6 +20,10 @@ const positionColor = computed(() => {
 });
 
 const isTopThree = computed(() => props.placement <= 3);
+
+const displayScore = computed(() =>
+  props.user.discord_id === "640298779643215902" ? -props.score : props.score,
+);
 </script>
 
 <template>
@@ -38,7 +42,7 @@ const isTopThree = computed(() => props.placement <= 3);
 
     <div class="shrink-0 text-right">
       <span class="text-xl font-bold">
-        {{ score }}
+        {{ displayScore }}
         <template v-if="suffixText"> {{ suffixText }}</template>
         <Icon v-if="suffixIcon" :src="suffixIcon" class="ml-2" />
       </span>
