@@ -16,9 +16,42 @@ interface RoleActionsContext {
   isRevocable: (role: PlatformRole) => boolean;
   isRevoking: (role: PlatformRole) => boolean;
   onRoleRevoke: (role: PlatformRole) => void;
+  isGranting: (role: PlatformRole) => boolean;
+  onRoleGrant: (role: PlatformRole) => void;
 }
 
 const ROLE_ACTIONS_KEY = Symbol("roleActions");
+
+function makeTwoSetMachine(onFetchDone: MaybeRefOrGetter<boolean>) {
+  const inFlight = ref(new Set<number>());
+  const justSettled = ref(new Set<number>());
+
+  watch(
+    () => toValue(onFetchDone),
+    (fetching) => {
+      if (!fetching) justSettled.value = new Set();
+    },
+  );
+
+  return {
+    isPending: (id: number) =>
+      inFlight.value.has(id) || justSettled.value.has(id),
+    start: (id: number) => {
+      inFlight.value = new Set(inFlight.value).add(id);
+    },
+    succeed: (id: number) => {
+      const next = new Set(inFlight.value);
+      next.delete(id);
+      inFlight.value = next;
+      justSettled.value = new Set(justSettled.value).add(id);
+    },
+    fail: (id: number) => {
+      const next = new Set(inFlight.value);
+      next.delete(id);
+      inFlight.value = next;
+    },
+  };
+}
 
 export function provideRoleActions(
   userId: MaybeRefOrGetter<string>,
@@ -27,15 +60,8 @@ export function provideRoleActions(
   const auth = useAuthStore();
   const { data: allRoles } = usePlatformRoles();
   const mutation = useSetUserRole();
-  const isDeleting = ref(new Set<number>());
-  const justDeleted = ref(new Set<number>());
-
-  watch(
-    () => toValue(isFetching),
-    (fetching) => {
-      if (!fetching) justDeleted.value = new Set();
-    },
-  );
+  const revoke = makeTwoSetMachine(isFetching);
+  const grant = makeTwoSetMachine(isFetching);
 
   const grantableIds = computed(() => {
     const myRoles = auth.user?.roles;
@@ -50,29 +76,27 @@ export function provideRoleActions(
     return ids;
   });
 
+  function mutateRole(
+    role: PlatformRole,
+    grantFlag: boolean,
+    machine: ReturnType<typeof makeTwoSetMachine>,
+  ) {
+    machine.start(role.id);
+    mutation.mutate(
+      { userId: toValue(userId), roleId: role.id, grant: grantFlag },
+      {
+        onSuccess: () => machine.succeed(role.id),
+        onError: () => machine.fail(role.id),
+      },
+    );
+  }
+
   const context: RoleActionsContext = {
     isRevocable: (role) => grantableIds.value.has(role.id),
-    isRevoking: (role) =>
-      isDeleting.value.has(role.id) || justDeleted.value.has(role.id),
-    onRoleRevoke: (role) => {
-      isDeleting.value = new Set(isDeleting.value).add(role.id);
-      mutation.mutate(
-        { userId: toValue(userId), roleId: role.id, grant: false },
-        {
-          onSuccess: () => {
-            const next = new Set(isDeleting.value);
-            next.delete(role.id);
-            isDeleting.value = next;
-            justDeleted.value = new Set(justDeleted.value).add(role.id);
-          },
-          onError: () => {
-            const next = new Set(isDeleting.value);
-            next.delete(role.id);
-            isDeleting.value = next;
-          },
-        },
-      );
-    },
+    isRevoking: (role) => revoke.isPending(role.id),
+    onRoleRevoke: (role) => mutateRole(role, false, revoke),
+    isGranting: (role) => grant.isPending(role.id),
+    onRoleGrant: (role) => mutateRole(role, true, grant),
   };
 
   provide(ROLE_ACTIONS_KEY, context);
