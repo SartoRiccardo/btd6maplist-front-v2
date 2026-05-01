@@ -35,7 +35,7 @@ const versionLabel = computed(() => {
   return `v${props.btd6Version / 10}`;
 });
 
-const { containerRef: fireContainer } = useFireEffect(() => props.burning);
+const { containerRef: _fireContainer } = useFireEffect(() => props.burning);
 </script>
 
 <template>
@@ -93,7 +93,7 @@ const { containerRef: fireContainer } = useFireEffect(() => props.burning);
         class="absolute inset-[-3px] rounded-[calc(var(--radius-panel)+3px)] pointer-events-none z-[2] shadow-[0_0_20px_6px_rgba(255,140,0,0.6),0_0_50px_15px_rgba(255,60,0,0.3)]"
       />
       <div
-        ref="fireContainer"
+        ref="_fireContainer"
         class="absolute inset-0 pointer-events-none z-10 overflow-visible"
       />
     </template>

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { computed } from "vue";
 import type { FormFieldError } from "@/services/api/formErrors";
 import ListEditor from "@/components/ui/ListEditor.vue";
 import type { AdditionalCode } from "./types";

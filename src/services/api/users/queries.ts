@@ -32,8 +32,8 @@ export const userQueryKeys = {
   list: (params?: GetUsersParams) => ["users", "list", params] as const,
   detail: (id: string, params?: GetUserParams) =>
     params ? (["users", id, params] as const) : (["users", id] as const),
-  me: (params?: GetUserParams) =>
-    params ? (["users", "@me", params] as const) : (["users", "@me"] as const),
+  me: (params?: GetUserParams): readonly ["users", "@me", GetUserParams | undefined] =>
+    ["users", "@me", params],
 } as const;
 
 /**

@@ -30,11 +30,6 @@ const preselectedFormatId = computed(() => {
   return on ? Number(on) : null;
 });
 
-const remakeOf = computed(() => {
-  const id = route.query["remake_of"];
-  return id ? Number(id) : null;
-});
-
 // --- Map code validation ---
 
 const codeInput = ref("");
