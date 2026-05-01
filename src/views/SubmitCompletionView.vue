@@ -11,7 +11,7 @@ import { parseApiErrors, type FormFieldError } from "@/services/api/formErrors";
 import { toast } from "vue-sonner";
 import { getFormatsMapIsIn } from "@/utils/formatBadges";
 import { permissions } from "@/constants/permissions";
-import { FORMAT_EXPERT_LIST } from "@/constants/formats";
+import { FORMAT_EXPERT_LIST, GLOBAL_FORMAT } from "@/constants/formats";
 import Panel from "@/components/ui/Panel.vue";
 import Button from "@/components/ui/Button.vue";
 import LinkButton from "@/components/ui/LinkButton.vue";
@@ -46,13 +46,13 @@ const eligibleFormats = computed(() => {
 });
 
 const canSubmit = computed(() =>
-  auth.hasPermission(permissions.completionSubmission.create),
+  auth.hasPermission(permissions.completionSubmission.create, GLOBAL_FORMAT),
 );
 
 const videoRequired = computed(() => {
   const model = formModel.value;
 
-  if (auth.hasPermission(permissions.completionSubmission.requireRecording))
+  if (auth.hasPermission(permissions.completionSubmission.requireRecording, GLOBAL_FORMAT))
     return true;
   if (model.black_border) return true;
   if (model.lcc_enabled) return true;

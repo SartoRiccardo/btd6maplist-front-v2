@@ -6,6 +6,7 @@ import { useConfig } from "@/services/api/config/queries";
 import { useFormats } from "@/services/api/formats/queries";
 import { getMapFormatBadges, getFormatsMapIsIn } from "@/utils/formatBadges";
 import { permissions } from "@/constants/permissions";
+import { GLOBAL_FORMAT } from "@/constants/formats";
 import { useAuthStore } from "@/stores/auth";
 import Btd6Map from "@/components/maps/Btd6Map.vue";
 import LinkButton from "@/components/ui/LinkButton.vue";
@@ -123,16 +124,18 @@ const completionRulesSlug = computed(() => {
 });
 
 // --- Admin actions ---
-const canEditMap = computed(() => auth.hasPermission(permissions.map.edit));
+const canEditMap = computed(() =>
+  auth.hasPermissionInAnyFormat(permissions.map.edit),
+);
 const canEditCompletion = computed(() =>
-  auth.hasPermission(permissions.completion.edit),
+  auth.hasPermissionInAnyFormat(permissions.completion.edit),
 );
 const canCreateCompletion = computed(() =>
-  auth.hasPermission(permissions.completion.create),
+  auth.hasPermissionInAnyFormat(permissions.completion.create),
 );
 const showSubmitCompletion = computed(
   () =>
-    auth.hasPermission(permissions.completionSubmission.create) &&
+    auth.hasPermission(permissions.completionSubmission.create, GLOBAL_FORMAT) &&
     hasOpenSubmissions.value,
 );
 </script>

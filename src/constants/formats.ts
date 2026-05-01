@@ -1,3 +1,5 @@
+export const GLOBAL_FORMAT = null;
+
 export const FORMAT_MAPLIST = 1;
 export const FORMAT_MAPLIST_ALL_VER = 2;
 export const FORMAT_NOSTALGIA_PACK = 11;

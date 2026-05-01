@@ -6,6 +6,7 @@ import { useFormats } from "@/services/api/formats/queries";
 import { useCreateMapSubmission } from "@/services/api/map-submissions/queries";
 import { getFormatsMapIsIn } from "@/utils/formatBadges";
 import { permissions } from "@/constants/permissions";
+import { GLOBAL_FORMAT } from "@/constants/formats";
 import { ApiError } from "@/services/api/client";
 import { parseApiErrors, type FormFieldError } from "@/services/api/formErrors";
 import { toast } from "vue-sonner";
@@ -69,7 +70,7 @@ const eligibleFormats = computed(() =>
 );
 
 const canSubmit = computed(() =>
-  auth.hasPermission(permissions.mapSubmission.create),
+  auth.hasPermission(permissions.mapSubmission.create, GLOBAL_FORMAT),
 );
 
 const isDataReady = computed(

@@ -76,6 +76,12 @@ export const useAuthStore = defineStore("auth", () => {
     return perms.every((p) => hasPermission(p, format));
   }
 
+  function hasPermissionInAnyFormat(perm: string): boolean {
+    if (user.value?.is_banned) return false;
+    const formats = user.value?.permissions?.[perm];
+    return !!formats && formats.length > 0;
+  }
+
   return {
     token,
     user,
@@ -89,5 +95,6 @@ export const useAuthStore = defineStore("auth", () => {
     hasPermission,
     hasAnyPermission,
     hasAllPermissions,
+    hasPermissionInAnyFormat,
   };
 });
