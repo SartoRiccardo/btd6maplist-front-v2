@@ -18,6 +18,7 @@ import { permissions } from "@/constants/permissions";
 import Panel from "@/components/ui/Panel.vue";
 import Button from "@/components/ui/Button.vue";
 import LinkButton from "@/components/ui/LinkButton.vue";
+import CompletionProofs from "@/components/completions/CompletionProofs.vue";
 import CompletionForm, {
   type CompletionFormModel,
 } from "@/components/completions/CompletionForm.vue";
@@ -35,9 +36,13 @@ const { data: formatsResponse, isLoading: formatsLoading } = useFormats();
 const isLoading = computed(
   () => completionLoading.value || formatsLoading.value || auth.isLoading,
 );
-const canEdit = computed(() =>
-  completionData.value != null &&
-  auth.hasPermission(permissions.completion.edit, completionData.value.format_id),
+const canEdit = computed(
+  () =>
+    completionData.value != null &&
+    auth.hasPermission(
+      permissions.completion.edit,
+      completionData.value.format_id,
+    ),
 );
 const formats = computed(() =>
   (formatsResponse.value?.data ?? []).filter((f) =>
@@ -145,6 +150,21 @@ async function handleSave() {
     </Panel>
 
     <Panel v-else>
+      <CompletionProofs
+        :subm-notes="completionData.subm_notes"
+        :proof-images="completionData.subm_proof_img"
+        :proof-videos="completionData.subm_proof_vid"
+      />
+
+      <hr
+        v-if="
+          completionData.subm_notes ||
+          completionData.subm_proof_img.length > 0 ||
+          completionData.subm_proof_vid.length > 0
+        "
+        class="border-(--color-contrast) mb-6"
+      />
+
       <CompletionForm
         ref="formRef"
         v-model="formModel"
