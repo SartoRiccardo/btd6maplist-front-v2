@@ -91,6 +91,23 @@ function childErrors(prefix: string): FormFieldError[] {
       </p>
     </div>
 
+    <!-- Map Notes -->
+    <div>
+      <label for="map-notes" class="block font-bold mb-2">Map Notes</label>
+      <textarea
+        id="map-notes"
+        :value="modelValue.map_notes"
+        :disabled="disabled"
+        placeholder="Optional notes about this map"
+        rows="4"
+        class="w-full px-3 py-2 rounded-(--radius-btn) bg-(--color-primary) text-(--color-text) border border-(--color-contrast) focus:outline-none focus:border-(--color-active) resize-y"
+        @input="update({ map_notes: ($event.target as HTMLTextAreaElement).value })"
+      />
+      <p v-if="fieldError('map_notes')" class="text-(--color-danger) text-sm mt-1">
+        {{ fieldError("map_notes") }}
+      </p>
+    </div>
+
     <!-- Preview Image + Round 6 Start -->
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
       <div>

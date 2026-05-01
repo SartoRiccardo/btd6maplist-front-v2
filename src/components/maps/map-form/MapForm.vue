@@ -47,6 +47,7 @@ defineExpose({ touchAll, clearTouched });
 const infoSlice = computed<MapInfoSlice>({
   get: () => ({
     name: props.modelValue.name,
+    map_notes: props.modelValue.map_notes,
     map_preview_url: props.modelValue.map_preview_url,
     custom_map_preview_file: props.modelValue.custom_map_preview_file,
     r6_start: props.modelValue.r6_start,

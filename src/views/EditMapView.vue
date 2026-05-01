@@ -67,6 +67,7 @@ function mapDetailToFormModel(map: MapDetail): MapFormModel {
 
   return {
     name: map.name,
+    map_notes: map.map_notes ?? "",
     map_preview_url: map.map_preview_url,
     custom_map_preview_file: null,
     r6_start: map.r6_start ?? "",
@@ -129,6 +130,7 @@ async function handleSave() {
       code: code.value,
       data: {
         name: formModel.value.name,
+        map_notes: formModel.value.map_notes || undefined,
         r6_start: formModel.value.r6_start || undefined,
         r6_start_file: formModel.value.r6_start_file ?? undefined,
         map_preview_url: formModel.value.map_preview_url || undefined,

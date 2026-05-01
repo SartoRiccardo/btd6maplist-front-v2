@@ -15,6 +15,7 @@ export interface VerifierEntry {
 
 export interface MapInfoSlice {
   name: string;
+  map_notes: string;
   map_preview_url: string;
   custom_map_preview_file: File | null;
   r6_start: string;
@@ -50,6 +51,7 @@ export interface MapFormModel
 export function createDefaultFormModel(): MapFormModel {
   return {
     name: "",
+    map_notes: "",
     map_preview_url: "",
     custom_map_preview_file: null,
     r6_start: "",
