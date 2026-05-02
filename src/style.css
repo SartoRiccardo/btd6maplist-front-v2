@@ -62,26 +62,50 @@ a:hover {
 
 .font-border {
   text-shadow:
+    1px 0 var(--color-font-border),
+    -1px 0 var(--color-font-border),
+    0 1px var(--color-font-border),
+    0 -1px var(--color-font-border),
+    1px 1px var(--color-font-border),
+    -1px -1px var(--color-font-border),
+    1px -1px var(--color-font-border),
+    -1px 1px var(--color-font-border),
     2px 0 var(--color-font-border),
     -2px 0 var(--color-font-border),
     0 2px var(--color-font-border),
     0 -2px var(--color-font-border),
-    1px 1px var(--color-font-border),
-    -1px -1px var(--color-font-border),
-    1px -1px var(--color-font-border),
-    -1px 1px var(--color-font-border);
+    2px 1px var(--color-font-border),
+    2px -1px var(--color-font-border),
+    -2px 1px var(--color-font-border),
+    -2px -1px var(--color-font-border),
+    1px 2px var(--color-font-border),
+    1px -2px var(--color-font-border),
+    -1px 2px var(--color-font-border),
+    -1px -2px var(--color-font-border);
 }
 
 .font-border-active {
   text-shadow:
+    1px 0 var(--color-font-border-active),
+    -1px 0 var(--color-font-border-active),
+    0 1px var(--color-font-border-active),
+    0 -1px var(--color-font-border-active),
+    1px 1px var(--color-font-border-active),
+    -1px -1px var(--color-font-border-active),
+    1px -1px var(--color-font-border-active),
+    -1px 1px var(--color-font-border-active),
     2px 0 var(--color-font-border-active),
     -2px 0 var(--color-font-border-active),
     0 2px var(--color-font-border-active),
     0 -2px var(--color-font-border-active),
-    1px 1px var(--color-font-border-active),
-    -1px -1px var(--color-font-border-active),
-    1px -1px var(--color-font-border-active),
-    -1px 1px var(--color-font-border-active);
+    2px 1px var(--color-font-border-active),
+    2px -1px var(--color-font-border-active),
+    -2px 1px var(--color-font-border-active),
+    -2px -1px var(--color-font-border-active),
+    1px 2px var(--color-font-border-active),
+    1px -2px var(--color-font-border-active),
+    -1px 2px var(--color-font-border-active),
+    -1px -2px var(--color-font-border-active);
 }
 
 @keyframes float-slow {
