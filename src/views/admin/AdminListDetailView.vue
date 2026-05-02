@@ -13,6 +13,7 @@ import Button from "@/components/ui/Button.vue";
 import FormatPresentationForm, {
   type FormatPresentationFormModel,
 } from "@/components/formats/FormatPresentationForm.vue";
+import FormatPresentationFormSkeleton from "@/components/formats/FormatPresentationFormSkeleton.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -138,9 +139,9 @@ async function handleSave() {
       {{ format ? format.name : "List Info" }}
     </h1>
 
-    <div v-if="isLoading" class="flex justify-center py-12">
-      <p class="text-(--color-text-muted)">Loading...</p>
-    </div>
+    <Panel v-if="isLoading">
+      <FormatPresentationFormSkeleton />
+    </Panel>
 
     <div v-else-if="!canEdit" class="flex justify-center py-12">
       <p class="text-(--color-text-muted)">
