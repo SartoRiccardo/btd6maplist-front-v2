@@ -16,9 +16,11 @@ import { ApiError } from "@/services/api/client";
 import { parseApiErrors, type FormFieldError } from "@/services/api/formErrors";
 import { toast } from "vue-sonner";
 import { permissions } from "@/constants/permissions";
+import type { User } from "@/services/api/users/types";
 import Panel from "@/components/ui/Panel.vue";
 import Button from "@/components/ui/Button.vue";
 import LinkButton from "@/components/ui/LinkButton.vue";
+import UserEntry from "@/components/users/UserEntry.vue";
 import CompletionProofs from "@/components/completions/CompletionProofs.vue";
 import CompletionForm, {
   type CompletionFormModel,
@@ -78,6 +80,12 @@ watch(
   },
   { immediate: true },
 );
+
+const acceptedByUser = computed<User | null>(() => {
+  const ab = completionData.value?.accepted_by;
+  if (ab != null && typeof ab === "object") return ab;
+  return null;
+});
 
 const isDeleted = computed(() => completionData.value?.deleted_on != null);
 
@@ -183,7 +191,14 @@ async function handleSave() {
         :subm-notes="completionData.subm_notes"
         :proof-images="completionData.subm_proof_img"
         :proof-videos="completionData.subm_proof_vid"
-      />
+      >
+        <template v-if="acceptedByUser" #notes-footer>
+          <p class="text-(--color-text-muted) mt-2 ml-4 italic flex items-center">
+            <span class="mr-1">Completion approved by</span>
+            <UserEntry :user="acceptedByUser" inline class="ml-2" />
+          </p>
+        </template>
+      </CompletionProofs>
 
       <hr
         v-if="
