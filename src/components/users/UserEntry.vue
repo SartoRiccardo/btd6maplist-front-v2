@@ -57,8 +57,8 @@ const textSizeClass = computed(() => {
         />
 
         <div
-          class="pl-1 min-w-0"
-          :class="{ 'flex flex-col justify-center': centered }"
+          class="min-w-0"
+          :class="{ 'flex flex-col justify-center': centered, 'pl-2.5': textSize === 'lg', 'pl-1': textSize !== 'lg' }"
         >
           <p
             class="user-name text-start font-bold mb-0 transition-colors duration-100 truncate"
