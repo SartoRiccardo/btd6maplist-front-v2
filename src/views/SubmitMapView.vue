@@ -202,6 +202,7 @@ async function handleSubmit() {
           <MapCodeInput
             v-model="codeInput"
             :disabled="busy"
+            :external-error="apiErrors.find((e) => e.path === 'code')?.message"
             @validation="validation = $event"
           />
         </Panel>

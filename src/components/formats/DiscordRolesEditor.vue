@@ -98,7 +98,7 @@ const inputClass =
       <button
         v-if="!disabled"
         type="button"
-        class="text-(--color-text-muted) hover:text-red-400 transition-colors cursor-pointer"
+        class="text-(--color-text-muted) hover:text-(--color-danger) transition-colors cursor-pointer"
         @click="remove(i)"
       >
         <i class="bi bi-trash" />

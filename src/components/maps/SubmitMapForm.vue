@@ -174,10 +174,10 @@ function fieldError(field: string): string | undefined {
         @update:model-value="update({ proof_image: $event })"
         @error="imageError = $event"
       />
-      <p v-if="fieldError('proof_image')" class="text-red-400 text-sm mt-1">
+      <p v-if="fieldError('proof_image')" class="text-(--color-danger) text-sm mt-1">
         {{ fieldError("proof_image") }}
       </p>
-      <p v-else-if="imageError" class="text-red-400 text-sm mt-1">
+      <p v-else-if="imageError" class="text-(--color-danger) text-sm mt-1">
         {{ imageError }}
       </p>
     </div>
@@ -211,7 +211,7 @@ function fieldError(field: string): string | undefined {
           </span>
         </Button>
       </div>
-      <p v-if="fieldError('format_id')" class="text-red-400 text-sm mt-1">
+      <p v-if="fieldError('format_id')" class="text-(--color-danger) text-sm mt-1">
         {{ fieldError("format_id") }}
       </p>
       <p v-if="selectedFormat" class="text-(--color-text-muted) text-sm mt-2">
@@ -262,7 +262,7 @@ function fieldError(field: string): string | undefined {
         "
       />
       <div class="flex justify-between mt-1">
-        <p v-if="fieldError('subm_notes')" class="text-red-400 text-sm">
+        <p v-if="fieldError('subm_notes')" class="text-(--color-danger) text-sm">
           {{ fieldError("subm_notes") }}
         </p>
         <span class="text-(--color-text-muted) text-xs ml-auto">

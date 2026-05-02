@@ -61,7 +61,7 @@ function addUrl() {
           v-if="modelValue.length > 1"
           type="button"
           :disabled="disabled"
-          class="px-2 py-2 rounded-(--radius-btn) text-(--color-text-muted) hover:text-red-400 transition-colors disabled:opacity-50"
+          class="px-2 py-2 rounded-(--radius-btn) text-(--color-text-muted) hover:text-(--color-danger) transition-colors disabled:opacity-50"
           @click="removeAt(i)"
         >
           <i class="bi bi-trash" />

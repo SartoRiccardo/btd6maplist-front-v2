@@ -80,7 +80,7 @@ function fieldError(field: string): string | undefined {
           update({ discord_id: ($event.target as HTMLInputElement).value })
         "
       />
-      <p v-if="fieldError('discord_id')" class="text-red-400 text-xs mt-1">
+      <p v-if="fieldError('discord_id')" class="text-(--color-danger) text-xs mt-1">
         {{ fieldError("discord_id") }}
       </p>
     </div>
@@ -95,7 +95,7 @@ function fieldError(field: string): string | undefined {
         class="w-full px-3 py-1.5 rounded-(--radius-btn) bg-(--color-primary) text-(--color-text) border border-(--color-contrast) focus:outline-none focus:border-(--color-active) disabled:opacity-50"
         @input="update({ name: ($event.target as HTMLInputElement).value })"
       />
-      <p v-if="fieldError('name')" class="text-red-400 text-xs mt-1">
+      <p v-if="fieldError('name')" class="text-(--color-danger) text-xs mt-1">
         {{ fieldError("name") }}
       </p>
     </div>

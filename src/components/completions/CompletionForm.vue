@@ -176,7 +176,7 @@ function fieldError(field: string): string | undefined {
           </span>
         </Button>
       </div>
-      <p v-if="fieldError('format_id')" class="text-red-400 text-sm mt-1">
+      <p v-if="fieldError('format_id')" class="text-(--color-danger) text-sm mt-1">
         {{ fieldError("format_id") }}
       </p>
     </div>
@@ -224,7 +224,7 @@ function fieldError(field: string): string | undefined {
             })
           "
         />
-        <p v-if="fieldError('lcc_leftover')" class="text-red-400 text-sm mt-1">
+        <p v-if="fieldError('lcc_leftover')" class="text-(--color-danger) text-sm mt-1">
           {{ fieldError("lcc_leftover") }}
         </p>
       </div>
@@ -254,7 +254,7 @@ function fieldError(field: string): string | undefined {
             />
             <p
               v-if="fieldError(`players.${index}`)"
-              class="text-red-400 text-xs mt-1"
+              class="text-(--color-danger) text-xs mt-1"
             >
               {{ fieldError(`players.${index}`) }}
             </p>

@@ -161,10 +161,10 @@ function fieldError(field: string): string | undefined {
         @update:model-value="update({ proof_images: $event })"
         @error="imageError = $event"
       />
-      <p v-if="fieldError('proof_images')" class="text-red-400 text-sm mt-1">
+      <p v-if="fieldError('proof_images')" class="text-(--color-danger) text-sm mt-1">
         {{ fieldError("proof_images") }}
       </p>
-      <p v-else-if="imageError" class="text-red-400 text-sm mt-1">
+      <p v-else-if="imageError" class="text-(--color-danger) text-sm mt-1">
         {{ imageError }}
       </p>
     </div>
@@ -178,7 +178,7 @@ function fieldError(field: string): string | undefined {
       :max="10"
       @update:model-value="update({ proof_videos: $event })"
     />
-    <p v-if="fieldError('proof_videos')" class="text-red-400 text-sm -mt-4">
+    <p v-if="fieldError('proof_videos')" class="text-(--color-danger) text-sm -mt-4">
       {{ fieldError("proof_videos") }}
     </p>
 
@@ -219,7 +219,7 @@ function fieldError(field: string): string | undefined {
           </span>
         </Button>
       </div>
-      <p v-if="fieldError('format_id')" class="text-red-400 text-sm mt-1">
+      <p v-if="fieldError('format_id')" class="text-(--color-danger) text-sm mt-1">
         {{ fieldError("format_id") }}
       </p>
     </div>
@@ -272,7 +272,7 @@ function fieldError(field: string): string | undefined {
             })
           "
         />
-        <p v-if="fieldError('lcc_leftover')" class="text-red-400 text-sm mt-1">
+        <p v-if="fieldError('lcc_leftover')" class="text-(--color-danger) text-sm mt-1">
           {{ fieldError("lcc_leftover") }}
         </p>
       </div>
@@ -297,7 +297,7 @@ function fieldError(field: string): string | undefined {
         "
       />
       <div class="flex justify-between mt-1">
-        <p v-if="fieldError('subm_notes')" class="text-red-400 text-sm">
+        <p v-if="fieldError('subm_notes')" class="text-(--color-danger) text-sm">
           {{ fieldError("subm_notes") }}
         </p>
         <span class="text-(--color-text-muted) text-xs ml-auto">

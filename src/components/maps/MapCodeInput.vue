@@ -8,6 +8,7 @@ const codeInput = defineModel<string>({ default: "" });
 
 defineProps<{
   disabled?: boolean;
+  externalError?: string;
 }>();
 
 export interface MapCodeValidation {
@@ -79,12 +80,15 @@ watch(
         <i class="bi bi-arrow-repeat animate-spin inline-block" />
         Validating...
       </p>
-      <p v-else-if="nkError" class="text-red-400">
+      <p v-else-if="nkError" class="text-(--color-danger)">
         {{ nkError }}
       </p>
       <p v-else-if="nkMap && maplistLoading" class="text-(--color-text-muted)">
         <i class="bi bi-arrow-repeat animate-spin inline-block" />
         Checking list status...
+      </p>
+      <p v-else-if="externalError" class="text-(--color-danger)">
+        {{ externalError }}
       </p>
     </div>
   </div>

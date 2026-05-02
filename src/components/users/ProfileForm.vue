@@ -84,7 +84,7 @@ function fieldError(field: string): string | undefined {
         :class="{ 'border-red-500!': fieldError('name') }"
         @input="update({ name: ($event.target as HTMLInputElement).value })"
       />
-      <p v-if="fieldError('name')" class="text-red-400 text-sm mt-1">
+      <p v-if="fieldError('name')" class="text-(--color-danger) text-sm mt-1">
         {{ fieldError("name") }}
       </p>
     </div>
@@ -103,7 +103,7 @@ function fieldError(field: string): string | undefined {
         :class="{ 'border-red-500!': fieldError('nk_oak') }"
         @input="update({ nk_oak: ($event.target as HTMLInputElement).value })"
       />
-      <p v-if="fieldError('nk_oak')" class="text-red-400 text-sm mt-1">
+      <p v-if="fieldError('nk_oak')" class="text-(--color-danger) text-sm mt-1">
         {{ fieldError("nk_oak") }}
       </p>
     </div>

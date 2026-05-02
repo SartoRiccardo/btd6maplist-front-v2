@@ -221,7 +221,7 @@ async function handleSave() {
 
       <p
         v-if="isDeleted"
-        class="mt-6 px-4 py-3 rounded-(--radius-panel) border border-red-500/50 bg-red-500/10 text-red-400 text-sm"
+        class="mt-6 px-4 py-3 rounded-(--radius-panel) border border-(--color-danger)/50 bg-(--color-danger)/10 text-(--color-danger) text-sm"
       >
         This completion was deleted.
       </p>

@@ -44,7 +44,7 @@ function removeAt(index: number) {
       <button
         v-if="!disabled && modelValue.length > minItems"
         type="button"
-        class="mt-2 text-(--color-text-muted) hover:text-red-400 transition-colors cursor-pointer"
+        class="mt-2 text-(--color-text-muted) hover:text-(--color-danger) transition-colors cursor-pointer"
         @click="removeAt(i)"
       >
         <i class="bi bi-trash" />
