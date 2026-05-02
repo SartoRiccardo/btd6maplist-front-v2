@@ -8,6 +8,9 @@ import { fileURLToPath, URL } from "node:url";
 
 export default defineConfig({
   plugins: [vue()],
+  build: {
+    sourcemap: true,
+  },
   css: {
     postcss: {
       plugins: [tailwindcss()],
