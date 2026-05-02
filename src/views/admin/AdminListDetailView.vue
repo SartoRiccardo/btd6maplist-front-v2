@@ -44,6 +44,8 @@ const formModel = ref<FormatPresentationFormModel>({
   preview_map_3_code: "",
   map_submission_rules: "",
   completion_submission_rules: "",
+  map_submission_wh: "",
+  run_submission_wh: "",
 });
 
 let formInitialized = false;
@@ -71,6 +73,8 @@ watch(
         preview_map_3_code: fmt.preview_map3?.code ?? "",
         map_submission_rules: fmt.map_submission_rules ?? "",
         completion_submission_rules: fmt.completion_submission_rules ?? "",
+        map_submission_wh: fmt.map_submission_wh ?? "",
+        run_submission_wh: fmt.run_submission_wh ?? "",
       };
     }
   },
@@ -114,6 +118,8 @@ async function handleSave() {
         completion_submission_rules:
           formModel.value.completion_submission_rules || null,
         discord_server_url: formModel.value.discord_server_url || null,
+        map_submission_wh: formModel.value.map_submission_wh || null,
+        run_submission_wh: formModel.value.run_submission_wh || null,
       },
     });
     toast.success("Saved successfully.");

@@ -102,6 +102,8 @@ export interface FormatPresentationFormModel {
   preview_map_3_code: string;
   map_submission_rules: string;
   completion_submission_rules: string;
+  map_submission_wh: string;
+  run_submission_wh: string;
 }
 
 const props = withDefaults(
@@ -299,6 +301,44 @@ const errorClass = "border-(--color-danger)!";
             class="text-(--color-danger) text-sm mt-1"
           >
             {{ fieldError("run_submission_status") }}
+          </p>
+        </div>
+
+        <div>
+          <label class="block font-bold mb-1">Map Submission Webhook</label>
+          <input
+            type="url"
+            :value="modelValue.map_submission_wh"
+            :disabled="disabled"
+            :class="[inputClass, fieldError('map_submission_wh') ? errorClass : '']"
+            @input="
+              update({ map_submission_wh: ($event.target as HTMLInputElement).value })
+            "
+          />
+          <p
+            v-if="fieldError('map_submission_wh')"
+            class="text-(--color-danger) text-sm mt-1"
+          >
+            {{ fieldError("map_submission_wh") }}
+          </p>
+        </div>
+
+        <div>
+          <label class="block font-bold mb-1">Run Submission Webhook</label>
+          <input
+            type="url"
+            :value="modelValue.run_submission_wh"
+            :disabled="disabled"
+            :class="[inputClass, fieldError('run_submission_wh') ? errorClass : '']"
+            @input="
+              update({ run_submission_wh: ($event.target as HTMLInputElement).value })
+            "
+          />
+          <p
+            v-if="fieldError('run_submission_wh')"
+            class="text-(--color-danger) text-sm mt-1"
+          >
+            {{ fieldError("run_submission_wh") }}
           </p>
         </div>
 

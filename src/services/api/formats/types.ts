@@ -41,6 +41,8 @@ export interface Format {
   is_no_geraldo_leaderboard_enabled: boolean;
   is_black_border_leaderboard_enabled: boolean;
   proposed_difficulties: string[] | null;
+  map_submission_wh: string | null;
+  run_submission_wh: string | null;
   preview_map1: Map | null;
   preview_map2: Map | null;
   preview_map3: Map | null;
