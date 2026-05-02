@@ -58,16 +58,20 @@ const textSizeClass = computed(() => {
 
         <div
           class="min-w-0"
-          :class="{ 'flex flex-col justify-center': centered, 'pl-2.5': textSize === 'lg', 'pl-1': textSize !== 'lg' }"
+          :class="{
+            'flex flex-col justify-center': centered,
+            'pl-2': textSize === 'lg',
+            'pl-1': textSize !== 'lg',
+          }"
         >
           <p
-            class="user-name text-start font-bold mb-0 transition-colors duration-100 truncate"
+            class="user-name text-start px-1 font-bold mb-0 transition-colors duration-100 truncate"
             :class="textSizeClass"
           >
             <span v-if="inline" class="ml-[1.8em]" />
             {{ user.name }}
           </p>
-          <p v-if="label" class="text-start mb-0 text-xs">{{ label }}</p>
+          <p v-if="label" class="text-start mb-0 text-xs pl-1">{{ label }}</p>
         </div>
       </div>
     </component>

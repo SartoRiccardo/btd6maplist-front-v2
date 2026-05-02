@@ -51,7 +51,7 @@ const { containerRef: _fireContainer } = useFireEffect(() => props.burning);
   >
     <p
       v-if="showName && mapName"
-      class="absolute top-[-0.7rem] left-[-0.1rem] w-full text-center font-['Luckiest_Guy'] font-border text-base md:text-2xl break-words z-10"
+      class="absolute top-[-0.7rem] left-[-0.1rem] w-full px-1 text-center font-['Luckiest_Guy'] font-border text-base md:text-2xl break-words z-10"
     >
       {{ mapName }}
     </p>
