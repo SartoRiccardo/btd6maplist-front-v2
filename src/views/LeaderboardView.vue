@@ -3,9 +3,11 @@ import { computed, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useFormats } from "@/services/api/formats/queries";
 import { useLeaderboard } from "@/services/api/leaderboard/queries";
+import { useConfig } from "@/services/api/config/queries";
 import type { LeaderboardValue } from "@/services/api/leaderboard/types";
 import {
   FORMAT_ICONS,
+  FORMAT_MAPLIST,
   FORMATS_WITH_POINTS,
   LEADERBOARD_VALUES,
 } from "@/constants/formats";
@@ -120,6 +122,19 @@ function onPageChange(page: number) {
   router.replace({ query: { ...route.query, page: page.toString() } });
 }
 
+// --- Config ---
+const { data: config } = useConfig();
+
+const pointsDecimalDigits = computed(() => {
+  if (
+    Number(selectedFormatId.value) === FORMAT_MAPLIST &&
+    selectedValue.value === "points"
+  ) {
+    return config.value?.decimal_digits;
+  }
+  return undefined;
+});
+
 // --- Leaderboard query ---
 const ENTRIES_PER_PAGE = 50;
 
@@ -198,6 +213,7 @@ watch(
           :key="entry.user.discord_id"
           :placement="entry.placement"
           :score="entry.score"
+          :decimal-digits="pointsDecimalDigits"
           :suffix-icon="currentValueOption.icon"
           :suffix-text="currentValueOption.suffix"
           :user="entry.user"

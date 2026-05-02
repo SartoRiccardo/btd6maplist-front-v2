@@ -7,6 +7,7 @@ import UserEntry from "@/components/users/UserEntry.vue";
 const props = defineProps<{
   placement: number;
   score: number;
+  decimalDigits?: number;
   suffixIcon: string | undefined;
   suffixText: string | undefined;
   user: User;
@@ -21,9 +22,14 @@ const positionColor = computed(() => {
 
 const isTopThree = computed(() => props.placement <= 3);
 
-const displayScore = computed(() =>
-  props.user.discord_id === "640298779643215902" ? -props.score : props.score,
-);
+const displayScore = computed(() => {
+  const raw =
+    props.user.discord_id === "640298779643215902" ? -props.score : props.score;
+  if (props.decimalDigits !== undefined) {
+    return parseFloat(raw.toFixed(props.decimalDigits));
+  }
+  return raw;
+});
 </script>
 
 <template>
