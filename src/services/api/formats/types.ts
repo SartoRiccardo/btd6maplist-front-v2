@@ -8,6 +8,9 @@ export interface UpdateFormatRequest {
   emoji?: string | null;
   proposed_difficulties?: unknown[] | null;
   is_no_geraldo_enabled?: boolean | null;
+  is_lcc_leaderboard_enabled: boolean;
+  is_no_geraldo_leaderboard_enabled: boolean;
+  is_black_border_leaderboard_enabled: boolean;
   map_submission_wh?: string | null;
   run_submission_wh?: string | null;
   slug?: string | null;
@@ -34,6 +37,9 @@ export interface Format {
   run_submission_status: "closed" | "open" | "lcc_only";
   map_submission_status: "closed" | "open" | "open_chimps";
   is_no_geraldo_enabled: boolean;
+  is_lcc_leaderboard_enabled: boolean;
+  is_no_geraldo_leaderboard_enabled: boolean;
+  is_black_border_leaderboard_enabled: boolean;
   proposed_difficulties: string[] | null;
   preview_map1: Map | null;
   preview_map2: Map | null;

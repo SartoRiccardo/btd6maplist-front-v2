@@ -32,6 +32,9 @@ const formModel = ref<FormatPresentationFormModel>({
   hidden: false,
   map_submission_status: "closed",
   run_submission_status: "closed",
+  is_lcc_leaderboard_enabled: false,
+  is_no_geraldo_leaderboard_enabled: false,
+  is_black_border_leaderboard_enabled: false,
   button_text: "",
   discord_server_url: "",
   description: "",
@@ -55,6 +58,10 @@ watch(
         hidden: fmt.hidden,
         map_submission_status: fmt.map_submission_status,
         run_submission_status: fmt.run_submission_status,
+        is_lcc_leaderboard_enabled: fmt.is_lcc_leaderboard_enabled,
+        is_no_geraldo_leaderboard_enabled: fmt.is_no_geraldo_leaderboard_enabled,
+        is_black_border_leaderboard_enabled:
+          fmt.is_black_border_leaderboard_enabled,
         button_text: fmt.button_text ?? "",
         discord_server_url: fmt.discord_server_url ?? "",
         description: fmt.description ?? "",
@@ -97,6 +104,11 @@ async function handleSave() {
         preview_map_1_code: formModel.value.preview_map_1_code || null,
         preview_map_2_code: formModel.value.preview_map_2_code || null,
         preview_map_3_code: formModel.value.preview_map_3_code || null,
+        is_lcc_leaderboard_enabled: formModel.value.is_lcc_leaderboard_enabled,
+        is_no_geraldo_leaderboard_enabled:
+          formModel.value.is_no_geraldo_leaderboard_enabled,
+        is_black_border_leaderboard_enabled:
+          formModel.value.is_black_border_leaderboard_enabled,
         map_submission_rules: formModel.value.map_submission_rules || null,
         completion_submission_rules:
           formModel.value.completion_submission_rules || null,

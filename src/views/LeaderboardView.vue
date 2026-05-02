@@ -27,7 +27,15 @@ const selectedFormatId = ref("");
 const leaderboardFormats = computed(() => {
   if (!formats.value) return [];
   return formats.value.data
-    .filter((f) => !f.hidden && f.run_submission_status !== "closed")
+    .filter(
+      (f) =>
+        !f.hidden &&
+        f.run_submission_status !== "closed" &&
+        (FORMATS_WITH_POINTS.includes(f.id) ||
+          f.is_lcc_leaderboard_enabled ||
+          f.is_no_geraldo_leaderboard_enabled ||
+          f.is_black_border_leaderboard_enabled),
+    )
     .map((f) => {
       const icon = FORMAT_ICONS.find((fi) => fi.id === f.id);
       return { id: f.id, image: icon?.image ?? "", name: f.name };
@@ -67,12 +75,22 @@ function onFormatChange(key: string) {
 }
 
 // --- Value selector ---
+const selectedFormat = computed(() =>
+  formats.value?.data.find((f) => f.id.toString() === selectedFormatId.value),
+);
+
 const availableValues = computed(() => {
   const fmtId = Number(selectedFormatId.value);
-  if (FORMATS_WITH_POINTS.includes(fmtId)) {
-    return LEADERBOARD_VALUES;
-  }
-  return LEADERBOARD_VALUES.filter((v) => v.key !== "points");
+  const fmt = selectedFormat.value;
+  return LEADERBOARD_VALUES.filter((v) => {
+    if (v.key === "points") return FORMATS_WITH_POINTS.includes(fmtId);
+    if (v.key === "lccs") return fmt?.is_lcc_leaderboard_enabled ?? true;
+    if (v.key === "no_geraldo")
+      return fmt?.is_no_geraldo_leaderboard_enabled ?? true;
+    if (v.key === "black_border")
+      return fmt?.is_black_border_leaderboard_enabled ?? true;
+    return true;
+  });
 });
 
 const selectedValue = ref("points");

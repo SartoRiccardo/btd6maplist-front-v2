@@ -91,6 +91,9 @@ export interface FormatPresentationFormModel {
   hidden: boolean;
   map_submission_status: "closed" | "open" | "open_chimps";
   run_submission_status: "closed" | "open" | "lcc_only";
+  is_lcc_leaderboard_enabled: boolean;
+  is_no_geraldo_leaderboard_enabled: boolean;
+  is_black_border_leaderboard_enabled: boolean;
   button_text: string;
   discord_server_url: string;
   description: string;
@@ -365,6 +368,63 @@ const errorClass = "border-(--color-danger)!";
           >
             {{ fieldError("description") }}
           </p>
+        </div>
+
+        <div class="sm:col-span-2">
+          <label class="block font-bold mb-2">Leaderboard Types</label>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <BoxedCheckbox
+                :model-value="modelValue.is_lcc_leaderboard_enabled"
+                :disabled="disabled"
+                icon="/images/medals/medal_lcc.webp"
+                label="LCCs"
+                @update:model-value="
+                  update({ is_lcc_leaderboard_enabled: $event })
+                "
+              />
+              <p
+                v-if="fieldError('is_lcc_leaderboard_enabled')"
+                class="text-(--color-danger) text-sm mt-1"
+              >
+                {{ fieldError("is_lcc_leaderboard_enabled") }}
+              </p>
+            </div>
+            <div>
+              <BoxedCheckbox
+                :model-value="modelValue.is_no_geraldo_leaderboard_enabled"
+                :disabled="disabled"
+                icon="/images/medals/medal_nogerry.webp"
+                label="No Optimal Hero"
+                @update:model-value="
+                  update({ is_no_geraldo_leaderboard_enabled: $event })
+                "
+              />
+              <p
+                v-if="fieldError('is_no_geraldo_leaderboard_enabled')"
+                class="text-(--color-danger) text-sm mt-1"
+              >
+                {{ fieldError("is_no_geraldo_leaderboard_enabled") }}
+              </p>
+            </div>
+            <div>
+              <BoxedCheckbox
+                :model-value="modelValue.is_black_border_leaderboard_enabled"
+                :disabled="disabled"
+                icon="/images/medals/medal_bb.webp"
+                label="Black Border"
+                @update:model-value="
+                  update({ is_black_border_leaderboard_enabled: $event })
+                "
+              />
+              <p
+                v-if="fieldError('is_black_border_leaderboard_enabled')"
+                class="text-(--color-danger) text-sm mt-1"
+              >
+                {{ fieldError("is_black_border_leaderboard_enabled") }}
+              </p>
+            </div>
+          </div>
         </div>
 
         <div class="sm:col-span-2">
