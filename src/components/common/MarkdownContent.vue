@@ -56,6 +56,19 @@ const html = computed(() => marked.parse(props.text) as string);
 .markdown-content :deep(h3) {
   margin-top: 1rem;
   margin-bottom: 0.5rem;
+  font-family: "Luckiest Guy", cursive;
+}
+
+.markdown-content :deep(h1) {
+  font-size: 1.875rem;
+}
+
+.markdown-content :deep(h2) {
+  font-size: 1.5rem;
+}
+
+.markdown-content :deep(h3) {
+  font-size: 1.25rem;
 }
 
 .markdown-content :deep(p) {
