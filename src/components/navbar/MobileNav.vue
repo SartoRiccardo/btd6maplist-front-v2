@@ -60,7 +60,11 @@ function closeDrawer() {
           <div
             class="flex items-center justify-between border-b border-(--color-secondary) px-4 py-4"
           >
-            <div class="flex items-center gap-4">
+            <RouterLink
+              to="/"
+              @click="isDrawerOpen = false"
+              class="flex items-center gap-4 text-(--color-text)!"
+            >
               <img
                 alt="Logo"
                 src="/images/maplist.webp"
@@ -71,7 +75,7 @@ function closeDrawer() {
               >
                 BTD6 Maplist
               </span>
-            </div>
+            </RouterLink>
             <DrawerClose
               @click="isDrawerOpen = false"
               class="rounded-lg p-2 text-(--color-text) transition-colors hover:bg-(--color-secondary) -translate-y-0.5"
