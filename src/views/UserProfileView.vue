@@ -11,7 +11,7 @@ import { useFormats } from "@/services/api/formats/queries";
 import { formatDate } from "@/utils/dates";
 import { getMapFormatBadges } from "@/utils/formatBadges";
 import { permissions } from "@/constants/permissions";
-import { FORMATS_WITH_POINTS } from "@/constants/formats";
+import { FORMAT_MAPLIST, FORMATS_WITH_POINTS } from "@/constants/formats";
 import { useAuthStore } from "@/stores/auth";
 import { provideRoleActions } from "@/composables/useRoleActions";
 import Badge from "@/components/common/Badge.vue";
@@ -130,6 +130,7 @@ watch(
           :key="rank.format_id"
           :ranks="rank"
           :format="format"
+          :points-decimal-digits="rank.format_id === FORMAT_MAPLIST ? config?.decimal_digits : undefined"
         />
       </div>
     </div>

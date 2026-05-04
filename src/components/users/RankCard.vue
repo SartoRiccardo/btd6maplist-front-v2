@@ -7,7 +7,7 @@ import { getPositionColor } from "@/utils/colors";
 import Badge from "@/components/common/Badge.vue";
 import Tooltip from "@/components/ui/Tooltip.vue";
 
-const props = defineProps<{ ranks: UserFormatRanks; format?: Format }>();
+const props = defineProps<{ ranks: UserFormatRanks; format?: Format; pointsDecimalDigits?: number }>();
 
 const formatInfo = FORMAT_ICONS.find((f) => f.id === props.ranks.format_id);
 
@@ -61,7 +61,8 @@ function getEntry(key: MedalDef["key"]): RankEntry | null {
 
 function formatScore(entry: RankEntry | null, key: MedalDef["key"], suffix?: string): string {
   if (!entry) return "—";
-  if (key === "points") return `${entry.score.toFixed(2)}${suffix ?? ""}`;
+  if (key === "points" && props.pointsDecimalDigits !== undefined)
+    return `${entry.score.toFixed(props.pointsDecimalDigits)}${suffix ?? ""}`;
   return `${entry.score}${suffix ?? ""}`;
 }
 </script>
