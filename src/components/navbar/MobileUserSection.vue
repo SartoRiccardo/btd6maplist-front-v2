@@ -27,7 +27,7 @@ function handleLogout() {
 </script>
 
 <template>
-  <div class="bg-(--color-secondary) px-4 py-4">
+  <div class="bg-(--color-secondary) px-4 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
     <!-- Skeleton while loading -->
     <div
       v-if="authStore.isAuthenticated && authStore.isLoading"

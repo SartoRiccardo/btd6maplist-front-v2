@@ -47,7 +47,7 @@ function closeDrawer() {
         <i class="bi bi-list text-xl"></i>
       </DrawerTrigger>
 
-      <DrawerContent class="h-screen bg-(--color-primary) text-(--color-text)">
+      <DrawerContent class="h-dvh bg-(--color-primary) text-(--color-text)">
         <div class="sr-only">
           <DrawerTitle>Navigation Menu</DrawerTitle>
           <DrawerDescription
