@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import type { UserFormatRanks, RankEntry } from "@/services/api/users/types";
-import { FORMAT_ICONS } from "@/constants/formats";
+import type { Format } from "@/services/api/formats/types";
+import { computed } from "vue";
+import { FORMAT_ICONS, FORMATS_WITH_POINTS } from "@/constants/formats";
 import { getPositionColor } from "@/utils/colors";
 import Badge from "@/components/common/Badge.vue";
 import Tooltip from "@/components/ui/Tooltip.vue";
 
-const props = defineProps<{ ranks: UserFormatRanks }>();
+const props = defineProps<{ ranks: UserFormatRanks; format?: Format }>();
 
 const formatInfo = FORMAT_ICONS.find((f) => f.id === props.ranks.format_id);
 
@@ -16,7 +18,7 @@ interface MedalDef {
   suffix?: string;
 }
 
-const medals: MedalDef[] = [
+const ALL_MEDALS: MedalDef[] = [
   {
     key: "points",
     image: "/images/medals/medal_win.webp",
@@ -40,12 +42,26 @@ const medals: MedalDef[] = [
   },
 ];
 
+const medals = computed(() => {
+  return ALL_MEDALS.filter((m) => {
+    if (m.key === "points")
+      return FORMATS_WITH_POINTS.includes(props.ranks.format_id);
+    if (m.key === "lccs") return props.format?.is_lcc_leaderboard_enabled ?? true;
+    if (m.key === "no_geraldo")
+      return props.format?.is_no_geraldo_leaderboard_enabled ?? true;
+    if (m.key === "black_border")
+      return props.format?.is_black_border_leaderboard_enabled ?? true;
+    return true;
+  });
+});
+
 function getEntry(key: MedalDef["key"]): RankEntry | null {
   return props.ranks[key];
 }
 
-function formatScore(entry: RankEntry | null, suffix?: string): string {
+function formatScore(entry: RankEntry | null, key: MedalDef["key"], suffix?: string): string {
   if (!entry) return "—";
+  if (key === "points") return `${entry.score.toFixed(2)}${suffix ?? ""}`;
   return `${entry.score}${suffix ?? ""}`;
 }
 </script>
@@ -78,7 +94,7 @@ function formatScore(entry: RankEntry | null, suffix?: string): string {
           <p
             class="absolute bottom-[-0.5rem] left-1/2 -translate-x-1/2 mb-0 font-['Luckiest_Guy'] font-border text-md whitespace-nowrap"
           >
-            {{ formatScore(getEntry(medal.key), medal.suffix) }}
+            {{ formatScore(getEntry(medal.key), medal.key, medal.suffix) }}
           </p>
 
           <!-- Placement badge -->

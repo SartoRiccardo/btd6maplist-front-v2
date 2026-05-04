@@ -11,6 +11,7 @@ import { useFormats } from "@/services/api/formats/queries";
 import { formatDate } from "@/utils/dates";
 import { getMapFormatBadges } from "@/utils/formatBadges";
 import { permissions } from "@/constants/permissions";
+import { FORMATS_WITH_POINTS } from "@/constants/formats";
 import { useAuthStore } from "@/stores/auth";
 import { provideRoleActions } from "@/composables/useRoleActions";
 import Badge from "@/components/common/Badge.vue";
@@ -55,6 +56,19 @@ const visibleFormatIds = computed(
   () =>
     formatsResponse.value?.data.filter((f) => !f.hidden).map((f) => f.id) ?? [],
 );
+
+const visibleRanks = computed(() => {
+  const fmts = formatsResponse.value?.data ?? [];
+  return (user.value?.ranks ?? [])
+    .map((rank) => ({ rank, format: fmts.find((f) => f.id === rank.format_id) }))
+    .filter(({ rank, format }) => {
+      const hasPoints = FORMATS_WITH_POINTS.includes(rank.format_id) && rank.points !== null;
+      const hasLcc = (format?.is_lcc_leaderboard_enabled ?? true) && rank.lccs !== null;
+      const hasNoGeraldo = (format?.is_no_geraldo_leaderboard_enabled ?? true) && rank.no_geraldo !== null;
+      const hasBb = (format?.is_black_border_leaderboard_enabled ?? true) && rank.black_border !== null;
+      return hasPoints || hasLcc || hasNoGeraldo || hasBb;
+    });
+});
 
 // --- Created Maps ---
 const mapsPerPage = 12;
@@ -106,15 +120,16 @@ watch(
     </div>
 
     <!-- Ranks -->
-    <div v-if="user?.ranks?.length" class="my-6">
+    <div v-if="visibleRanks.length" class="my-6">
       <h2 class="font-['Luckiest_Guy'] text-2xl text-center mb-4">Ranks</h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         <RankCard
-          v-for="rank in user.ranks.filter((r) =>
-            visibleFormatIds.includes(r.format_id),
+          v-for="{ rank, format } in visibleRanks.filter(({ rank }) =>
+            visibleFormatIds.includes(rank.format_id),
           )"
           :key="rank.format_id"
           :ranks="rank"
+          :format="format"
         />
       </div>
     </div>

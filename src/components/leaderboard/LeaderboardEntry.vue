@@ -26,7 +26,7 @@ const displayScore = computed(() => {
   const raw =
     props.user.discord_id === "640298779643215902" ? -props.score : props.score;
   if (props.decimalDigits !== undefined) {
-    return parseFloat(raw.toFixed(props.decimalDigits));
+    return raw.toFixed(props.decimalDigits);
   }
   return raw;
 });
