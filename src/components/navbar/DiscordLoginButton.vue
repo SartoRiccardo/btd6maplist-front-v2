@@ -34,6 +34,7 @@ async function handleDiscordLogin() {
 
 <template>
   <button
+    type="button"
     @click="handleDiscordLogin"
     :disabled="loginLoading"
     class="flex items-center justify-center gap-2 bg-[#5865F2] text-[#E0E3FF] rounded-xl px-4 py-2 hover:cursor-pointer hover:bg-[#4752C4] transition-colors duration-200 ease disabled:opacity-50 disabled:cursor-not-allowed"

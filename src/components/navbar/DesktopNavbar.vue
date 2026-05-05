@@ -79,6 +79,7 @@ function handleLogout() {
         class="ml-2 relative group transition-colors duration-200 ease rounded-xl hover:cursor-pointer translate-y-1"
       >
         <button
+          type="button"
           class="w-12 h-12 overflow-hidden border-2 rounded-md border-[#E0E3FF] transition-colors cursor-pointer ml-2"
           :aria-label="`Logged in as ${authStore.user.name}`"
         >
@@ -127,6 +128,7 @@ function handleLogout() {
                 >
                   <li v-for="theme in themes" :key="theme.id" class="py-1">
                     <button
+                      type="button"
                       @click="themeStore.setTheme(theme.id)"
                       class="flex items-center gap-2 w-full text-left bg-transparent border-none text-(--color-text) hover:text-(--color-active) cursor-pointer px-1 py-1 rounded"
                     >
@@ -147,6 +149,7 @@ function handleLogout() {
                 >{{ authStore.user.name }}</span
               >
               <button
+                type="button"
                 @click="handleLogout"
                 class="bg-(--color-danger) brightness-100 hover:brightness-110 saturate-100 hover:saturate-125 text-white px-3 py-2 rounded-lg text-sm cursor-pointer"
                 aria-label="Logout"

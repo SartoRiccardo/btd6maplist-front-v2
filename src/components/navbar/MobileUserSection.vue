@@ -48,7 +48,7 @@ function handleLogout() {
       "
     >
       <DropdownMenuTrigger as-child>
-        <button class="flex items-center gap-3 w-full text-left">
+        <button type="button" class="flex items-center gap-3 w-full text-left">
           <img
             :src="authStore.user.avatar_url || DEFAULT_AVATAR_URL"
             :alt="authStore.user.name"

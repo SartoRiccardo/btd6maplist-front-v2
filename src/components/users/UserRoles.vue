@@ -84,6 +84,7 @@ onClickOutside(dropdownRef, () => (showDropdown.value = false));
       class="flex items-center gap-1 pr-2 py-0.5 rounded-[0.3rem] border-2 border-black/40 font-border text-sm bg-black/30"
     >
       <button
+        type="button"
         v-if="roleActions?.isRevocable(role)"
         @click="roleActions.onRoleRevoke(role)"
         :disabled="roleActions.isRevoking(role)"
@@ -100,6 +101,7 @@ onClickOutside(dropdownRef, () => (showDropdown.value = false));
       class="relative"
     >
       <button
+        type="button"
         @click="showDropdown = !showDropdown"
         class="px-2 py-0.5 h-[98%] rounded-[0.3rem] border-2 border-black/40 font-border text-sm bg-black/30 cursor-pointer leading-none"
       >
@@ -110,6 +112,7 @@ onClickOutside(dropdownRef, () => (showDropdown.value = false));
         class="absolute top-full left-0 mt-1 z-20 flex flex-col bg-(--color-secondary) border border-black/40 rounded-[0.3rem] overflow-hidden min-w-max"
       >
         <button
+          type="button"
           v-for="role in assignableRoles"
           :key="role.id"
           @click="roleActions?.onRoleGrant(role)"

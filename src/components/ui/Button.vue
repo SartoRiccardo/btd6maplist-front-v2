@@ -12,6 +12,7 @@ defineEmits<{
 
 <template>
   <button
+    type="button"
     class="px-3 py-1.5 rounded-(--radius-btn) font-bold font-border-active transition-colors! duration-200"
     :class="
       disabled
