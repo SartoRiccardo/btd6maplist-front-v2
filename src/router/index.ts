@@ -161,6 +161,11 @@ const routes: RouteRecordRaw[] = [
     path: "/oauth2/discord/callback",
     meta: { standalone: true },
   },
+  {
+    component: () => import("@/views/NotFoundView.vue"),
+    name: "NotFound",
+    path: "/:pathMatch(.*)*",
+  },
 ];
 
 const router = createRouter({
