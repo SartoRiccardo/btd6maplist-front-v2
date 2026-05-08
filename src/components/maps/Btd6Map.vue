@@ -90,7 +90,7 @@ const { containerRef: _fireContainer } = useFireEffect(() => props.burning);
     <!-- Fire effect -->
     <template v-if="burning">
       <div
-        class="absolute inset-[-3px] rounded-[calc(var(--radius-panel)+3px)] pointer-events-none z-[2] shadow-[0_0_20px_6px_rgba(255,140,0,0.6),0_0_50px_15px_rgba(255,60,0,0.3)]"
+        class="absolute inset-[-3px] rounded-[calc(var(--radius-panel)+3px)] pointer-events-none z-[2] shadow-[0_0_15px_3px_rgba(255,140,0,0.4),0_0_30px_8px_rgba(255,60,0,0.2)]"
       />
       <div
         ref="_fireContainer"
