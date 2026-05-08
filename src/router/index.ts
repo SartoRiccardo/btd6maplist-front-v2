@@ -162,6 +162,22 @@ const routes: RouteRecordRaw[] = [
     meta: { standalone: true },
   },
   {
+    path: "/maplist",
+    redirect: "/maps/maplist",
+  },
+  {
+    path: "/expert-list",
+    redirect: "/maps/expert-list",
+  },
+  {
+    path: "/best-of-the-best",
+    redirect: "/maps/best-of-the-best",
+  },
+  {
+    path: "/nostalgia-pack",
+    redirect: "/maps/nostalgia-pack",
+  },
+  {
     component: () => import("@/views/NotFoundView.vue"),
     name: "NotFound",
     path: "/:pathMatch(.*)*",
