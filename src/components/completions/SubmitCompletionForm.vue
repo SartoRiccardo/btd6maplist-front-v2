@@ -308,5 +308,13 @@ function fieldError(field: string): string | undefined {
         </span>
       </div>
     </div>
+
+    <!-- Map error banner -->
+    <div
+      v-if="fieldError('map')"
+      class="bg-red-500/10 border border-(--color-danger) text-(--color-danger) px-4 py-3 rounded-(--radius-panel) text-center"
+    >
+      {{ fieldError("map") }}
+    </div>
   </div>
 </template>
