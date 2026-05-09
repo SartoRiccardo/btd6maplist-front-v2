@@ -151,7 +151,8 @@ async function handleSubmit() {
       apiErrors.value = errorResult.fieldErrors;
       await formRef.value.clearTouched();
       if (errorResult.fieldErrors.length === 0) {
-        toast.error(errorResult.message || "Something went wrong. Please try again.");
+        const message = errorResult.message || "Something went wrong. Please try again.";
+        toast.error(`${message} (Error code: ${errorResult.status})`);
       }
     } else {
       toast.error("Something went wrong. Please try again.");

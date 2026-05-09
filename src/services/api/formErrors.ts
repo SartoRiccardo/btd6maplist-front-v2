@@ -15,11 +15,12 @@ export interface FormFieldError {
 
 /**
  * Result of parsing API errors.
- * Contains both field-specific errors and a general message (if present).
+ * Contains both field-specific errors, a general message (if present), and HTTP status code.
  */
 export interface ApiErrorResult {
   fieldErrors: FormFieldError[];
   message: string | null;
+  status: number;
 }
 
 /**
@@ -34,7 +35,7 @@ export function parseApiErrors(error: ApiError): ApiErrorResult {
   let message: string | null = null;
 
   const data = error.response as Record<string, unknown> | undefined;
-  if (!data) return { fieldErrors, message };
+  if (!data) return { fieldErrors, message, status: error.status };
 
   // Extract general message
   if (typeof data["message"] === "string") {
@@ -53,5 +54,5 @@ export function parseApiErrors(error: ApiError): ApiErrorResult {
     }
   }
 
-  return { fieldErrors, message };
+  return { fieldErrors, message, status: error.status };
 }
