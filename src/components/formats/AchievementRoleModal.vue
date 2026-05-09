@@ -8,6 +8,7 @@ import type { FormFieldError } from "@/services/api/formErrors";
 import { parseApiErrors } from "@/services/api/formErrors";
 import { ApiError } from "@/services/api/client";
 import { intToHex, hexToInt } from "@/utils/colors";
+import { toast } from "vue-sonner";
 import Button from "@/components/ui/Button.vue";
 import AchievementRoleForm, {
   type AchievementRoleFormModel,
@@ -102,8 +103,14 @@ async function handleSave() {
     close(true);
   } catch (e) {
     if (e instanceof ApiError) {
-      apiErrors.value = parseApiErrors(e);
+      const errorResult = parseApiErrors(e);
+      apiErrors.value = errorResult.fieldErrors;
       await formRef.value.clearTouched();
+      if (errorResult.fieldErrors.length === 0) {
+        toast.error(errorResult.message || "Something went wrong. Please try again.");
+      }
+    } else {
+      toast.error("Something went wrong. Please try again.");
     }
   } finally {
     saving.value = false;

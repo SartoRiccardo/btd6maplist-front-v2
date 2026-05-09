@@ -125,9 +125,14 @@ async function handleSave() {
     toast.success("Saved successfully.");
   } catch (error: unknown) {
     if (error instanceof ApiError) {
-      apiErrors.value = parseApiErrors(error);
+      const errorResult = parseApiErrors(error);
+      apiErrors.value = errorResult.fieldErrors;
       await formRef.value.clearTouched();
-      toast.error("Please fix the errors before saving.");
+      if (errorResult.fieldErrors.length > 0) {
+        toast.error("Please fix the errors before saving.");
+      } else {
+        toast.error(errorResult.message || "Something went wrong. Please try again.");
+      }
     } else {
       toast.error("Something went wrong. Please try again.");
     }

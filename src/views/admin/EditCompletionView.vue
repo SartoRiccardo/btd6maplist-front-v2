@@ -152,12 +152,12 @@ async function handleSave() {
     toast.success("Completion updated.");
   } catch (error: unknown) {
     if (error instanceof ApiError) {
-      apiErrors.value = parseApiErrors(error);
-      if (apiErrors.value.length > 0) {
+      const errorResult = parseApiErrors(error);
+      apiErrors.value = errorResult.fieldErrors;
+      if (errorResult.fieldErrors.length > 0) {
         await formRef.value.clearTouched();
       } else {
-        const msg = (error.response as { message?: string } | null)?.message;
-        toast.error(msg ?? "Something went wrong. Please try again.");
+        toast.error(errorResult.message || "Something went wrong. Please try again.");
       }
     } else {
       toast.error("Something went wrong. Please try again.");

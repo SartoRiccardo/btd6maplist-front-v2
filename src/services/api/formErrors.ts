@@ -14,23 +14,44 @@ export interface FormFieldError {
 }
 
 /**
- * Parse API validation errors into FormFieldError[].
- * Expects the API response shape: { errors: { field: ["message", ...] } }
+ * Result of parsing API errors.
+ * Contains both field-specific errors and a general message (if present).
  */
-export function parseApiErrors(error: ApiError): FormFieldError[] {
-  const errors: FormFieldError[] = [];
-  const data = error.response as Record<string, unknown> | undefined;
-  if (!data) return errors;
+export interface ApiErrorResult {
+  fieldErrors: FormFieldError[];
+  message: string | null;
+}
 
+/**
+ * Parse API errors into both field-specific errors and a general message.
+ * Expects API response shapes like:
+ * - { errors: { field: ["message", ...] } }
+ * - { message: "General error message" }
+ * - { message: "General error", errors: { field: ["message"] } }
+ */
+export function parseApiErrors(error: ApiError): ApiErrorResult {
+  const fieldErrors: FormFieldError[] = [];
+  let message: string | null = null;
+
+  const data = error.response as Record<string, unknown> | undefined;
+  if (!data) return { fieldErrors, message };
+
+  // Extract general message
+  if (typeof data["message"] === "string") {
+    message = data["message"];
+  }
+
+  // Extract field-specific errors
   const apiErrors = data["errors"] as Record<string, string[]> | undefined;
   if (apiErrors && typeof apiErrors === "object") {
     for (const [path, messages] of Object.entries(apiErrors)) {
       if (Array.isArray(messages)) {
         for (const message of messages) {
-          errors.push({ path, message, source: "api" });
+          fieldErrors.push({ path, message, source: "api" });
         }
       }
     }
   }
-  return errors;
+
+  return { fieldErrors, message };
 }

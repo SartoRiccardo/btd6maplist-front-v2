@@ -158,10 +158,11 @@ async function handleSubmit() {
     router.push("/my-submissions/maps");
   } catch (error: unknown) {
     if (error instanceof ApiError) {
-      apiErrors.value = parseApiErrors(error);
+      const errorResult = parseApiErrors(error);
+      apiErrors.value = errorResult.fieldErrors;
       await formRef.value.clearTouched();
-      if (apiErrors.value.length === 0) {
-        toast.error("Something went wrong. Please try again.");
+      if (errorResult.fieldErrors.length === 0) {
+        toast.error(errorResult.message || "Something went wrong. Please try again.");
       }
     } else {
       toast.error("Something went wrong. Please try again.");
