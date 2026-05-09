@@ -241,6 +241,9 @@ function fieldError(field: string): string | undefined {
         placeholder="Search categories..."
         @update:model-value="onProposedSelect"
       />
+      <p v-if="fieldError('proposed')" class="text-(--color-danger) text-sm mt-1">
+        {{ fieldError("proposed") }}
+      </p>
     </div>
 
     <!-- Notes -->

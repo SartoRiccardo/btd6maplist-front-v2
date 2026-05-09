@@ -233,6 +233,7 @@ function fieldError(field: string): string | undefined {
           :disabled="disabled"
           label="Black Border"
           icon="/images/medals/medal_bb.webp"
+          :error="fieldError('black_border')"
           @update:model-value="update({ black_border: $event })"
         />
 
@@ -241,6 +242,7 @@ function fieldError(field: string): string | undefined {
           :disabled="disabled"
           label="No Optimal Hero"
           icon="/images/medals/medal_nogerry.webp"
+          :error="fieldError('no_geraldo')"
           @update:model-value="update({ no_geraldo: $event })"
         />
 
@@ -250,6 +252,7 @@ function fieldError(field: string): string | undefined {
           :locked="lccOnly"
           label="LCC"
           icon="/images/medals/medal_lcc.webp"
+          :error="fieldError('lcc_enabled')"
           @update:model-value="update({ lcc_enabled: $event })"
         />
       </div>
