@@ -114,7 +114,7 @@ async function handleSubmit() {
     router.push(mapUrl.value);
   } catch (error: unknown) {
     if (error instanceof ApiError) {
-      apiErrors.value = parseApiErrors(error);
+      apiErrors.value = parseApiErrors(error).fieldErrors;
       await formRef.value.clearTouched();
       if (apiErrors.value.length === 0) {
         toast.error("Something went wrong. Please try again.");
