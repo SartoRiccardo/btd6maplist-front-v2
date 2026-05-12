@@ -1,13 +1,27 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { useSearch } from "@/services/api/search/queries";
 import MapGrid from "@/components/maps/MapGrid.vue";
 import MapFormatBadges from "@/components/maps/MapFormatBadges.vue";
 import UserEntry from "@/components/users/UserEntry.vue";
 import type { SearchParams } from "@/services/api/search/types";
 
+const route = useRoute();
+const router = useRouter();
+
 const inputValue = ref("");
 const submittedParams = ref<SearchParams | null>(null);
+
+watch(
+  () => route.query["q"],
+  (q) => {
+    const val = typeof q === "string" ? q.trim() : "";
+    inputValue.value = val;
+    submittedParams.value = val.length >= 3 ? { q: val } : null;
+  },
+  { immediate: true },
+);
 
 const { data: results, isFetching } = useSearch(submittedParams);
 
@@ -23,7 +37,7 @@ const hasResults = computed(() => results.value !== undefined);
 function handleSubmit() {
   const q = inputValue.value.trim();
   if (q.length < 3) return;
-  submittedParams.value = { q };
+  router.push({ query: { q } });
 }
 </script>
 
