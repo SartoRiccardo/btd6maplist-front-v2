@@ -87,6 +87,16 @@ function closeDrawer() {
 
           <div class="flex-1 overflow-y-auto px-3 py-4">
             <ul class="m-0 list-none p-0">
+              <li class="mb-3">
+                <RouterLink
+                  to="/search"
+                  @click="isDrawerOpen = false"
+                  class="flex items-center gap-2 rounded-xl px-4 text-[1.4rem] font-bold uppercase text-(--color-text)!"
+                >
+                  <i class="bi bi-search"></i>
+                  Search
+                </RouterLink>
+              </li>
               <template v-for="item in navItems" :key="item.name">
                 <li class="mb-3">
                   <RouterLink
