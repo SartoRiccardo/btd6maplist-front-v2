@@ -9,13 +9,12 @@ import { useUser, useBanUser } from "@/services/api/users/queries";
 import { useConfig } from "@/services/api/config/queries";
 import { useFormats } from "@/services/api/formats/queries";
 import { formatDate } from "@/utils/dates";
-import { getMapFormatBadges } from "@/utils/formatBadges";
 import { permissions } from "@/constants/permissions";
 import { FORMAT_MAPLIST, FORMATS_WITH_POINTS } from "@/constants/formats";
 import { useAuthStore } from "@/stores/auth";
 import { provideRoleActions } from "@/composables/useRoleActions";
-import Badge from "@/components/common/Badge.vue";
 import Button from "@/components/ui/Button.vue";
+import MapFormatBadges from "@/components/maps/MapFormatBadges.vue";
 import LinkButton from "@/components/ui/LinkButton.vue";
 import ProfileHeader from "@/components/users/ProfileHeader.vue";
 import ProfileHeaderSkeleton from "@/components/users/ProfileHeaderSkeleton.vue";
@@ -184,34 +183,7 @@ watch(
         :skeleton-count="mapsPerPage"
       >
         <template #bottom="{ map }">
-          <div
-            v-if="
-              getMapFormatBadges(map, { config, visibleFormatIds }).length > 0
-            "
-            class="absolute bottom-[-0.75rem] left-0 w-full flex justify-center gap-1 z-10 text-[28px] md:text-[40px]"
-          >
-            <template
-              v-for="badge in getMapFormatBadges(map, {
-                config,
-                visibleFormatIds,
-              })"
-              :key="badge.label"
-            >
-              <img
-                v-if="badge.squareImage"
-                :src="badge.icon"
-                :title="badge.label"
-                class="h-[1.5em] w-[1.5em] rounded-sm object-cover"
-              />
-              <Badge
-                v-else
-                :src="badge.icon"
-                :alt="badge.label"
-                :title="badge.label"
-                class="translate-y-0!"
-              />
-            </template>
-          </div>
+          <MapFormatBadges :map="map" />
         </template>
       </MapGrid>
       <p

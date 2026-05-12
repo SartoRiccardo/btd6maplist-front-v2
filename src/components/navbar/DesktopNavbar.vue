@@ -24,6 +24,15 @@ function handleLogout() {
 
 <template>
   <div class="justify-end flex gap-x-3">
+    <!-- Search Button -->
+    <RouterLink
+      to="/search"
+      class="flex items-center no-underline text-(--color-text)! transition-colors duration-200 ease rounded-xl px-4 py-2 hover:cursor-pointer hover:bg-(--color-secondary) hover:text-inherit!"
+      aria-label="Search"
+    >
+      <i class="bi bi-search"></i>
+    </RouterLink>
+
     <template v-for="item in navItems" :key="item.name">
       <RouterLink
         v-if="item.url"

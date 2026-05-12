@@ -152,6 +152,11 @@ const routes: RouteRecordRaw[] = [
     path: "/admin/maps",
   },
   {
+    component: () => import("@/views/SearchView.vue"),
+    name: "Search",
+    path: "/search",
+  },
+  {
     component: () => import("@/views/OAuth2LoginView.vue"),
     name: "OAuth2Login",
     path: "/oauth2/login",
