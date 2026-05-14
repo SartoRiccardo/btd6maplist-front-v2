@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import type { CompletionProofImage } from "@/services/api/completions/types";
 import ImageLightbox from "@/components/common/ImageLightbox.vue";
 
 defineProps<{
   submNotes: string | null;
-  proofImages: string[];
+  proofImages: CompletionProofImage[];
   proofVideos: string[];
 }>();
 
@@ -29,12 +30,12 @@ function youtubeEmbedUrl(url: string): string | null {
       <h3 class="font-['Luckiest_Guy'] text-xl mb-3">Submission Images</h3>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         <img
-          v-for="(src, i) in proofImages"
+          v-for="(img, i) in proofImages"
           :key="i"
-          :src="src"
+          :src="img.url"
           alt="Submission proof"
           class="w-full rounded-(--radius-panel) object-cover cursor-zoom-in hover:opacity-80 transition-opacity"
-          @click="lightbox?.show(src)"
+          @click="lightbox?.show(img.url)"
         />
       </div>
     </div>

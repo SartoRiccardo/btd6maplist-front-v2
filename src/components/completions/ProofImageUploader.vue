@@ -3,19 +3,27 @@ import { ref, onBeforeUnmount } from "vue";
 import DropZone from "@/components/ui/DropZone.vue";
 import ImageLightbox from "@/components/common/ImageLightbox.vue";
 
-withDefaults(
+const props = withDefaults(
   defineProps<{
     modelValue: File[];
+    existingUrls?: string[];
     disabled?: boolean;
     maxFiles?: number;
   }>(),
-  { disabled: false, maxFiles: 4 },
+  { existingUrls: () => [], disabled: false, maxFiles: 4 },
 );
 
 const emit = defineEmits<{
   "update:modelValue": [files: File[]];
+  "update:existingUrls": [urls: string[]];
   error: [message: string];
 }>();
+
+function removeExisting(index: number) {
+  const next = [...props.existingUrls!];
+  next.splice(index, 1);
+  emit("update:existingUrls", next);
+}
 
 const lightboxRef = ref<InstanceType<typeof ImageLightbox> | null>(null);
 
@@ -59,12 +67,32 @@ onBeforeUnmount(() => {
     >
       <template #files="{ files, removeFile }">
         <div
-          v-if="files.length > 0"
+          v-if="existingUrls!.length > 0 || files.length > 0"
           class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4"
         >
           <div
+            v-for="(url, i) in existingUrls"
+            :key="`existing-${i}`"
+            class="relative group"
+          >
+            <img
+              :src="url"
+              alt="Proof image"
+              class="w-full aspect-[4/3] object-cover rounded-(--radius-panel) cursor-zoom-in hover:opacity-80 transition-opacity"
+              @click="lightboxRef?.show(url)"
+            />
+            <button
+              v-if="!disabled"
+              type="button"
+              class="absolute -top-2 -left-2 w-6 h-6 rounded-full bg-black/70 text-white flex items-center justify-center text-sm hover:bg-red-600 transition-colors cursor-pointer"
+              @click.stop="removeExisting(i)"
+            >
+              <i class="bi bi-x" />
+            </button>
+          </div>
+          <div
             v-for="(url, i) in getPreviewUrls(files)"
-            :key="i"
+            :key="`new-${i}`"
             class="relative group"
           >
             <img

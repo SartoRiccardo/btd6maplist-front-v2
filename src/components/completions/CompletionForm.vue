@@ -11,6 +11,7 @@ import Button from "@/components/ui/Button.vue";
 import BoxedCheckbox from "@/components/ui/BoxedCheckbox.vue";
 import AsyncSelect from "@/components/ui/AsyncSelect.vue";
 import ListEditor from "@/components/ui/ListEditor.vue";
+import ProofImageUploader from "@/components/completions/ProofImageUploader.vue";
 
 export interface CompletionFormModel {
   format_id: number | null;
@@ -19,6 +20,8 @@ export interface CompletionFormModel {
   lcc_enabled: boolean;
   lcc_leftover: number | null;
   players: string[];
+  additional_image_proofs: File[];
+  existing_image_proofs: string[];
 }
 
 const props = withDefaults(
@@ -154,6 +157,18 @@ function fieldError(field: string): string | undefined {
 
 <template>
   <div class="flex flex-col gap-6">
+    <!-- Additional Image Proofs -->
+    <div>
+      <label class="block font-bold mb-2">Additional Images</label>
+      <ProofImageUploader
+        :model-value="modelValue.additional_image_proofs"
+        :existing-urls="modelValue.existing_image_proofs"
+        :disabled="disabled"
+        @update:model-value="update({ additional_image_proofs: $event })"
+        @update:existing-urls="update({ existing_image_proofs: $event })"
+      />
+    </div>
+
     <!-- Format Selector -->
     <div>
       <label class="block font-bold mb-2">Format</label>

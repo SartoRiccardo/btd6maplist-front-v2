@@ -6,6 +6,11 @@ export interface LCC {
   leftover: number;
 }
 
+export interface CompletionProofImage {
+  url: string;
+  is_added_by_admin: boolean;
+}
+
 export interface Completion {
   id: number;
   map_code: string;
@@ -18,7 +23,7 @@ export interface Completion {
   players: User[];
   submitted_on: number;
   subm_notes: string | null;
-  subm_proof_img: string[];
+  subm_proof_img: CompletionProofImage[];
   subm_proof_vid: string[];
   map: Map;
   is_current_lcc: boolean;
@@ -80,6 +85,7 @@ export interface UpdateCompletionRequest {
   no_geraldo: boolean | null;
   lcc: { leftover: number } | null;
   accept: boolean;
+  additional_image_proofs: (File | string)[];
 }
 
 export interface GetCompletionsParams {

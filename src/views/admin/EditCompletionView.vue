@@ -61,6 +61,10 @@ function toFormModel(c: CompletionDetail): CompletionFormModel {
     lcc_enabled: c.lcc !== null,
     lcc_leftover: c.lcc?.leftover ?? null,
     players: c.players.map((p) => p.discord_id),
+    additional_image_proofs: [],
+    existing_image_proofs: c.subm_proof_img
+      .filter((img) => img.is_added_by_admin)
+      .map((img) => img.url),
   };
 }
 
@@ -71,6 +75,8 @@ const formModel = ref<CompletionFormModel>({
   lcc_enabled: false,
   lcc_leftover: null,
   players: [""],
+  additional_image_proofs: [],
+  existing_image_proofs: [],
 });
 
 watch(
@@ -145,6 +151,7 @@ async function handleSave() {
         ? { leftover: model.lcc_leftover }
         : null,
     accept: isAccepted,
+    additional_image_proofs: [...model.existing_image_proofs, ...model.additional_image_proofs],
   };
 
   try {

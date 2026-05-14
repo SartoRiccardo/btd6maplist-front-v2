@@ -177,6 +177,9 @@ export async function updateCompletion(
   if (data.lcc != null)
     formData.append("lcc[leftover]", data.lcc.leftover.toString());
   formData.append("accept", data.accept ? "1" : "0");
+  for (const item of data.additional_image_proofs) {
+    formData.append("additional_image_proofs[]", item);
+  }
   return apiRequest<void>(`${BASE_PATH}/${id}`, {
     method: "PUT",
     body: formData,
