@@ -4,13 +4,14 @@ import {
   useQueryClient,
   type UseQueryOptions,
 } from "@tanstack/vue-query";
-import { getFormats, getFormat, updateFormat } from "./index";
+import { getFormats, getFormat, getFormatWithWebhooks, updateFormat } from "./index";
 import type { Format, UpdateFormatRequest } from "./types";
 import type { PaginatedResponse } from "@/services/api/common/types";
 
 export const formatQueryKeys = {
   all: ["formats"] as const,
   detail: (id: number) => ["formats", id] as const,
+  detailWithWebhooks: (id: number) => ["formats", id, "webhooks"] as const,
 } as const;
 
 export function useFormats(
@@ -30,6 +31,13 @@ export function useFormat(id: number) {
   return useQuery({
     queryKey: formatQueryKeys.detail(id),
     queryFn: () => getFormat(id),
+  });
+}
+
+export function useFormatWithWebhooks(id: number) {
+  return useQuery({
+    queryKey: formatQueryKeys.detailWithWebhooks(id),
+    queryFn: () => getFormatWithWebhooks(id),
   });
 }
 

@@ -12,6 +12,10 @@ export async function getFormat(id: number): Promise<Format> {
   return api.get<Format>(`${BASE_PATH}/${id}`);
 }
 
+export async function getFormatWithWebhooks(id: number): Promise<Format> {
+  return api.get<Format>(`${BASE_PATH}/${id}?include=webhooks`);
+}
+
 export async function updateFormat(
   id: number,
   data: UpdateFormatRequest,

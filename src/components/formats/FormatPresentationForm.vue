@@ -5,6 +5,7 @@ import { useEmitOnChange } from "@/composables/useEmitOnChange";
 import type { FormFieldError } from "@/services/api/formErrors";
 import type { Map } from "@/services/api/maps/types";
 import BoxedCheckbox from "@/components/ui/BoxedCheckbox.vue";
+import PasswordField from "@/components/ui/PasswordField.vue";
 import { MARKDOWN_ICONS } from "@/utils/markdownIcons";
 
 const ICON_GROUPS = [
@@ -306,14 +307,11 @@ const errorClass = "border-(--color-danger)!";
 
         <div>
           <label class="block font-bold mb-1">Map Submission Webhook</label>
-          <input
-            type="url"
-            :value="modelValue.map_submission_wh"
+          <PasswordField
+            :model-value="modelValue.map_submission_wh"
             :disabled="disabled"
-            :class="[inputClass, fieldError('map_submission_wh') ? errorClass : '']"
-            @input="
-              update({ map_submission_wh: ($event.target as HTMLInputElement).value })
-            "
+            :error="fieldError('map_submission_wh')"
+            @update:model-value="update({ map_submission_wh: $event })"
           />
           <p
             v-if="fieldError('map_submission_wh')"
@@ -325,14 +323,11 @@ const errorClass = "border-(--color-danger)!";
 
         <div>
           <label class="block font-bold mb-1">Run Submission Webhook</label>
-          <input
-            type="url"
-            :value="modelValue.run_submission_wh"
+          <PasswordField
+            :model-value="modelValue.run_submission_wh"
             :disabled="disabled"
-            :class="[inputClass, fieldError('run_submission_wh') ? errorClass : '']"
-            @input="
-              update({ run_submission_wh: ($event.target as HTMLInputElement).value })
-            "
+            :error="fieldError('run_submission_wh')"
+            @update:model-value="update({ run_submission_wh: $event })"
           />
           <p
             v-if="fieldError('run_submission_wh')"

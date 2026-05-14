@@ -2,7 +2,7 @@
 import { ref, watch, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
-import { useFormat, useUpdateFormat } from "@/services/api/formats/queries";
+import { useFormatWithWebhooks, useUpdateFormat } from "@/services/api/formats/queries";
 import { permissions } from "@/constants/permissions";
 import { ApiError } from "@/services/api/client";
 import { parseApiErrors } from "@/services/api/formErrors";
@@ -24,7 +24,7 @@ const canEdit = computed(() =>
   auth.hasPermission(permissions.formatPresentation.edit, id),
 );
 
-const { data: format, isLoading } = useFormat(id);
+const { data: format, isLoading } = useFormatWithWebhooks(id);
 const { mutateAsync: saveFormat } = useUpdateFormat();
 
 const formModel = ref<FormatPresentationFormModel>({
