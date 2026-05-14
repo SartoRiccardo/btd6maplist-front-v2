@@ -6,6 +6,7 @@ import {
   useCompletion,
   useUpdateCompletion,
   useDeleteCompletion,
+  useSetAdminNote,
 } from "@/services/api/completions/queries";
 import { useFormats } from "@/services/api/formats/queries";
 import type {
@@ -23,6 +24,7 @@ import LinkButton from "@/components/ui/LinkButton.vue";
 import UserEntry from "@/components/users/UserEntry.vue";
 import CompletionProofs from "@/components/completions/CompletionProofs.vue";
 import CompletionAdminNote from "@/components/completions/CompletionAdminNote.vue";
+import PromptModal from "@/components/common/PromptModal.vue";
 import CompletionForm, {
   type CompletionFormModel,
 } from "@/components/completions/CompletionForm.vue";
@@ -112,6 +114,19 @@ function handleCancel(e: MouseEvent) {
 
 const updateMutation = useUpdateCompletion();
 const deleteMutation = useDeleteCompletion();
+const setAdminNoteMutation = useSetAdminNote();
+
+const addNoteModal = ref<InstanceType<typeof PromptModal> | null>(null);
+
+async function handleAddNote() {
+  const note = await addNoteModal.value!.prompt();
+  if (!note) return;
+  try {
+    await setAdminNoteMutation.mutateAsync({ id: id.value, note });
+  } catch {
+    toast.error("Something went wrong. Please try again.");
+  }
+}
 
 async function handleDelete() {
   try {
@@ -243,7 +258,10 @@ async function handleSave() {
 
       <div class="flex justify-between mt-6">
         <template v-if="!isDeleted">
-          <Button :disabled="busy || !!completionData.admin_note" @click="handleDelete">Delete</Button>
+          <div class="flex gap-2">
+            <Button :disabled="busy || !!completionData.admin_note" @click="handleDelete">Delete</Button>
+            <Button v-if="!completionData.admin_note" :disabled="busy" @click="handleAddNote">Add Note</Button>
+          </div>
           <div class="flex gap-2">
             <LinkButton :to="cancelUrl" :disabled="busy" @click="handleCancel"
               >Cancel</LinkButton
@@ -256,5 +274,12 @@ async function handleSave() {
         >
       </div>
     </Panel>
+
+    <PromptModal
+      ref="addNoteModal"
+      title="Add Admin Note"
+      confirm-label="Save Note"
+      placeholder="Write a note visible to admins only..."
+    />
   </div>
 </template>

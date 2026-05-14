@@ -70,6 +70,13 @@ const showActions = computed(
       class="flex justify-end gap-2 mb-4"
     >
       <Button
+        v-if="canEdit && !completion.admin_note && actions.onAddNote"
+        :disabled="isActionsDisabled"
+        @click="actions.onAddNote!(completion)"
+      >
+        Add Note
+      </Button>
+      <Button
         v-if="isPending && !isOwnCompletion && actions.onReject"
         :disabled="isActionsDisabled"
         @click="actions.onReject!(completion)"

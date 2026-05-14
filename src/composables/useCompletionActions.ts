@@ -6,6 +6,7 @@ export interface CompletionActions {
   shouldShowActions?: (completion: CompletionDetail) => boolean;
   onApprove?: (completion: CompletionDetail) => void;
   onReject?: (completion: CompletionDetail) => void;
+  onAddNote?: (completion: CompletionDetail) => void;
 }
 
 const COMPLETION_ACTIONS_KEY = Symbol("completionActions");

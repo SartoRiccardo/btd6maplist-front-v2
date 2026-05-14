@@ -5,6 +5,7 @@ import { useAuthStore } from "@/stores/auth";
 import { useFormats } from "@/services/api/formats/queries";
 import {
   useDeleteCompletion,
+  useSetAdminNote,
   useUpdateCompletion,
   completionQueryKeys,
 } from "@/services/api/completions/queries";
@@ -15,6 +16,7 @@ import { provideCompletionActions } from "@/composables/useCompletionActions";
 import { toast } from "vue-sonner";
 import CompletionList from "@/components/completions/CompletionList.vue";
 import ConfirmModal from "@/components/common/ConfirmModal.vue";
+import PromptModal from "@/components/common/PromptModal.vue";
 import type { CompletionDetail } from "@/services/api/completions/types";
 
 const auth = useAuthStore();
@@ -22,11 +24,13 @@ const { data: formatsResponse } = useFormats();
 
 const rejectModal = ref<InstanceType<typeof ConfirmModal>>();
 const approveModal = ref<InstanceType<typeof ConfirmModal>>();
+const addNoteModal = ref<InstanceType<typeof PromptModal>>();
 
 const { mutateAsync: rejectCompletion, isPending: isRejecting } =
   useDeleteCompletion();
 const { mutateAsync: updateCompletion, isPending: isApproving } =
   useUpdateCompletion();
+const { mutateAsync: setAdminNote } = useSetAdminNote();
 const isFetching = useIsFetching({ queryKey: completionQueryKeys.all });
 const isDisabled = computed(
   () => isRejecting.value || isApproving.value || isFetching.value > 0,
@@ -67,6 +71,15 @@ provideCompletionActions({
     const confirmed = await rejectModal.value!.confirm();
     if (!confirmed) return;
     await rejectCompletion(completion.id);
+  },
+  onAddNote: async (completion: CompletionDetail) => {
+    const note = await addNoteModal.value!.prompt();
+    if (!note) return;
+    try {
+      await setAdminNote({ id: completion.id, note });
+    } catch {
+      toast.error("Something went wrong. Please try again.");
+    }
   },
 });
 
@@ -115,5 +128,11 @@ const allowedFormatIds = computed(() => {
     <ConfirmModal ref="rejectModal" confirm-label="Reject" danger>
       Do you want to reject this completion?
     </ConfirmModal>
+    <PromptModal
+      ref="addNoteModal"
+      title="Add Admin Note"
+      confirm-label="Save Note"
+      placeholder="Write a note visible to admins only..."
+    />
   </div>
 </template>
