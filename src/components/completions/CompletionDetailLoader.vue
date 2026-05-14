@@ -9,7 +9,7 @@ const props = defineProps<{
 
 const { data: completion, isLoading } = useCompletion(
   () => props.completionId,
-  { include: "accepted_by.flair,players.flair" },
+  { include: "accepted_by.flair,players.flair,admin_note" },
 );
 </script>
 

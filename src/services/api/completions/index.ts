@@ -9,7 +9,7 @@ import type {
   UpdateCompletionRequest,
 } from "./types";
 import type { PaginatedResponse } from "@/services/api/common/types";
-import { apiRequest } from "../client";
+import { api, apiRequest } from "../client";
 
 const BASE_PATH = "/api/completions";
 
@@ -193,4 +193,25 @@ export async function updateCompletion(
  */
 export async function deleteCompletion(id: number): Promise<void> {
   return apiRequest<void>(`${BASE_PATH}/${id}`, { method: "DELETE" });
+}
+
+/**
+ * PUT /completions/:id/admin-note
+ *
+ * Set or replace the admin note on a completion. Requires edit:completion.
+ */
+export async function setAdminNote(
+  id: number,
+  admin_note: string,
+): Promise<void> {
+  return api.put(`${BASE_PATH}/${id}/admin-note`, { admin_note });
+}
+
+/**
+ * DELETE /completions/:id/admin-note
+ *
+ * Remove the admin note on a completion. Requires edit:completion. Idempotent.
+ */
+export async function deleteAdminNote(id: number): Promise<void> {
+  return api.delete(`${BASE_PATH}/${id}/admin-note`);
 }

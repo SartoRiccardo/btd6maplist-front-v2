@@ -21,6 +21,7 @@ const props = withDefaults(
     emptyMessage?: string;
     showFilters?: boolean;
     mapDisplay?: "hidden" | "minimal" | "detail";
+    includeAdminNote?: boolean;
   }>(),
   {
     perPage: 25,
@@ -59,10 +60,11 @@ const { data: response, isLoading } = useCompletions(
     ...props.params,
     page: page.value,
     per_page: props.perPage,
-    include:
-      props.mapDisplay === "detail"
-        ? "players.flair,map.metadata"
-        : "players.flair",
+    include: [
+      "players.flair",
+      ...(props.mapDisplay === "detail" ? ["map.metadata"] : []),
+      ...(props.includeAdminNote ? ["admin_note"] : []),
+    ].join(","),
     black_border: filterBB.value,
     no_geraldo: filterNoGeraldo.value,
     lcc: filterLCC.value,

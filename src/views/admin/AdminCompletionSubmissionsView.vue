@@ -8,8 +8,11 @@ import {
   useUpdateCompletion,
   completionQueryKeys,
 } from "@/services/api/completions/queries";
+import { ApiError } from "@/services/api/client";
+import { parseApiErrors } from "@/services/api/formErrors";
 import { permissions } from "@/constants/permissions";
 import { provideCompletionActions } from "@/composables/useCompletionActions";
+import { toast } from "vue-sonner";
 import CompletionList from "@/components/completions/CompletionList.vue";
 import ConfirmModal from "@/components/common/ConfirmModal.vue";
 import type { CompletionDetail } from "@/services/api/completions/types";
@@ -32,22 +35,33 @@ const isDisabled = computed(
 provideCompletionActions({
   disabled: isDisabled,
   shouldShowActions: (completion) =>
-    completion.accepted_by == null && completion.deleted_on == null,
+    completion.accepted_by == null &&
+    completion.deleted_on == null &&
+    !completion.admin_note,
   onApprove: async (completion: CompletionDetail) => {
     const confirmed = await approveModal.value!.confirm();
     if (!confirmed) return;
-    await updateCompletion({
-      id: completion.id,
-      data: {
-        format_id: completion.format_id,
-        players: completion.players.map((p) => p.discord_id),
-        black_border: completion.black_border,
-        no_geraldo: completion.no_geraldo,
-        lcc: completion.lcc,
-        accept: true,
-        additional_image_proofs: [],
-      },
-    });
+    try {
+      await updateCompletion({
+        id: completion.id,
+        data: {
+          format_id: completion.format_id,
+          players: completion.players.map((p) => p.discord_id),
+          black_border: completion.black_border,
+          no_geraldo: completion.no_geraldo,
+          lcc: completion.lcc,
+          accept: true,
+          additional_image_proofs: [],
+        },
+      });
+    } catch (error: unknown) {
+      if (error instanceof ApiError) {
+        const result = parseApiErrors(error);
+        toast.error(result.message ?? "Something went wrong. Please try again.");
+      } else {
+        toast.error("Something went wrong. Please try again.");
+      }
+    }
   },
   onReject: async (completion: CompletionDetail) => {
     const confirmed = await rejectModal.value!.confirm();
@@ -85,6 +99,7 @@ const allowedFormatIds = computed(() => {
       }"
       :show-filters="false"
       map-display="detail"
+      :include-admin-note="true"
       empty-message="No pending completions."
     />
     <p

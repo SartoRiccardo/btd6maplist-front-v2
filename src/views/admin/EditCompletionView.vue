@@ -22,6 +22,7 @@ import Button from "@/components/ui/Button.vue";
 import LinkButton from "@/components/ui/LinkButton.vue";
 import UserEntry from "@/components/users/UserEntry.vue";
 import CompletionProofs from "@/components/completions/CompletionProofs.vue";
+import CompletionAdminNote from "@/components/completions/CompletionAdminNote.vue";
 import CompletionForm, {
   type CompletionFormModel,
 } from "@/components/completions/CompletionForm.vue";
@@ -33,7 +34,7 @@ const auth = useAuthStore();
 const id = computed(() => Number(route.params["id"]));
 
 const { data: completionData, isLoading: completionLoading } =
-  useCompletion(id);
+  useCompletion(id, { include: "accepted_by.flair,admin_note" });
 const { data: formatsResponse, isLoading: formatsLoading } = useFormats();
 
 const isLoading = computed(
@@ -234,14 +235,20 @@ async function handleSave() {
         This completion was deleted.
       </p>
 
+      <CompletionAdminNote
+        v-if="completionData.admin_note"
+        :note="completionData.admin_note"
+        class="mt-6"
+      />
+
       <div class="flex justify-between mt-6">
         <template v-if="!isDeleted">
-          <Button :disabled="busy" @click="handleDelete">Delete</Button>
+          <Button :disabled="busy || !!completionData.admin_note" @click="handleDelete">Delete</Button>
           <div class="flex gap-2">
             <LinkButton :to="cancelUrl" :disabled="busy" @click="handleCancel"
               >Cancel</LinkButton
             >
-            <Button :disabled="busy" @click="handleSave">Save</Button>
+            <Button :disabled="busy || !!completionData.admin_note" @click="handleSave">Save</Button>
           </div>
         </template>
         <LinkButton v-else :to="cancelUrl" @click="handleCancel"

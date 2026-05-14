@@ -11,6 +11,7 @@ import { RouterLink } from "vue-router";
 import Badge from "@/components/common/Badge.vue";
 import Button from "@/components/ui/Button.vue";
 import Tooltip from "@/components/ui/Tooltip.vue";
+import CompletionAdminNote from "@/components/completions/CompletionAdminNote.vue";
 
 const props = defineProps<{
   completion: Completion;
@@ -192,9 +193,12 @@ const difficultyInfo = computed(() => {
 
       <!-- Actions -->
       <div class="flex gap-1">
-        <RouterLink v-if="showEdit" :to="editUrl!">
-          <Button><i class="bi bi-pencil-fill" /></Button>
-        </RouterLink>
+        <template v-if="showEdit">
+          <RouterLink v-if="!completion.admin_note" :to="editUrl!">
+            <Button><i class="bi bi-pencil-fill" /></Button>
+          </RouterLink>
+          <Button v-else disabled><i class="bi bi-pencil-fill" /></Button>
+        </template>
         <Button @click="emit('toggleDetail')">
           <i class="bi bi-search" />
         </Button>
@@ -208,9 +212,12 @@ const difficultyInfo = computed(() => {
           <slot />
         </div>
         <div class="flex gap-1 shrink-0">
-          <RouterLink v-if="showEdit" :to="editUrl!">
-            <Button><i class="bi bi-pencil-fill" /></Button>
-          </RouterLink>
+          <template v-if="showEdit">
+            <RouterLink v-if="!completion.admin_note" :to="editUrl!">
+              <Button><i class="bi bi-pencil-fill" /></Button>
+            </RouterLink>
+            <Button v-else disabled><i class="bi bi-pencil-fill" /></Button>
+          </template>
           <Button @click="emit('toggleDetail')">
             <i class="bi bi-search" />
           </Button>
@@ -269,6 +276,13 @@ const difficultyInfo = computed(() => {
         </slot>
       </div>
     </div>
+
+    <!-- Admin note -->
+    <CompletionAdminNote
+      v-if="completion.admin_note"
+      :note="completion.admin_note"
+      class="mt-2"
+    />
 
     <!-- Expanded detail -->
     <div v-if="expanded" class="border-t border-(--color-primary) mt-2 pt-2">

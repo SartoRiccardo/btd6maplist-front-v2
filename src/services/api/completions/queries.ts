@@ -6,10 +6,12 @@ import {
   type UseQueryOptions,
 } from "@tanstack/vue-query";
 import {
+  deleteAdminNote,
   deleteCompletion,
   getCompletion,
   getCompletions,
   saveCompletion,
+  setAdminNote,
   submitCompletion,
   updateCompletion,
 } from "./index";
@@ -107,6 +109,37 @@ export function useUpdateCompletion() {
       queryClient.invalidateQueries({
         queryKey: completionQueryKeys.detail(id),
       });
+      queryClient.invalidateQueries({ queryKey: completionQueryKeys.all });
+    },
+  });
+}
+
+/**
+ * Mutation hook to set the admin note on a completion.
+ */
+export function useSetAdminNote() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, note }: { id: number; note: string }) =>
+      setAdminNote(id, note),
+    onSuccess: (_data, { id }) => {
+      queryClient.invalidateQueries({ queryKey: completionQueryKeys.detail(id) });
+      queryClient.invalidateQueries({ queryKey: completionQueryKeys.all });
+    },
+  });
+}
+
+/**
+ * Mutation hook to delete the admin note on a completion.
+ */
+export function useDeleteAdminNote() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: number) => deleteAdminNote(id),
+    onSuccess: (_data, id) => {
+      queryClient.invalidateQueries({ queryKey: completionQueryKeys.detail(id) });
       queryClient.invalidateQueries({ queryKey: completionQueryKeys.all });
     },
   });

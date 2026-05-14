@@ -25,6 +25,7 @@ export interface Completion {
   subm_notes: string | null;
   subm_proof_img: CompletionProofImage[];
   subm_proof_vid: string[];
+  admin_note?: string | null;
   map: Map;
   is_current_lcc: boolean;
 }
