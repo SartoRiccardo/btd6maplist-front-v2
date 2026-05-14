@@ -57,6 +57,8 @@ const formModel = ref<CompletionFormModel>({
   lcc_enabled: false,
   lcc_leftover: null,
   players: [""],
+  additional_image_proofs: [],
+  existing_image_proofs: [],
 });
 
 const proofImages = ref<File[]>([]);

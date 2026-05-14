@@ -90,7 +90,7 @@ export interface FormatPresentationFormModel {
   name: string;
   slug: string;
   hidden: boolean;
-  map_submission_status: "closed" | "open" | "open_chimps";
+  map_submission_status: "closed" | "open" | "open_chimps" | "with_recording";
   run_submission_status: "closed" | "open" | "lcc_only";
   is_lcc_leaderboard_enabled: boolean;
   is_no_geraldo_leaderboard_enabled: boolean;

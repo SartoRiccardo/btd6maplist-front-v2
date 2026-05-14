@@ -45,6 +45,7 @@ provideCompletionActions({
         no_geraldo: completion.no_geraldo,
         lcc: completion.lcc,
         accept: true,
+        additional_image_proofs: [],
       },
     });
   },
