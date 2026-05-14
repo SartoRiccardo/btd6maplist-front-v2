@@ -42,8 +42,7 @@ function buildCompletionParams(params?: GetCompletionsParams): string {
   if (params.black_border != null)
     searchParams.set("black_border", params.black_border);
   if (params.sort_by != null) searchParams.set("sort_by", params.sort_by);
-  if (params.sort_order != null)
-    searchParams.set("sort_order", params.sort_order);
+  searchParams.set("sort_order", params.sort_order ?? "desc");
   if (params.include != null) searchParams.set("include", params.include);
 
   const queryString = searchParams.toString();

@@ -18,7 +18,6 @@ const { data: creditUser2 } = useUser("1077309729942024302", {
 });
 const { data: recentCompletions } = useCompletions({
   sort_by: "created_on",
-  sort_order: "desc",
   per_page: 6,
   include: "players.flair",
 });
