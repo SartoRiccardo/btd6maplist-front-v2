@@ -7,6 +7,7 @@ import {
   useUpdateCompletion,
   useDeleteCompletion,
   useSetAdminNote,
+  useDeleteAdminNote,
 } from "@/services/api/completions/queries";
 import { useFormats } from "@/services/api/formats/queries";
 import type {
@@ -115,6 +116,7 @@ function handleCancel(e: MouseEvent) {
 const updateMutation = useUpdateCompletion();
 const deleteMutation = useDeleteCompletion();
 const setAdminNoteMutation = useSetAdminNote();
+const deleteAdminNoteMutation = useDeleteAdminNote();
 
 const addNoteModal = ref<InstanceType<typeof PromptModal> | null>(null);
 
@@ -254,6 +256,7 @@ async function handleSave() {
         v-if="completionData.admin_note"
         :note="completionData.admin_note"
         class="mt-6"
+        @delete="deleteAdminNoteMutation.mutateAsync(id)"
       />
 
       <div class="flex justify-between mt-6">

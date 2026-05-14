@@ -8,6 +8,7 @@ import { useFormats } from "@/services/api/formats/queries";
 import { useAuthStore } from "@/stores/auth";
 import { heroId } from "@/utils/heroes";
 import { RouterLink } from "vue-router";
+import { useDeleteAdminNote } from "@/services/api/completions/queries";
 import Badge from "@/components/common/Badge.vue";
 import Button from "@/components/ui/Button.vue";
 import Tooltip from "@/components/ui/Tooltip.vue";
@@ -26,6 +27,7 @@ const emit = defineEmits<{
 
 const auth = useAuthStore();
 const { data: formats } = useFormats();
+const { mutateAsync: deleteAdminNote } = useDeleteAdminNote();
 
 const hideNoGeraldo = computed(() => {
   const fmt = formats.value?.data.find(
@@ -282,6 +284,7 @@ const difficultyInfo = computed(() => {
       v-if="completion.admin_note"
       :note="completion.admin_note"
       class="mt-2"
+      @delete="deleteAdminNote(completion.id)"
     />
 
     <!-- Expanded detail -->
