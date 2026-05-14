@@ -10,6 +10,7 @@ import { getRetroMaps } from "@/services/api/retro-maps";
 import Button from "@/components/ui/Button.vue";
 import ImageDrop from "@/components/ui/ImageDrop.vue";
 import AsyncSelect from "@/components/ui/AsyncSelect.vue";
+import UrlListInput from "@/components/completions/UrlListInput.vue";
 
 interface ProposedOption {
   index: number;
@@ -21,6 +22,7 @@ export interface MapSubmissionFormModel {
   proposed: number | null;
   proof_image: File | null;
   subm_notes: string;
+  video_proof_urls: string[];
 }
 
 const props = withDefaults(
@@ -31,12 +33,14 @@ const props = withDefaults(
     eligibleFormats: Format[];
     disabledFormatIds?: number[];
     proposedDifficulties: string[];
+    videoRequired?: boolean;
   }>(),
   {
     disabled: false,
     externalErrors: () => [],
     disabledFormatIds: () => [],
     proposedDifficulties: () => [],
+    videoRequired: false,
   },
 );
 
@@ -115,6 +119,15 @@ const showProposedCategory = computed(
 
 // --- Validation ---
 
+function isValidUrl(str: string): boolean {
+  try {
+    new URL(str);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 const ownErrors = computed<FormFieldError[]>(() => {
   const errors: FormFieldError[] = [];
 
@@ -142,6 +155,27 @@ const ownErrors = computed<FormFieldError[]>(() => {
     });
   }
 
+  const nonEmptyVideos = props.modelValue.video_proof_urls.filter(
+    (v) => v.trim() !== "",
+  );
+  if (props.videoRequired && nonEmptyVideos.length === 0) {
+    errors.push({
+      path: "video_proof_urls",
+      message: "At least one video URL is required.",
+      source: "validation",
+    });
+  }
+  for (const url of nonEmptyVideos) {
+    if (!isValidUrl(url)) {
+      errors.push({
+        path: "video_proof_urls",
+        message: `"${url}" is not a valid URL.`,
+        source: "validation",
+      });
+      break;
+    }
+  }
+
   return errors;
 });
 
@@ -160,6 +194,12 @@ useEmitOnChange(activeErrors, (errors) => emit("errors", errors));
 
 function fieldError(field: string): string | undefined {
   return activeErrors.value.find((e) => e.path === field)?.message;
+}
+
+function indexedFieldErrors(field: string, length: number): (string | undefined)[] {
+  return Array.from({ length }, (_, i) =>
+    activeErrors.value.find((e) => e.path === `${field}.${i}`)?.message,
+  );
 }
 </script>
 
@@ -181,6 +221,20 @@ function fieldError(field: string): string | undefined {
         {{ imageError }}
       </p>
     </div>
+
+    <!-- Video URLs -->
+    <UrlListInput
+      :model-value="modelValue.video_proof_urls"
+      :disabled="disabled"
+      :required="videoRequired"
+      label="Video Proof"
+      :max="5"
+      :item-errors="indexedFieldErrors('video_proof_urls', modelValue.video_proof_urls.length)"
+      @update:model-value="update({ video_proof_urls: $event })"
+    />
+    <p v-if="fieldError('video_proof_urls')" class="text-(--color-danger) text-sm -mt-4">
+      {{ fieldError("video_proof_urls") }}
+    </p>
 
     <!-- List Picker -->
     <div>

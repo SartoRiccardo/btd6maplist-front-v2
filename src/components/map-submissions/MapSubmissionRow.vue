@@ -164,6 +164,21 @@ const createdOn = computed(() => {
       &laquo;{{ submission.subm_notes }}&raquo;
     </p>
 
+    <ul
+      v-if="submission.video_proof_urls.length > 0"
+      class="list-['-_'] list-inside text-sm mt-2 mb-0 space-y-0.5"
+    >
+      <li v-for="url in submission.video_proof_urls" :key="url">
+        <a
+          :href="url"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-(--color-highlight) hover:text-(--color-active) break-all"
+          >{{ url }}</a
+        >
+      </li>
+    </ul>
+
     <ImageLightbox ref="lightbox" />
   </div>
 </template>

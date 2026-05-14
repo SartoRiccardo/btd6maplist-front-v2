@@ -6,11 +6,13 @@ const props = withDefaults(
     required?: boolean;
     label?: string;
     max?: number;
+    itemErrors?: (string | undefined)[];
   }>(),
   {
     disabled: false,
     required: false,
     max: 10,
+    itemErrors: () => [],
   },
 );
 
@@ -48,24 +50,30 @@ function addUrl() {
     </label>
 
     <div class="flex flex-col gap-2">
-      <div v-for="(url, i) in modelValue" :key="i" class="flex gap-2">
-        <input
-          type="url"
-          :value="url"
-          :disabled="disabled"
-          placeholder="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-          class="flex-1 px-3 py-2 rounded-(--radius-btn) bg-(--color-primary) text-(--color-text) border border-(--color-contrast) focus:outline-none focus:border-(--color-active)"
-          @input="updateAt(i, ($event.target as HTMLInputElement).value)"
-        />
-        <button
-          v-if="modelValue.length > 1"
-          type="button"
-          :disabled="disabled"
-          class="px-2 py-2 rounded-(--radius-btn) text-(--color-text-muted) hover:text-(--color-danger) transition-colors disabled:opacity-50"
-          @click="removeAt(i)"
-        >
-          <i class="bi bi-trash" />
-        </button>
+      <div v-for="(url, i) in modelValue" :key="i">
+        <div class="flex gap-2">
+          <input
+            type="url"
+            :value="url"
+            :disabled="disabled"
+            placeholder="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+            class="flex-1 px-3 py-2 rounded-(--radius-btn) bg-(--color-primary) text-(--color-text) border border-(--color-contrast) focus:outline-none focus:border-(--color-active)"
+            :class="{ 'border-(--color-danger)!': itemErrors?.[i] }"
+            @input="updateAt(i, ($event.target as HTMLInputElement).value)"
+          />
+          <button
+            v-if="modelValue.length > 1"
+            type="button"
+            :disabled="disabled"
+            class="px-2 py-2 rounded-(--radius-btn) text-(--color-text-muted) hover:text-(--color-danger) transition-colors disabled:opacity-50"
+            @click="removeAt(i)"
+          >
+            <i class="bi bi-trash" />
+          </button>
+        </div>
+        <p v-if="itemErrors?.[i]" class="text-(--color-danger) text-sm mt-1">
+          {{ itemErrors[i] }}
+        </p>
       </div>
     </div>
 

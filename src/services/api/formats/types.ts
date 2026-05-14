@@ -4,7 +4,7 @@ export interface UpdateFormatRequest {
   name: string;
   hidden: boolean;
   run_submission_status: "closed" | "open" | "lcc_only";
-  map_submission_status: "closed" | "open" | "open_chimps";
+  map_submission_status: "closed" | "open" | "open_chimps" | "with_recording";
   emoji?: string | null;
   proposed_difficulties?: unknown[] | null;
   is_no_geraldo_enabled?: boolean | null;
@@ -35,7 +35,7 @@ export interface Format {
   discord_server_url: string | null;
   hidden: boolean;
   run_submission_status: "closed" | "open" | "lcc_only";
-  map_submission_status: "closed" | "open" | "open_chimps";
+  map_submission_status: "closed" | "open" | "open_chimps" | "with_recording";
   is_no_geraldo_enabled: boolean;
   is_lcc_leaderboard_enabled: boolean;
   is_no_geraldo_leaderboard_enabled: boolean;

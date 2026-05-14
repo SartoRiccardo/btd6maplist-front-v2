@@ -13,6 +13,7 @@ export interface MapSubmission {
   rejected_by: string | null;
   created_on: string;
   completion_proof: string;
+  video_proof_urls: string[];
   status: MapSubmissionStatus;
   submitter: User;
   rejecter: User | null;
@@ -38,6 +39,7 @@ export interface CreateMapSubmissionRequest {
   proposed: number;
   completion_proof: File;
   subm_notes?: string;
+  video_proof_urls?: string[];
 }
 
 export interface CreateMapSubmissionResponse {

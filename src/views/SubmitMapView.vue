@@ -84,6 +84,7 @@ const formModel = ref<MapSubmissionFormModel>({
   proposed: null,
   proof_image: null,
   subm_notes: "",
+  video_proof_urls: [],
 });
 
 // Auto-select format from ?on= param or when only one eligible
@@ -124,6 +125,10 @@ const proposedDifficulties = computed(
   () => selectedFormat.value?.proposed_difficulties ?? [],
 );
 
+const videoRequired = computed(
+  () => selectedFormat.value?.map_submission_status === "with_recording",
+);
+
 // --- Submission ---
 
 const submitMutation = useCreateMapSubmission();
@@ -154,6 +159,7 @@ async function handleSubmit() {
       proposed: model.proposed ?? 0,
       completion_proof: model.proof_image!,
       subm_notes: model.subm_notes || undefined,
+      video_proof_urls: model.video_proof_urls.filter((v) => v.trim() !== "") || undefined,
     });
     router.push("/my-submissions/maps");
   } catch (error: unknown) {
@@ -263,6 +269,7 @@ async function handleSubmit() {
             :eligible-formats="visibleFormats"
             :disabled-format-ids="disabledFormatIds"
             :proposed-difficulties="proposedDifficulties"
+            :video-required="videoRequired"
             @errors="activeErrors = $event"
           />
 

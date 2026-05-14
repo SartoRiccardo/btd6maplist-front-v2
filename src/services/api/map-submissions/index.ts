@@ -70,6 +70,9 @@ export async function createMapSubmission(
   formData.append("proposed", data.proposed.toString());
   formData.append("completion_proof", data.completion_proof);
   if (data.subm_notes != null) formData.append("subm_notes", data.subm_notes);
+  if (data.video_proof_urls != null) {
+    for (const url of data.video_proof_urls) formData.append("video_proof_urls[]", url);
+  }
 
   return apiRequest<CreateMapSubmissionResponse>(BASE_PATH, {
     method: "POST",

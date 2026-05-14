@@ -148,6 +148,12 @@ useEmitOnChange(activeErrors, (errors) => emit("errors", errors));
 function fieldError(field: string): string | undefined {
   return activeErrors.value.find((e) => e.path === field)?.message;
 }
+
+function indexedFieldErrors(field: string, length: number): (string | undefined)[] {
+  return Array.from({ length }, (_, i) =>
+    activeErrors.value.find((e) => e.path === `${field}.${i}`)?.message,
+  );
+}
 </script>
 
 <template>
@@ -176,6 +182,7 @@ function fieldError(field: string): string | undefined {
       :required="videoRequired"
       label="Proof Videos"
       :max="10"
+      :item-errors="indexedFieldErrors('proof_videos', modelValue.proof_videos.length)"
       @update:model-value="update({ proof_videos: $event })"
     />
     <p v-if="fieldError('proof_videos')" class="text-(--color-danger) text-sm -mt-4">
