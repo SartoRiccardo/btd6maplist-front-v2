@@ -25,6 +25,8 @@ jobs:
       - run: npm run build
         env:
           VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
+          VITE_PLAUSIBLE_DATA_DOMAIN: ${{ secrets.VITE_PLAUSIBLE_DATA_DOMAIN }}
+          VITE_PLAUSIBLE_SCRIPT_SRC: ${{ secrets.VITE_PLAUSIBLE_SCRIPT_SRC }}
 
       - run: tar -czf dist.tar.gz dist/
 

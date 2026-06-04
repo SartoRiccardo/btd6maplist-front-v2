@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onErrorCaptured } from "vue";
+import { ref, onErrorCaptured, onMounted } from "vue";
 import { RouterView, useRoute } from "vue-router";
 import Navbar from "@/components/navbar/Navbar.vue";
 import Footer from "@/components/layout/Footer.vue";
@@ -16,6 +16,21 @@ const renderError = ref<unknown>(null);
 onErrorCaptured((err) => {
   renderError.value = err;
   return false;
+});
+
+// Load Plausible analytics script in production
+onMounted(() => {
+  if (
+    import.meta.env.PROD &&
+    import.meta.env['VITE_PLAUSIBLE_DATA_DOMAIN'] &&
+    import.meta.env['VITE_PLAUSIBLE_SCRIPT_SRC']
+  ) {
+    const script = document.createElement("script");
+    script.defer = true;
+    script.setAttribute("data-domain", import.meta.env['VITE_PLAUSIBLE_DATA_DOMAIN']);
+    script.src = import.meta.env['VITE_PLAUSIBLE_SCRIPT_SRC'];
+    document.head.appendChild(script);
+  }
 });
 </script>
 
