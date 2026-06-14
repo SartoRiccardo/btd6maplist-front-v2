@@ -61,6 +61,7 @@ export interface SubmitCompletionRequest {
   subm_notes?: string;
   proof_videos?: string[];
   lcc?: { leftover: number };
+  is_video_proof_public: boolean;
 }
 
 export interface SubmitCompletionResponse {
@@ -77,6 +78,7 @@ export interface SaveCompletionRequest {
   subm_notes: string | null;
   proof_videos: string[];
   lcc: { leftover: number } | null;
+  is_video_proof_public: boolean;
 }
 
 export interface UpdateCompletionRequest {

@@ -77,6 +77,7 @@ const formModel = ref<CompletionFormModel>({
   proof_videos: [""],
   lcc_enabled: false,
   lcc_leftover: null,
+  hide_videos: false,
 });
 
 // Auto-select when only one eligible format
@@ -140,6 +141,7 @@ async function handleSubmit() {
       model.lcc_enabled && model.lcc_leftover != null
         ? { leftover: model.lcc_leftover }
         : undefined,
+    is_video_proof_public: !model.hide_videos,
   };
 
   try {

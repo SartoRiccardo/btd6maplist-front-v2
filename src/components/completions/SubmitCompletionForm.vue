@@ -19,6 +19,7 @@ export interface CompletionFormModel {
   proof_videos: string[];
   lcc_enabled: boolean;
   lcc_leftover: number | null;
+  hide_videos: boolean;
 }
 
 const props = withDefaults(
@@ -174,6 +175,14 @@ function indexedFieldErrors(field: string, length: number): (string | undefined)
         {{ imageError }}
       </p>
     </div>
+
+    <!-- Hide Video Proofs -->
+    <BoxedCheckbox
+      :model-value="modelValue.hide_videos"
+      :disabled="disabled"
+      label="Hide my video proofs"
+      @update:model-value="update({ hide_videos: $event })"
+    />
 
     <!-- Proof Videos -->
     <UrlListInput

@@ -14,6 +14,7 @@ import { permissions } from "@/constants/permissions";
 import Panel from "@/components/ui/Panel.vue";
 import Button from "@/components/ui/Button.vue";
 import LinkButton from "@/components/ui/LinkButton.vue";
+import BoxedCheckbox from "@/components/ui/BoxedCheckbox.vue";
 import CompletionForm, {
   type CompletionFormModel,
 } from "@/components/completions/CompletionForm.vue";
@@ -63,6 +64,7 @@ const formModel = ref<CompletionFormModel>({
 
 const proofImages = ref<File[]>([]);
 const proofVideos = ref<string[]>([""]);
+const hideVideos = ref(false);
 const imageError = ref<string | null>(null);
 
 watch(
@@ -105,6 +107,7 @@ async function handleSubmit() {
     no_geraldo: model.no_geraldo,
     subm_notes: null,
     proof_videos: proofVideos.value.filter((v) => v.trim() !== ""),
+    is_video_proof_public: !hideVideos.value,
     lcc:
       model.lcc_enabled && model.lcc_leftover != null
         ? { leftover: model.lcc_leftover }
@@ -167,6 +170,13 @@ async function handleSubmit() {
           {{ imageError }}
         </p>
       </div>
+
+      <!-- Hide Video Proofs -->
+      <BoxedCheckbox
+        v-model="hideVideos"
+        :disabled="busy"
+        label="Hide my video proofs"
+      />
 
       <!-- Proof Videos -->
       <UrlListInput
