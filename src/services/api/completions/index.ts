@@ -112,6 +112,7 @@ export async function submitCompletion(
   }
   if (data.lcc != null)
     formData.append("lcc[leftover]", data.lcc.leftover.toString());
+  formData.append("is_video_proof_public", data.is_video_proof_public ? "1" : "0");
 
   return apiRequest<SubmitCompletionResponse>(`${BASE_PATH}/submit`, {
     method: "POST",
@@ -139,6 +140,7 @@ function buildCompletionFormData(data: SaveCompletionRequest): FormData {
   }
   if (data.lcc != null)
     formData.append("lcc[leftover]", data.lcc.leftover.toString());
+  formData.append("is_video_proof_public", data.is_video_proof_public ? "1" : "0");
   return formData;
 }
 
