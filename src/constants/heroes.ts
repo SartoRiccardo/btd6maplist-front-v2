@@ -3,6 +3,7 @@ export const HEROES = [
   "ben",
   "brickell",
   "churchill",
+  "dan",
   "corvus",
   "etienne",
   "ezili",
