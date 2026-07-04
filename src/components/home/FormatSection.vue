@@ -1,15 +1,22 @@
 <script setup lang="ts">
+import { computed } from "vue";
 import { RouterLink } from "vue-router";
 import type { Format } from "@/services/api/formats/types";
 import Btd6Map from "@/components/maps/Btd6Map.vue";
 
-defineProps<{
+const props = defineProps<{
   format: Format;
   heroUrl: string;
   iconUrl: string;
   inverted?: boolean;
   bordered?: boolean;
 }>();
+
+const sanitizedFormatName = computed(() => {
+	return props.format.name.toLowerCase().startsWith("the ")
+		? props.format.name.slice(4)
+		: props.format.name;
+});
 </script>
 
 <template>
@@ -61,6 +68,11 @@ defineProps<{
         {{ format.name }}
       </h2>
       <p class="px-4 md:px-12">{{ format.description }}</p>
+      <p v-if="format.discord_server_url" class="mt-2 text-center">
+        <a :href="format.discord_server_url" target="_blank">
+          <i class="bi bi-discord" /> Join the {{ sanitizedFormatName }} Discord!
+        </a>
+      </p>
       <div class="pt-6">
         <RouterLink
           :to="`/maps/${format.slug}`"
