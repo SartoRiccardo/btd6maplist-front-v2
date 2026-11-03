@@ -48,6 +48,8 @@ const showEdit = computed(
     ),
 );
 
+const isPinned = computed(() => props.completion.is_pinned === true);
+
 const isDeleted = computed(() => props.completion.deleted_on != null);
 const isPending = computed(() => props.completion.accepted_by == null);
 
@@ -82,6 +84,7 @@ const difficultyInfo = computed(() => {
 <template>
   <div
     class="bg-(--color-secondary) rounded-(--radius-panel) my-2 py-2 px-3 relative"
+    :class="isPinned && 'pinned-completion'"
   >
     <span
       v-if="statusPill"
@@ -298,5 +301,9 @@ const difficultyInfo = computed(() => {
 .medal-blocked {
   filter: brightness(0%) drop-shadow(1px 1px 0 white)
     drop-shadow(-1px -1px 0 white);
+}
+
+.pinned-completion {
+  box-shadow: 0 0 0.4rem 0 var(--color-highlight);
 }
 </style>

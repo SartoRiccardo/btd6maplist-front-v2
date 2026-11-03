@@ -10,9 +10,11 @@ import {
   deleteCompletion,
   getCompletion,
   getCompletions,
+  pinCompletion,
   saveCompletion,
   setAdminNote,
   submitCompletion,
+  unpinCompletion,
   updateCompletion,
 } from "./index";
 import type {
@@ -153,6 +155,40 @@ export function useDeleteCompletion() {
 
   return useMutation({
     mutationFn: (id: number) => deleteCompletion(id),
+    onSuccess: (_data, id) => {
+      queryClient.invalidateQueries({
+        queryKey: completionQueryKeys.detail(id),
+      });
+      queryClient.invalidateQueries({ queryKey: completionQueryKeys.all });
+    },
+  });
+}
+
+/**
+ * Mutation hook to pin a completion to the authenticated user's profile.
+ */
+export function usePinCompletion() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: number) => pinCompletion(id),
+    onSuccess: (_data, id) => {
+      queryClient.invalidateQueries({
+        queryKey: completionQueryKeys.detail(id),
+      });
+      queryClient.invalidateQueries({ queryKey: completionQueryKeys.all });
+    },
+  });
+}
+
+/**
+ * Mutation hook to unpin a completion from the authenticated user's profile.
+ */
+export function useUnpinCompletion() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: number) => unpinCompletion(id),
     onSuccess: (_data, id) => {
       queryClient.invalidateQueries({
         queryKey: completionQueryKeys.detail(id),

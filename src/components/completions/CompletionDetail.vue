@@ -1,10 +1,18 @@
 <script setup lang="ts">
 import { computed, toValue } from "vue";
+import { useIsFetching } from "@tanstack/vue-query";
 import type { CompletionDetail } from "@/services/api/completions/types";
 import type { User } from "@/services/api/users/types";
 import { useAuthStore } from "@/stores/auth";
 import { permissions } from "@/constants/permissions";
 import { useCompletionActions } from "@/composables/useCompletionActions";
+import {
+  completionQueryKeys,
+  usePinCompletion,
+  useUnpinCompletion,
+} from "@/services/api/completions/queries";
+import { toast } from "vue-sonner";
+import { ApiError } from "@/services/api/client";
 import UserEntry from "@/components/users/UserEntry.vue";
 import LinkButton from "@/components/ui/LinkButton.vue";
 import Button from "@/components/ui/Button.vue";
@@ -16,6 +24,14 @@ const props = defineProps<{
 
 const auth = useAuthStore();
 const actions = useCompletionActions();
+const {
+  mutateAsync: pinCompletion,
+  isPending: pinMutationPending,
+} = usePinCompletion();
+const {
+  mutateAsync: unpinCompletion,
+  isPending: unpinMutationPending,
+} = useUnpinCompletion();
 
 const acceptedByUser = computed<User | null>(() => {
   const ab = props.completion.accepted_by;
@@ -34,6 +50,33 @@ const canEdit = computed(
     !isOwnCompletion.value &&
     auth.hasPermission(permissions.completion.edit, props.completion.format_id),
 );
+
+const isPinned = computed(() => props.completion.is_pinned === true);
+// Stay "loading" through the mutation AND the refetch it triggers
+const completionsFetching = useIsFetching({
+  queryKey: completionQueryKeys.all,
+});
+const pinPending = computed(
+  () =>
+    pinMutationPending.value ||
+    unpinMutationPending.value ||
+    completionsFetching.value > 0,
+);
+
+const togglePin = () => {
+  if (pinPending.value) return;
+  try {
+    isPinned.value
+      ? unpinCompletion(props.completion.id)
+      : pinCompletion(props.completion.id);
+  } catch (error) {
+    toast.error(
+      error instanceof ApiError
+        ? error.message
+        : "Failed to update pin. Please try again.",
+    );
+  }
+};
 
 const isActionsDisabled = computed(() => toValue(actions.disabled) ?? false);
 const showActions = computed(
@@ -58,17 +101,26 @@ const showActions = computed(
       </template>
     </CompletionProofs>
 
-    <!-- Admin actions -->
+    <!-- Actions -->
     <div
       v-if="
         showActions &&
-        (canEdit ||
+        (isOwnCompletion ||
+          canEdit ||
           (isPending &&
             !isOwnCompletion &&
             (actions.onApprove || actions.onReject)))
       "
       class="flex justify-end gap-2 mb-4"
     >
+      <Button
+        v-if="isOwnCompletion"
+        :disabled="pinPending"
+        @click="togglePin"
+      >
+        <i :class="isPinned ? 'bi bi-pin-fill' : 'bi bi-pin-angle'" class="mr-1" />
+        {{ isPinned ? "Unpin" : "Pin" }}
+      </Button>
       <Button
         v-if="canEdit && !completion.admin_note && actions.onAddNote"
         :disabled="isActionsDisabled"

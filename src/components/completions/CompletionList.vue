@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { useCompletions } from "@/services/api/completions/queries";
 import { useFormats } from "@/services/api/formats/queries";
 import type { GetCompletionsParams } from "@/services/api/completions/types";
@@ -25,10 +26,12 @@ const props = withDefaults(
   }>(),
   {
     perPage: 25,
-    emptyMessage: "No completions yet.",
+    emptyMessage: undefined,
     showFilters: true,
   },
 );
+
+const { t } = useI18n({ inheritLocale: true });
 
 const { data: formatsResponse } = useFormats();
 const visibleFormatIds = computed(
@@ -161,7 +164,7 @@ function toggleDetail(id: number) {
   </template>
 
   <p v-else class="text-center text-(--color-text-muted)">
-    {{ emptyMessage }}
+    {{ emptyMessage ?? t("noCompletions") }}
   </p>
 
   <Pagination
@@ -172,3 +175,11 @@ function toggleDetail(id: number) {
     @update:current-page="page = $event"
   />
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "noCompletions": "No completions yet."
+  }
+}
+</i18n>

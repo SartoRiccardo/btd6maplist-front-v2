@@ -41,6 +41,7 @@ function buildCompletionParams(params?: GetCompletionsParams): string {
   if (params.lcc != null) searchParams.set("lcc", params.lcc);
   if (params.black_border != null)
     searchParams.set("black_border", params.black_border);
+  if (params.is_pinned != null) searchParams.set("is_pinned", params.is_pinned);
   if (params.sort_by != null) searchParams.set("sort_by", params.sort_by);
   searchParams.set("sort_order", params.sort_order ?? "desc");
   if (params.include != null) searchParams.set("include", params.include);
@@ -194,6 +195,26 @@ export async function updateCompletion(
  */
 export async function deleteCompletion(id: number): Promise<void> {
   return apiRequest<void>(`${BASE_PATH}/${id}`, { method: "DELETE" });
+}
+
+/**
+ * POST /completions/:id/pin
+ *
+ * Pin a completion to the authenticated user's profile.
+ * Only a player on the completion may pin it. Idempotent.
+ */
+export async function pinCompletion(id: number): Promise<void> {
+  return apiRequest<void>(`${BASE_PATH}/${id}/pin`, { method: "POST" });
+}
+
+/**
+ * POST /completions/:id/unpin
+ *
+ * Remove the authenticated user's pin on a completion.
+ * Only a player on the completion may unpin it. Idempotent.
+ */
+export async function unpinCompletion(id: number): Promise<void> {
+  return apiRequest<void>(`${BASE_PATH}/${id}/unpin`, { method: "POST" });
 }
 
 /**

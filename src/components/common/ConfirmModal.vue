@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import Button from "@/components/ui/Button.vue";
 
 const props = withDefaults(
@@ -7,8 +8,10 @@ const props = withDefaults(
     confirmLabel?: string;
     danger?: boolean;
   }>(),
-  { confirmLabel: "Confirm", danger: false },
+  { confirmLabel: undefined, danger: false },
 );
+
+const { t } = useI18n({ inheritLocale: true });
 
 const open = ref(false);
 const resolvePromise = ref<((value: boolean) => void) | null>(null);
@@ -55,16 +58,16 @@ defineExpose({ confirm });
           @click.stop
         >
           <slot>
-            <p class="text-center mb-0">Are you sure?</p>
+            <p class="text-center mb-0">{{ t("areYouSure") }}</p>
           </slot>
 
           <div class="flex justify-center gap-3 mt-4">
-            <Button @click="respond(false)">Cancel</Button>
+            <Button @click="respond(false)">{{ t("common.cancel") }}</Button>
             <Button
               :active="!props.danger"
               :danger="props.danger"
               @click="respond(true)"
-              >{{ props.confirmLabel }}</Button
+              >{{ props.confirmLabel ?? t("confirm") }}</Button
             >
           </div>
         </div>
@@ -72,6 +75,15 @@ defineExpose({ confirm });
     </Transition>
   </Teleport>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "areYouSure": "Are you sure?",
+    "confirm": "Confirm"
+  }
+}
+</i18n>
 
 <style scoped>
 .confirm-modal-enter-active,

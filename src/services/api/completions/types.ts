@@ -28,6 +28,7 @@ export interface Completion {
   admin_note?: string | null;
   map: Map;
   is_current_lcc: boolean;
+  is_pinned?: boolean;
 }
 
 export interface CompletionWithMapMetadata extends Omit<Completion, "map"> {
@@ -103,7 +104,8 @@ export interface GetCompletionsParams {
   no_geraldo?: FilterOption;
   lcc?: FilterOption;
   black_border?: FilterOption;
-  sort_by?: "created_on";
+  is_pinned?: FilterOption;
+  sort_by?: "created_on" | "pinned";
   sort_order?: SortOrder;
   include?: string;
 }

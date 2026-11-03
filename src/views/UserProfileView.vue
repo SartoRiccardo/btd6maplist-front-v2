@@ -144,6 +144,7 @@ watch(
           player_id: userId,
           deleted: 'exclude',
           pending: 'exclude',
+          sort_by: 'pinned',
         }"
         empty-message="No completions yet."
       >

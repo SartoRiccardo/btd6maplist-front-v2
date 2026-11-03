@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import Button from "@/components/ui/Button.vue";
 
 const props = withDefaults(
@@ -9,8 +10,10 @@ const props = withDefaults(
     placeholder?: string;
     rows?: number;
   }>(),
-  { title: "", confirmLabel: "Submit", placeholder: "", rows: 4 },
+  { title: "", confirmLabel: undefined, placeholder: "", rows: 4 },
 );
+
+const { t } = useI18n({ inheritLocale: true });
 
 const open = ref(false);
 const text = ref("");
@@ -63,9 +66,9 @@ defineExpose({ prompt });
             class="w-full px-3 py-2 rounded-(--radius-btn) bg-(--color-primary) text-(--color-text) border border-(--color-contrast) focus:outline-none focus:border-(--color-active) resize-y"
           />
           <div class="flex justify-center gap-3 mt-4">
-            <Button @click="respond(null)">Cancel</Button>
+            <Button @click="respond(null)">{{ t("common.cancel") }}</Button>
             <Button :disabled="!text.trim()" active @click="respond(text.trim())">
-              {{ props.confirmLabel }}
+              {{ props.confirmLabel ?? t("submit") }}
             </Button>
           </div>
         </div>
@@ -73,6 +76,14 @@ defineExpose({ prompt });
     </Transition>
   </Teleport>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "submit": "Submit"
+  }
+}
+</i18n>
 
 <style scoped>
 .confirm-modal-enter-active,
