@@ -133,14 +133,20 @@ function handleLogout() {
                 class="absolute right-full top-0 mr-2 pointer-events-none opacity-0 translate-x-2 transition-all duration-200 ease theme-panel"
               >
                 <ul
-                  class="bg-(--color-secondary) px-3 py-2 rounded-lg list-none min-w-44"
+                  class="bg-(--color-secondary) px-2 py-1 rounded-lg list-none min-w-44 text-[1.5rem]"
                 >
-                  <li v-for="theme in themes" :key="theme.id" class="py-1">
+                  <li v-for="theme in themes" :key="theme.id">
                     <button
                       type="button"
                       @click="themeStore.setTheme(theme.id)"
-                      class="flex items-center gap-2 w-full text-left bg-transparent border-none text-(--color-text) hover:text-(--color-active) cursor-pointer px-1 py-1 rounded"
+                      class="flex items-center gap-2 w-full text-left bg-transparent border-none text-(--color-text) hover:text-(--color-active) cursor-pointer px-1 py-0.5 rounded"
                     >
+                      <span
+                        class="w-4 h-4 rounded-full shrink-0 border border-(--color-contrast) translate-y-[0.1rem]"
+                        :style="{
+                          background: `linear-gradient(135deg, ${theme.colors.primary} 50%, ${theme.colors.highlight} 50%)`,
+                        }"
+                      />
                       <span class="whitespace-nowrap uppercase">{{
                         theme.name
                       }}</span>

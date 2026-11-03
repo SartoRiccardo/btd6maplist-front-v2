@@ -102,6 +102,23 @@ export const themes: Theme[] = [
       fontBorderActive: "#00ff00",
     },
   },
+  {
+    id: "colorblind-test",
+    name: "Colorblind test",
+    colors: {
+      primary: "#4d5d4a",
+      secondary: "#526152",
+      highlight: "#565e51",
+      active: "#5a6053",
+      contrast: "#4f5c4e",
+      text: "#575e54",
+      textMuted: "#545b52",
+      danger: "#53594f",
+      textActive: "#5a6157",
+      fontBorder: "#4e574e",
+      fontBorderActive: "#4f584e",
+    },
+  },
 ];
 
 export const DEFAULT_THEME_ID = "deep-ocean";
