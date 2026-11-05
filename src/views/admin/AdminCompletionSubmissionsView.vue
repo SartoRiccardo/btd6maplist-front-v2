@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { useIsFetching } from "@tanstack/vue-query";
+import { useI18n } from "vue-i18n";
 import { useAuthStore } from "@/stores/auth";
 import { useFormats } from "@/services/api/formats/queries";
 import {
@@ -18,6 +19,8 @@ import CompletionList from "@/components/completions/CompletionList.vue";
 import ConfirmModal from "@/components/common/ConfirmModal.vue";
 import PromptModal from "@/components/common/PromptModal.vue";
 import type { CompletionDetail } from "@/services/api/completions/types";
+
+const { t } = useI18n({ inheritLocale: true });
 
 const auth = useAuthStore();
 const { data: formatsResponse } = useFormats();
@@ -61,9 +64,9 @@ provideCompletionActions({
     } catch (error: unknown) {
       if (error instanceof ApiError) {
         const result = parseApiErrors(error);
-        toast.error(result.message ?? "Something went wrong. Please try again.");
+        toast.error(result.message ?? t("somethingWentWrong"));
       } else {
-        toast.error("Something went wrong. Please try again.");
+        toast.error(t("somethingWentWrong"));
       }
     }
   },
@@ -78,7 +81,7 @@ provideCompletionActions({
     try {
       await setAdminNote({ id: completion.id, note });
     } catch {
-      toast.error("Something went wrong. Please try again.");
+      toast.error(t("somethingWentWrong"));
     }
   },
 });
@@ -100,7 +103,7 @@ const allowedFormatIds = computed(() => {
     <h1
       class="font-['Luckiest_Guy'] text-3xl md:text-4xl text-center mt-6 mb-4"
     >
-      Completion Submissions
+      {{ t("title") }}
     </h1>
 
     <CompletionList
@@ -113,26 +116,44 @@ const allowedFormatIds = computed(() => {
       :show-filters="false"
       map-display="detail"
       :include-admin-note="true"
-      empty-message="No pending completions."
+      :empty-message="t('noPending')"
     />
     <p
       v-else-if="formatsResponse"
       class="text-center text-(--color-text-muted)"
     >
-      You don't have permission to review completions for any format.
+      {{ t("noPermission") }}
     </p>
 
-    <ConfirmModal ref="approveModal" confirm-label="Accept">
-      Do you want to accept this completion?
+    <ConfirmModal ref="approveModal" :confirm-label="t('accept')">
+      {{ t("acceptConfirm") }}
     </ConfirmModal>
-    <ConfirmModal ref="rejectModal" confirm-label="Reject" danger>
-      Do you want to reject this completion?
+    <ConfirmModal ref="rejectModal" :confirm-label="t('reject')" danger>
+      {{ t("rejectConfirm") }}
     </ConfirmModal>
     <PromptModal
       ref="addNoteModal"
-      title="Add Admin Note"
-      confirm-label="Save Note"
-      placeholder="Write a note visible to admins only..."
+      :title="t('addNoteTitle')"
+      :confirm-label="t('saveNote')"
+      :placeholder="t('addNotePlaceholder')"
     />
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "title": "Completion Submissions",
+    "noPending": "No pending completions.",
+    "noPermission": "You don't have permission to review completions for any format.",
+    "accept": "Accept",
+    "reject": "Reject",
+    "acceptConfirm": "Do you want to accept this completion?",
+    "rejectConfirm": "Do you want to reject this completion?",
+    "addNoteTitle": "Add Admin Note",
+    "saveNote": "Save Note",
+    "addNotePlaceholder": "Write a note visible to admins only...",
+    "somethingWentWrong": "Something went wrong. Please try again."
+  }
+}
+</i18n>

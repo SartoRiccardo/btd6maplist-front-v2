@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 import { useTouchedProvider } from "@/composables/useTouchedFields";
 import { useEmitOnChange } from "@/composables/useEmitOnChange";
 import type { FormFieldError } from "@/services/api/formErrors";
@@ -36,6 +37,8 @@ const emit = defineEmits<{
 const { touchAll, clearTouched, isTouched, touch } = useTouchedProvider();
 defineExpose({ touchAll, clearTouched });
 
+const { t } = useI18n({ inheritLocale: true });
+
 function update(partial: Partial<AchievementRoleFormModel>) {
   for (const key of Object.keys(partial)) touch(key);
   emit("update:modelValue", { ...props.modelValue, ...partial });
@@ -51,20 +54,20 @@ const ownErrors = computed<FormFieldError[]>(() => {
   if (!props.modelValue.name.trim()) {
     errors.push({
       path: "name",
-      message: "Name is required.",
+      message: t("nameRequired"),
       source: "validation",
     });
   } else if (props.modelValue.name.trim().length > 32) {
     errors.push({
       path: "name",
-      message: "Max 32 characters.",
+      message: t("max32Characters"),
       source: "validation",
     });
   }
   if (!props.modelValue.lb_type) {
     errors.push({
       path: "lb_type",
-      message: "Type is required.",
+      message: t("typeRequired"),
       source: "validation",
     });
   }
@@ -73,7 +76,7 @@ const ownErrors = computed<FormFieldError[]>(() => {
     if (isNaN(thresh) || thresh < 0) {
       errors.push({
         path: "threshold",
-        message: "Must be a non-negative integer.",
+        message: t("nonNegativeInteger"),
         source: "validation",
       });
     }
@@ -81,7 +84,7 @@ const ownErrors = computed<FormFieldError[]>(() => {
   if (props.modelValue.tooltip_description.trim().length > 128) {
     errors.push({
       path: "tooltip_description",
-      message: "Max 128 characters.",
+      message: t("max128Characters"),
       source: "validation",
     });
   }
@@ -116,7 +119,7 @@ const errorClass = "border-(--color-danger)!";
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
       <!-- name — first -->
       <div class="sm:col-span-2">
-        <label class="block font-bold mb-1 text-sm">Name</label>
+        <label class="block font-bold mb-1 text-sm">{{ t("common.name") }}</label>
         <input
           type="text"
           maxlength="32"
@@ -132,7 +135,7 @@ const errorClass = "border-(--color-danger)!";
 
       <!-- lb_type -->
       <div>
-        <label class="block font-bold mb-1 text-sm">Type</label>
+        <label class="block font-bold mb-1 text-sm">{{ t("typeLabel") }}</label>
         <select
           :value="modelValue.lb_type"
           :disabled="disabled"
@@ -141,7 +144,7 @@ const errorClass = "border-(--color-danger)!";
             update({ lb_type: ($event.target as HTMLSelectElement).value })
           "
         >
-          <option value="" disabled>Select...</option>
+          <option value="" disabled>{{ t("selectPlaceholder") }}</option>
           <option
             v-for="lv in LEADERBOARD_VALUES"
             :key="lv.key"
@@ -160,7 +163,7 @@ const errorClass = "border-(--color-danger)!";
 
       <!-- threshold -->
       <div>
-        <label class="block font-bold mb-1 text-sm">Threshold</label>
+        <label class="block font-bold mb-1 text-sm">{{ t("thresholdLabel") }}</label>
         <input
           type="number"
           min="0"
@@ -184,7 +187,7 @@ const errorClass = "border-(--color-danger)!";
         <BoxedCheckbox
           :model-value="modelValue.for_first"
           :disabled="disabled"
-          label="First place only"
+          :label="t('firstPlaceOnly')"
           @update:model-value="update({ for_first: $event })"
         />
         <p
@@ -197,7 +200,7 @@ const errorClass = "border-(--color-danger)!";
 
       <!-- colors -->
       <div>
-        <label class="block font-bold mb-1 text-sm">Border Color</label>
+        <label class="block font-bold mb-1 text-sm">{{ t("borderColorLabel") }}</label>
         <input
           type="color"
           :value="modelValue.clr_border"
@@ -209,7 +212,7 @@ const errorClass = "border-(--color-danger)!";
         />
       </div>
       <div>
-        <label class="block font-bold mb-1 text-sm">Inner Color</label>
+        <label class="block font-bold mb-1 text-sm">{{ t("innerColorLabel") }}</label>
         <input
           type="color"
           :value="modelValue.clr_inner"
@@ -223,7 +226,7 @@ const errorClass = "border-(--color-danger)!";
 
       <!-- tooltip_description -->
       <div class="sm:col-span-2">
-        <label class="block font-bold mb-1 text-sm">Tooltip Description</label>
+        <label class="block font-bold mb-1 text-sm">{{ t("tooltipDescriptionLabel") }}</label>
         <textarea
           :value="modelValue.tooltip_description"
           :disabled="disabled"
@@ -263,7 +266,7 @@ const errorClass = "border-(--color-danger)!";
           />
           <div class="pl-3 pt-3.5 flex flex-col">
             <h1 class="font-['Luckiest_Guy'] text-3xl font-border mb-2">
-              Preview
+              {{ t("preview") }}
             </h1>
             <div
               class="px-2 py-0.5 rounded-[0.3rem] border-2 border-solid font-border text-sm inline-block self-start"
@@ -272,7 +275,7 @@ const errorClass = "border-(--color-danger)!";
                 borderColor: modelValue.clr_border,
               }"
             >
-              {{ modelValue.name || "Role Name" }}
+              {{ modelValue.name || t("roleNamePlaceholder") }}
             </div>
           </div>
         </div>
@@ -282,7 +285,7 @@ const errorClass = "border-(--color-danger)!";
     <!-- Discord roles -->
     <div>
       <h2 class="font-['Luckiest_Guy'] text-2xl text-center pt-4">
-        Discord Roles
+        {{ t("discordRoles") }}
       </h2>
       <hr class="border-(--color-contrast) mb-4" />
       <DiscordRolesEditor
@@ -293,3 +296,25 @@ const errorClass = "border-(--color-danger)!";
     </div>
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "typeLabel": "Type",
+    "selectPlaceholder": "Select...",
+    "thresholdLabel": "Threshold",
+    "firstPlaceOnly": "First place only",
+    "borderColorLabel": "Border Color",
+    "innerColorLabel": "Inner Color",
+    "tooltipDescriptionLabel": "Tooltip Description",
+    "preview": "Preview",
+    "roleNamePlaceholder": "Role Name",
+    "discordRoles": "Discord Roles",
+    "nameRequired": "Name is required.",
+    "max32Characters": "Max 32 characters.",
+    "typeRequired": "Type is required.",
+    "nonNegativeInteger": "Must be a non-negative integer.",
+    "max128Characters": "Max 128 characters."
+  }
+}
+</i18n>

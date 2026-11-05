@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
+import { useI18n } from "vue-i18n";
 import { useTouchedFields } from "@/composables/useTouchedFields";
 import { useEmitOnChange } from "@/composables/useEmitOnChange";
 import type { FormFieldError } from "@/services/api/formErrors";
@@ -26,6 +27,8 @@ const emit = defineEmits<{
 }>();
 
 const { isTouched, touch } = useTouchedFields();
+
+const { t } = useI18n({ inheritLocale: true });
 
 const { data: config } = useConfig();
 
@@ -83,7 +86,7 @@ const ownErrors = computed<FormFieldError[]>(() => {
     if (!v.user_id) {
       errors.push({
         path: `verifiers.${i}.user_id`,
-        message: "A verifier must be selected.",
+        message: t("verifierRequired"),
         source: "validation",
       });
     }
@@ -115,7 +118,7 @@ function fieldError(field: string): string | undefined {
     :default="{ user_id: null, version: '' } as VerifierEntry"
     :disabled="disabled"
     :min-items="1"
-    add-label="Add Verifier"
+    :add-label="t('addVerifier')"
     @update:model-value="onRemove"
   >
     <template #item="{ index }">
@@ -126,7 +129,7 @@ function fieldError(field: string): string | undefined {
             :search-fn="searchUsers"
             :display-value="(u: User) => u.name"
             :disabled="disabled"
-            placeholder="Search users..."
+            :placeholder="t('searchUsers')"
             :min-chars="3"
             @update:model-value="onUserSelect(index, $event)"
           />
@@ -151,12 +154,24 @@ function fieldError(field: string): string | undefined {
             onVersionChange(index, ($event.target as HTMLSelectElement).value)
           "
         >
-          <option value="alltime">All Time</option>
+          <option value="alltime">{{ t("allTime") }}</option>
           <option v-if="currentVersion" value="current">
-            Current Version ({{ currentVersion }})
+            {{ t("currentVersion", { version: currentVersion }) }}
           </option>
         </select>
       </div>
     </template>
   </ListEditor>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "addVerifier": "Add Verifier",
+    "searchUsers": "Search users...",
+    "allTime": "All Time",
+    "currentVersion": "Current Version ({version})",
+    "verifierRequired": "A verifier must be selected."
+  }
+}
+</i18n>

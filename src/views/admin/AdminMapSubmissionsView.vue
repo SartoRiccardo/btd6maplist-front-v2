@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 import { RouterLink } from "vue-router";
+import { useI18n } from "vue-i18n";
 import {
   useMapSubmissions,
   useRejectMapSubmission,
@@ -17,13 +18,15 @@ import { useAuthStore } from "@/stores/auth";
 import { permissions } from "@/constants/permissions";
 import { FORMAT_ICONS } from "@/constants/formats";
 
+const { t } = useI18n({ inheritLocale: true });
+
 const authStore = useAuthStore();
 const page = ref(1);
 
 const statusFilters: { value: MapSubmissionStatus; label: string }[] = [
-  { value: "pending", label: "Pending" },
-  { value: "accepted", label: "Accepted" },
-  { value: "rejected", label: "Rejected" },
+  { value: "pending", label: t("statusPending") },
+  { value: "accepted", label: t("statusAccepted") },
+  { value: "rejected", label: t("statusRejected") },
 ];
 const selectedStatus = ref<MapSubmissionStatus>("pending");
 
@@ -89,7 +92,7 @@ function acceptUrl(submission: MapSubmission) {
     <h1
       class="font-['Luckiest_Guy'] text-3xl md:text-4xl text-center mt-6 mb-4"
     >
-      Map Submissions
+      {{ t("title") }}
     </h1>
 
     <div class="flex justify-center gap-1.5 mb-6">
@@ -104,7 +107,7 @@ function acceptUrl(submission: MapSubmission) {
     </div>
 
     <div v-if="isLoading" class="flex justify-center">
-      <p class="text-(--color-text-muted)">Loading...</p>
+      <p class="text-(--color-text-muted)">{{ t("common.loading") }}</p>
     </div>
 
     <template v-else-if="submissions && submissions.data.length > 0">
@@ -127,7 +130,7 @@ function acceptUrl(submission: MapSubmission) {
     </template>
 
     <p v-else class="text-center text-(--color-text-muted)">
-      No map submissions found.
+      {{ t("noneFound") }}
     </p>
 
     <Pagination
@@ -139,7 +142,20 @@ function acceptUrl(submission: MapSubmission) {
     />
 
     <ConfirmModal ref="confirmModal">
-      <p class="text-center mb-0">Do you want to reject this submission?</p>
+      <p class="text-center mb-0">{{ t("rejectConfirm") }}</p>
     </ConfirmModal>
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "title": "Map Submissions",
+    "statusPending": "Pending",
+    "statusAccepted": "Accepted",
+    "statusRejected": "Rejected",
+    "noneFound": "No map submissions found.",
+    "rejectConfirm": "Do you want to reject this submission?"
+  }
+}
+</i18n>

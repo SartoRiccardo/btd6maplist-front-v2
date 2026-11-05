@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 import { useRoute } from "vue-router";
+import { useI18n } from "vue-i18n";
 import CompletionList from "@/components/completions/CompletionList.vue";
 import MapGrid from "@/components/maps/MapGrid.vue";
 import Pagination from "@/components/ui/Pagination.vue";
@@ -19,6 +20,8 @@ import LinkButton from "@/components/ui/LinkButton.vue";
 import ProfileHeader from "@/components/users/ProfileHeader.vue";
 import ProfileHeaderSkeleton from "@/components/users/ProfileHeaderSkeleton.vue";
 import RankCard from "@/components/users/RankCard.vue";
+
+const { t } = useI18n({ inheritLocale: true });
 
 const route = useRoute();
 const auth = useAuthStore();
@@ -102,7 +105,7 @@ watch(
       class="flex justify-end gap-2 mt-3"
     >
       <LinkButton v-if="canEditProfile" to="/profile/edit" class="text-sm">
-        <i class="bi bi-pencil-fill mr-1" /> Edit Profile
+        <i class="bi bi-pencil-fill mr-1" /> {{ t("editProfile") }}
       </LinkButton>
       <Button
         v-if="canBan"
@@ -114,13 +117,13 @@ watch(
           :class="user.is_banned ? 'bi bi-arrow-clockwise' : 'bi bi-ban'"
           class="mr-1"
         />
-        {{ user.is_banned ? "Unban User" : "Ban User" }}
+        {{ user.is_banned ? t("unbanUser") : t("banUser") }}
       </Button>
     </div>
 
     <!-- Ranks -->
     <div v-if="visibleRanks.length" class="my-6">
-      <h2 class="font-['Luckiest_Guy'] text-2xl text-center mb-4">Ranks</h2>
+      <h2 class="font-['Luckiest_Guy'] text-2xl text-center mb-4">{{ t("ranks") }}</h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         <RankCard
           v-for="{ rank, format } in visibleRanks.filter(({ rank }) =>
@@ -137,7 +140,7 @@ watch(
     <!-- Completions -->
     <div class="my-6">
       <h2 class="font-['Luckiest_Guy'] text-2xl text-center mb-4">
-        Completions
+        {{ t("completions") }}
       </h2>
       <CompletionList
         :params="{
@@ -146,7 +149,7 @@ watch(
           pending: 'exclude',
           sort_by: 'pinned',
         }"
-        empty-message="No completions yet."
+        :empty-message="t('noCompletions')"
       >
         <template #default="{ completion }">
           <RouterLink
@@ -177,7 +180,7 @@ watch(
     <!-- Created Maps -->
     <div class="my-6">
       <h2 class="font-['Luckiest_Guy'] text-2xl text-center mb-4">
-        Created Maps
+        {{ t("createdMaps") }}
       </h2>
       <MapGrid
         :maps="mapsLoading ? undefined : createdMaps"
@@ -191,7 +194,7 @@ watch(
         v-if="!mapsLoading && createdMaps?.length === 0"
         class="text-center text-(--color-text-muted)"
       >
-        No created maps.
+        {{ t("noCreatedMaps") }}
       </p>
       <Pagination
         v-if="cachedMapsMeta"
@@ -203,3 +206,18 @@ watch(
     </div>
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "editProfile": "Edit Profile",
+    "banUser": "Ban User",
+    "unbanUser": "Unban User",
+    "ranks": "Ranks",
+    "completions": "Completions",
+    "noCompletions": "No completions yet.",
+    "createdMaps": "Created Maps",
+    "noCreatedMaps": "No created maps."
+  }
+}
+</i18n>

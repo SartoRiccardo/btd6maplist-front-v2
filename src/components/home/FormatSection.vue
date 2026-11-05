@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { RouterLink } from "vue-router";
+import { useI18n } from "vue-i18n";
 import type { Format } from "@/services/api/formats/types";
 import Btd6Map from "@/components/maps/Btd6Map.vue";
+
+const { t } = useI18n({ inheritLocale: true });
 
 const props = defineProps<{
   format: Format;
@@ -70,7 +73,7 @@ const sanitizedFormatName = computed(() => {
       <p class="px-4 md:px-12">{{ format.description }}</p>
       <p v-if="format.discord_server_url" class="mt-2 text-center">
         <a :href="format.discord_server_url" target="_blank">
-          <i class="bi bi-discord" /> Join the {{ sanitizedFormatName }} Discord!
+          <i class="bi bi-discord" /> {{ t("joinDiscord", { name: sanitizedFormatName }) }}
         </a>
       </p>
       <div class="pt-6">
@@ -84,3 +87,11 @@ const sanitizedFormatName = computed(() => {
     </div>
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "joinDiscord": "Join the {name} Discord!"
+  }
+}
+</i18n>

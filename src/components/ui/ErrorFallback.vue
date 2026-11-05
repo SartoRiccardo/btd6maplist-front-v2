@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import { useI18n } from "vue-i18n";
 import Button from "@/components/ui/Button.vue";
 
 const props = defineProps<{ error: unknown }>();
 const emit = defineEmits<{ reset: [] }>();
+
+const { t } = useI18n({ inheritLocale: true });
 
 const copied = ref(false);
 let copyTimeout: ReturnType<typeof setTimeout> | null = null;
@@ -45,13 +48,12 @@ function message(): string {
       class="w-full max-w-lg bg-(--color-secondary) rounded-(--radius-panel) p-6 flex flex-col gap-4"
     >
       <h2 class="text-xl font-bold font-border text-(--color-danger)">
-        Something went wrong
+        {{ t("title") }}
       </h2>
       <p class="text-sm text-(--color-text) opacity-75">
-        This page encountered a rendering error. Copy the error details below
-        and report it by messaging
-        <span class="font-semibold underline">@chimenea.mo</span> on Discord or
-        opening an issue on
+        {{ t("descriptionPrefix") }}
+        <span class="font-semibold underline">@chimenea.mo</span>
+        {{ t("discordConnector") }}
         <a
           href="https://github.com/SartoRiccardo/btd6maplist-front-v2/issues/new"
           target="_blank"
@@ -67,10 +69,23 @@ function message(): string {
       <div class="flex gap-3 flex-wrap">
         <Button :active="true" @click="copyDetails">
           <i class="mr-1" :class="copied ? 'bi bi-check-lg' : 'bi bi-copy'" />
-          {{ copied ? "Copied!" : "Copy error details" }}
+          {{ copied ? t("copied") : t("copyDetails") }}
         </Button>
-        <Button @click="emit('reset')">Try navigating away</Button>
+        <Button @click="emit('reset')">{{ t("tryNavigatingAway") }}</Button>
       </div>
     </div>
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "title": "Something went wrong",
+    "descriptionPrefix": "This page encountered a rendering error. Copy the error details below and report it by messaging",
+    "discordConnector": "on Discord or opening an issue on",
+    "copied": "Copied!",
+    "copyDetails": "Copy error details",
+    "tryNavigatingAway": "Try navigating away"
+  }
+}
+</i18n>

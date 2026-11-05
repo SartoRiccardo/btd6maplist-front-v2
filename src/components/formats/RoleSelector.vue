@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { toRef } from "vue";
+import { useI18n } from "vue-i18n";
 import { useGuildRoles } from "@/services/discord/queries";
 
 const props = withDefaults(
@@ -14,6 +15,8 @@ const props = withDefaults(
 const emit = defineEmits<{
   (e: "update:modelValue", value: string): void;
 }>();
+
+const { t } = useI18n({ inheritLocale: true });
 
 const {
   data: roles,
@@ -38,12 +41,12 @@ const inputClass =
       <option value="" disabled>
         {{
           !guildId
-            ? "Select a server first"
+            ? t("selectServerFirst")
             : isLoading
-              ? "Loading..."
+              ? t("common.loading")
               : isError
-                ? "Failed to load roles"
-                : "Select role..."
+                ? t("failedToLoadRoles")
+                : t("selectRole")
         }}
       </option>
       <option
@@ -55,7 +58,18 @@ const inputClass =
       </option>
     </select>
     <p v-if="isError" class="text-(--color-danger) text-xs mt-1">
-      The bot may not be in this server.
+      {{ t("botMayNotBeInServer") }}
     </p>
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "selectServerFirst": "Select a server first",
+    "failedToLoadRoles": "Failed to load roles",
+    "selectRole": "Select role...",
+    "botMayNotBeInServer": "The bot may not be in this server."
+  }
+}
+</i18n>

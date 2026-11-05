@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { useFilter } from "reka-ui";
 import { useTouchedProvider } from "@/composables/useTouchedFields";
 import { useEmitOnChange } from "@/composables/useEmitOnChange";
@@ -51,6 +52,8 @@ const emit = defineEmits<{
 
 const { touchAll, clearTouched, isTouched, touch } = useTouchedProvider();
 defineExpose({ touchAll, clearTouched });
+
+const { t } = useI18n({ inheritLocale: true });
 
 const imageError = ref<string | null>(null);
 
@@ -134,7 +137,7 @@ const ownErrors = computed<FormFieldError[]>(() => {
   if (props.eligibleFormats.length > 1 && props.modelValue.format_id == null) {
     errors.push({
       path: "format_id",
-      message: "Please select a list.",
+      message: t("selectList"),
       source: "validation",
     });
   }
@@ -142,7 +145,7 @@ const ownErrors = computed<FormFieldError[]>(() => {
   if (props.modelValue.proof_image == null) {
     errors.push({
       path: "proof_image",
-      message: "A proof image is required.",
+      message: t("proofImageRequired"),
       source: "validation",
     });
   }
@@ -150,7 +153,7 @@ const ownErrors = computed<FormFieldError[]>(() => {
   if (props.modelValue.subm_notes.length > 5000) {
     errors.push({
       path: "subm_notes",
-      message: "Notes must be 5000 characters or less.",
+      message: t("notesTooLong"),
       source: "validation",
     });
   }
@@ -161,7 +164,7 @@ const ownErrors = computed<FormFieldError[]>(() => {
   if (props.videoRequired && nonEmptyVideos.length === 0) {
     errors.push({
       path: "video_proof_urls",
-      message: "At least one video URL is required.",
+      message: t("videoUrlRequired"),
       source: "validation",
     });
   }
@@ -169,7 +172,7 @@ const ownErrors = computed<FormFieldError[]>(() => {
     if (!isValidUrl(url)) {
       errors.push({
         path: "video_proof_urls",
-        message: `"${url}" is not a valid URL.`,
+        message: t("invalidVideoUrl", { url }),
         source: "validation",
       });
       break;
@@ -207,7 +210,9 @@ function indexedFieldErrors(field: string, length: number): (string | undefined)
   <div class="flex flex-col gap-6">
     <!-- Proof Image -->
     <div>
-      <label class="block font-bold mb-2">Proof of Completion</label>
+      <label class="block font-bold mb-2">{{
+        t("proofOfCompletion")
+      }}</label>
       <ImageDrop
         :model-value="modelValue.proof_image"
         :disabled="disabled"
@@ -227,7 +232,7 @@ function indexedFieldErrors(field: string, length: number): (string | undefined)
       :model-value="modelValue.video_proof_urls"
       :disabled="disabled"
       :required="videoRequired"
-      label="Video Proof"
+      :label="t('videoProof')"
       :max="5"
       :item-errors="indexedFieldErrors('video_proof_urls', modelValue.video_proof_urls.length)"
       @update:model-value="update({ video_proof_urls: $event })"
@@ -238,7 +243,7 @@ function indexedFieldErrors(field: string, length: number): (string | undefined)
 
     <!-- List Picker -->
     <div>
-      <label class="block font-bold mb-1">Submit to</label>
+      <label class="block font-bold mb-1">{{ t("submitTo") }}</label>
       <div class="flex flex-wrap gap-2">
         <Button
           v-for="fmt in eligibleFormats"
@@ -260,7 +265,7 @@ function indexedFieldErrors(field: string, length: number): (string | undefined)
             <span
               v-if="disabledFormatIds.includes(fmt.id)"
               class="text-xs opacity-60"
-              >(already in list)</span
+              >({{ t("alreadyInList") }})</span
             >
           </span>
         </Button>
@@ -269,21 +274,23 @@ function indexedFieldErrors(field: string, length: number): (string | undefined)
         {{ fieldError("format_id") }}
       </p>
       <p v-if="selectedFormat" class="text-(--color-text-muted) text-sm mt-2">
-        Make sure to check{{
+        {{ t("makeSureToCheck") }}{{
           selectedFormat.name.toLowerCase().startsWith("the") ? "" : " the"
         }}
         <RouterLink
           :to="`/maps/${selectedFormat.slug}/map-rules`"
           class="text-(--color-highlight) hover:text-(--color-active)"
-          >{{ selectedFormat.name }} map submission rules</RouterLink
+          >{{ t("mapSubmissionRules", { name: selectedFormat.name }) }}</RouterLink
         >
-        before submitting.
+        {{ t("beforeSubmitting") }}
       </p>
     </div>
 
     <!-- Proposed Category -->
     <div v-if="showProposedCategory">
-      <label class="block font-bold mb-1">Proposed Category</label>
+      <label class="block font-bold mb-1">{{
+        t("proposedCategory")
+      }}</label>
       <AsyncSelect
         :key="modelValue.format_id ?? 'none'"
         :model-value="selectedProposed"
@@ -292,7 +299,7 @@ function indexedFieldErrors(field: string, length: number): (string | undefined)
         :disabled="disabled"
         :min-chars="0"
         :debounce="isNostalgiaPack ? 400 : 0"
-        placeholder="Search categories..."
+        :placeholder="t('searchCategories')"
         @update:model-value="onProposedSelect"
       />
       <p v-if="fieldError('proposed')" class="text-(--color-danger) text-sm mt-1">
@@ -303,8 +310,10 @@ function indexedFieldErrors(field: string, length: number): (string | undefined)
     <!-- Notes -->
     <div>
       <label for="subm-notes" class="block font-bold mb-1">
-        Notes
-        <span class="text-(--color-text-muted) font-normal">(optional)</span>
+        {{ t("notes") }}
+        <span class="text-(--color-text-muted) font-normal"
+          >({{ t("optional") }})</span
+        >
       </label>
       <textarea
         id="subm-notes"
@@ -329,3 +338,26 @@ function indexedFieldErrors(field: string, length: number): (string | undefined)
     </div>
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "proofOfCompletion": "Proof of Completion",
+    "videoProof": "Video Proof",
+    "submitTo": "Submit to",
+    "alreadyInList": "already in list",
+    "makeSureToCheck": "Make sure to check",
+    "mapSubmissionRules": "{name} map submission rules",
+    "beforeSubmitting": "before submitting.",
+    "proposedCategory": "Proposed Category",
+    "searchCategories": "Search categories...",
+    "notes": "Notes",
+    "optional": "optional",
+    "selectList": "Please select a list.",
+    "proofImageRequired": "A proof image is required.",
+    "notesTooLong": "Notes must be 5000 characters or less.",
+    "videoUrlRequired": "At least one video URL is required.",
+    "invalidVideoUrl": "\"{url}\" is not a valid URL."
+  }
+}
+</i18n>

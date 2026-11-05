@@ -5,6 +5,7 @@ import { useAuthStore } from "@/stores/auth";
 import { useUpdateCurrentUser } from "@/services/api/users/queries";
 import { ApiError } from "@/services/api/client";
 import { parseApiErrors, type FormFieldError } from "@/services/api/formErrors";
+import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import ProfileForm, {
   type ProfileFormModel,
@@ -12,6 +13,8 @@ import ProfileForm, {
 import Panel from "@/components/ui/Panel.vue";
 import Button from "@/components/ui/Button.vue";
 import LinkButton from "@/components/ui/LinkButton.vue";
+
+const { t } = useI18n({ inheritLocale: true });
 
 const oakGuideOpen = ref(false);
 
@@ -54,11 +57,11 @@ async function handleSave() {
       apiErrors.value = errorResult.fieldErrors;
       await formRef.value.clearTouched();
       if (errorResult.fieldErrors.length === 0) {
-        const message = errorResult.message || "Something went wrong. Please try again.";
-        toast.error(`${message} (Error code: ${errorResult.status})`);
+        const message = errorResult.message || t("tryAgainError");
+        toast.error(`${message} ${t("errorCode", { code: errorResult.status })}`);
       }
     } else {
-      toast.error("Something went wrong. Please try again.");
+      toast.error(t("tryAgainError"));
     }
   }
 }
@@ -67,7 +70,7 @@ async function handleSave() {
 <template>
   <div>
     <h1 class="font-['Luckiest_Guy'] text-3xl text-center mb-6">
-      Edit Profile
+      {{ t("editProfile") }}
     </h1>
 
     <Panel>
@@ -80,8 +83,8 @@ async function handleSave() {
       />
 
       <div class="flex justify-end gap-2 mt-6">
-        <LinkButton :to="profileUrl" :disabled="busy">Cancel</LinkButton>
-        <Button :disabled="busy" @click="handleSave"> Save </Button>
+        <LinkButton :to="profileUrl" :disabled="busy">{{ t("common.cancel") }}</LinkButton>
+        <Button :disabled="busy" @click="handleSave"> {{ t("common.save") }} </Button>
       </div>
 
       <div class="pt-6">
@@ -91,24 +94,23 @@ async function handleSave() {
             target="_blank"
             class="inline-flex items-center gap-1"
           >
-            NinjaKiwi OAKs <i class="bi bi-box-arrow-up-right" />
+            {{ t("oaksLink") }}
+            <i class="bi bi-box-arrow-up-right" />
           </a>
-          (OpenData API Keys) are used to give you your in-game profile picture
-          and banner. You can generate one inside of BTD6 very easily.
+          {{ t("oaksExplanation") }}
           <br />
-          They expire after 90 days of not being used, so if you haven't been
-          here for a while, chances are you need to generate a new one!
+          {{ t("oaksExpiry") }}
         </p>
 
         <div class="flex justify-center mb-3">
           <Button @click="oakGuideOpen = !oakGuideOpen">
-            {{ oakGuideOpen ? "Hide guide" : "How do I get mine?" }}
+            {{ oakGuideOpen ? t("hideGuide") : t("howDoIGetMine") }}
           </Button>
         </div>
 
         <div v-if="oakGuideOpen" class="flex flex-col items-center gap-4">
           <p class="text-center">
-            Open BTD6 and go into the settings, then click <b><u>Account</u></b>
+            {{ t("guideStep1") }} <b><u>{{ t("guideAccount") }}</u></b>
           </p>
           <img
             src="https://i.imgur.com/FurlzfB.png"
@@ -116,7 +118,8 @@ async function handleSave() {
           />
 
           <p class="text-center">
-            Click <b><u>Open Data API</u></b> on the bottom right
+            {{ t("guideClick") }} <b><u>{{ t("guideOpenDataApi") }}</u></b>
+            {{ t("guideStep2Suffix") }}
           </p>
           <img
             src="https://i.imgur.com/tCqlDYj.png"
@@ -124,8 +127,8 @@ async function handleSave() {
           />
 
           <p class="text-center">
-            Click <b><u>Generate New Key</u></b> and then you can copy it and
-            you're done!
+            {{ t("guideClick") }} <b><u>{{ t("guideGenerateKey") }}</u></b>
+            {{ t("guideStep3Suffix") }}
           </p>
           <img
             src="https://i.imgur.com/owhXl4U.png"
@@ -136,3 +139,25 @@ async function handleSave() {
     </Panel>
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "editProfile": "Edit Profile",
+    "oaksLink": "NinjaKiwi OAKs",
+    "oaksExplanation": "(OpenData API Keys) are used to give you your in-game profile picture and banner. You can generate one inside of BTD6 very easily.",
+    "oaksExpiry": "They expire after 90 days of not being used, so if you haven't been here for a while, chances are you need to generate a new one!",
+    "hideGuide": "Hide guide",
+    "howDoIGetMine": "How do I get mine?",
+    "guideStep1": "Open BTD6 and go into the settings, then click",
+    "guideAccount": "Account",
+    "guideClick": "Click",
+    "guideOpenDataApi": "Open Data API",
+    "guideStep2Suffix": "on the bottom right",
+    "guideGenerateKey": "Generate New Key",
+    "guideStep3Suffix": "and then you can copy it and you're done!",
+    "tryAgainError": "Something went wrong. Please try again.",
+    "errorCode": "(Error code: {code})"
+  }
+}
+</i18n>

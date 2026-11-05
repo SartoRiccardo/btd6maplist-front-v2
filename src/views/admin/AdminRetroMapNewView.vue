@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import { useI18n } from "vue-i18n";
 import { ApiError } from "@/services/api/client";
 import { parseApiErrors, type FormFieldError } from "@/services/api/formErrors";
 import { toast } from "vue-sonner";
@@ -10,6 +11,8 @@ import Button from "@/components/ui/Button.vue";
 import RetroMapForm, {
   type RetroMapFormModel,
 } from "@/components/retro-maps/RetroMapForm.vue";
+
+const { t } = useI18n({ inheritLocale: true });
 
 const router = useRouter();
 
@@ -49,11 +52,11 @@ async function handleSave() {
       apiErrors.value = errorResult.fieldErrors;
       await formRef.value.clearTouched();
       if (errorResult.fieldErrors.length === 0) {
-        const message = errorResult.message || "Something went wrong. Please try again.";
-        toast.error(`${message} (Error code: ${errorResult.status})`);
+        const message = errorResult.message || t("somethingWentWrong");
+        toast.error(t("errorWithCode", { message, code: errorResult.status }));
       }
     } else {
-      toast.error("Something went wrong. Please try again.");
+      toast.error(t("somethingWentWrong"));
     }
   } finally {
     isBusy.value = false;
@@ -66,7 +69,7 @@ async function handleSave() {
     <h1
       class="font-['Luckiest_Guy'] text-3xl md:text-4xl text-center mt-6 mb-4"
     >
-      New Retro Map
+      {{ t("title") }}
     </h1>
 
     <Panel>
@@ -80,8 +83,19 @@ async function handleSave() {
     </Panel>
 
     <div class="flex justify-between items-center mt-8">
-      <Button @click="router.push('/admin/retro-maps')">← Back</Button>
-      <Button :disabled="isBusy" @click="handleSave">Save</Button>
+      <Button @click="router.push('/admin/retro-maps')">{{ t("back") }}</Button>
+      <Button :disabled="isBusy" @click="handleSave">{{ t("common.save") }}</Button>
     </div>
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "title": "New Retro Map",
+    "back": "← Back",
+    "somethingWentWrong": "Something went wrong. Please try again.",
+    "errorWithCode": "{message} (Error code: {code})"
+  }
+}
+</i18n>

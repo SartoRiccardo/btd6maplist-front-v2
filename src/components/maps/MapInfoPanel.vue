@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 import type { MapCreator, MapVerification } from "@/services/api/maps/types";
 import type { User } from "@/services/api/users/types";
 import { useNKMapCreator } from "@/composables/useNKMapCreator";
@@ -22,6 +23,8 @@ const props = defineProps<{
 }>();
 
 const noCreators = computed(() => props.creators.length === 0);
+
+const { t } = useI18n({ inheritLocale: true });
 const {
   creatorName: nkCreatorName,
   creatorAvatar: nkCreatorAvatar,
@@ -76,7 +79,7 @@ const nkSyntheticUser = computed<User | null>(() => {
     <div class="flex flex-col sm:flex-row gap-4 mb-4">
       <div class="flex-1">
         <h3 class="font-['Luckiest_Guy'] text-xl mb-2">
-          Creator{{ creators.length > 1 ? "s" : "" }}
+          {{ t("creator", creators.length) }}
         </h3>
         <template v-if="creators.length > 0">
           <UserEntry
@@ -89,22 +92,24 @@ const nkSyntheticUser = computed<User | null>(() => {
         <UserEntry
           v-else-if="nkSyntheticUser"
           :user="nkSyntheticUser"
-          label="This user does not have a BTD6 Maplist account"
+          :label="t('noAccount')"
           no-link
         />
         <UserEntrySkeleton v-else-if="nkLoading" />
-        <p v-else class="text-(--color-text-muted) text-sm">Unknown creator</p>
+        <p v-else class="text-(--color-text-muted) text-sm">
+          {{ t("unknownCreator") }}
+        </p>
       </div>
 
       <div class="flex-1">
         <h3 class="font-['Luckiest_Guy'] text-xl mb-2">
-          Verifier{{ verifications.length > 1 ? "s" : "" }}
+          {{ t("verifier", verifications.length) }}
         </h3>
         <UserEntry
           v-for="verification in verifications"
           :key="verification.user_id"
           :user="verification.user"
-          :label="verification.version ? 'Current version' : undefined"
+          :label="verification.version ? t('currentVersion') : undefined"
         />
       </div>
     </div>
@@ -115,7 +120,7 @@ const nkSyntheticUser = computed<User | null>(() => {
       class="flex flex-wrap items-center gap-2 pt-4"
     >
       <h3 class="font-['Luckiest_Guy'] text-xl mb-0 mr-2">
-        Optimal Hero{{ optimalHeros.length > 1 ? "s" : "" }}
+        {{ t("optimalHero", optimalHeros.length) }}
       </h3>
       <Icon
         v-for="hero in optimalHeros"
@@ -128,8 +133,23 @@ const nkSyntheticUser = computed<User | null>(() => {
 
     <!-- Map Notes -->
     <div v-if="mapNotes" class="pt-4">
-      <h3 class="font-['Luckiest_Guy'] text-xl mb-2">Map Notes</h3>
+      <h3 class="font-['Luckiest_Guy'] text-xl mb-2">{{ t("mapNotes") }}</h3>
       <MarkdownContent :text="mapNotes" />
     </div>
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "creator": "Creator | Creators",
+    "verifier": "Verifier | Verifiers",
+    "optimalHero": "Optimal Hero | Optimal Heroes",
+    "mapNotes": "Map Notes",
+    "noAccount": "This user does not have a BTD6 Maplist account",
+    "unknownCreator": "Unknown creator",
+    "currentVersion": "Current version"
+  }
+}
+</i18n>
+

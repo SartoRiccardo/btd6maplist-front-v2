@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { useI18n } from "vue-i18n";
 import { useSearch } from "@/services/api/search/queries";
 import MapGrid from "@/components/maps/MapGrid.vue";
 import MapFormatBadges from "@/components/maps/MapFormatBadges.vue";
@@ -9,6 +10,8 @@ import type { SearchParams } from "@/services/api/search/types";
 
 const route = useRoute();
 const router = useRouter();
+
+const { t } = useI18n({ inheritLocale: true });
 
 const inputValue = ref("");
 const submittedParams = ref<SearchParams | null>(null);
@@ -44,14 +47,14 @@ function handleSubmit() {
 <template>
   <div>
     <h1 class="font-['Luckiest_Guy'] text-3xl md:text-4xl text-center mt-6 mb-4">
-      Search Maps or Users
+      {{ t("title") }}
     </h1>
 
     <form class="flex gap-2 mb-6" @submit.prevent="handleSubmit">
       <input
         v-model="inputValue"
         type="text"
-        placeholder="Search..."
+        :placeholder="t('searchPlaceholder')"
         :disabled="isFetching"
         class="flex-1 px-3 py-1.5 rounded-(--radius-btn) bg-(--color-primary) text-(--color-text) border border-(--color-contrast) focus:outline-none focus:border-(--color-active) disabled:opacity-50"
       />
@@ -59,19 +62,19 @@ function handleSubmit() {
         type="submit"
         :disabled="isFetching || inputValue.trim().length < 3"
         class="bg-(--color-highlight) text-(--color-text) px-4 py-1.5 rounded-(--radius-btn) transition-[filter] duration-150 hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
-        aria-label="Search"
+        :aria-label="t('search')"
       >
         <i class="bi bi-caret-right-fill"></i>
       </button>
     </form>
 
     <p v-if="isFetching" class="text-center text-(--color-text-muted)">
-      Searching...
+      {{ t("searching") }}
     </p>
 
     <template v-else-if="hasResults">
       <template v-if="maps.length">
-        <h2 class="font-['Luckiest_Guy'] text-2xl mt-12 mb-1 text-center">Maps</h2>
+        <h2 class="font-['Luckiest_Guy'] text-2xl mt-12 mb-1 text-center">{{ t("maps") }}</h2>
         <hr class="border-(--color-contrast) mb-4" />
         <MapGrid :maps="maps">
           <template #bottom="{ map }">
@@ -81,7 +84,7 @@ function handleSubmit() {
       </template>
 
       <template v-if="users.length">
-        <h2 class="font-['Luckiest_Guy'] text-2xl mt-12 mb-1 text-center">Users</h2>
+        <h2 class="font-['Luckiest_Guy'] text-2xl mt-12 mb-1 text-center">{{ t("users") }}</h2>
         <hr class="border-(--color-contrast) mb-4" />
         <div
           v-for="user in users"
@@ -93,8 +96,22 @@ function handleSubmit() {
       </template>
 
       <p v-if="!maps.length && !users.length" class="text-center text-(--color-text-muted)">
-        No results found.
+        {{ t("noResults") }}
       </p>
     </template>
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "title": "Search Maps or Users",
+    "searchPlaceholder": "Search...",
+    "search": "Search",
+    "searching": "Searching...",
+    "maps": "Maps",
+    "users": "Users",
+    "noResults": "No results found."
+  }
+}
+</i18n>

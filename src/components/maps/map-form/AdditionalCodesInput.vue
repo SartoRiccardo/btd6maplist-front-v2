@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useI18n } from "vue-i18n";
 import type { FormFieldError } from "@/services/api/formErrors";
 import ListEditor from "@/components/ui/ListEditor.vue";
 import type { AdditionalCode } from "./types";
@@ -26,6 +27,8 @@ function fieldError(index: number, field: string): string | undefined {
   return props.externalErrors.find((e) => e.path === `${index}.${field}`)
     ?.message;
 }
+
+const { t } = useI18n({ inheritLocale: true });
 </script>
 
 <template>
@@ -33,7 +36,7 @@ function fieldError(index: number, field: string): string | undefined {
     :model-value="modelValue"
     :default="{ code: '', description: '' } as AdditionalCode"
     :disabled="disabled"
-    add-label="Add Code"
+    :add-label="t('addCode')"
     @update:model-value="emit('update:modelValue', $event)"
   >
     <template #item="{ item, index }">
@@ -43,7 +46,7 @@ function fieldError(index: number, field: string): string | undefined {
             type="text"
             :value="item.code"
             :disabled="disabled"
-            placeholder="Code"
+            :placeholder="t('code')"
             class="w-32 px-3 py-2 rounded-(--radius-btn) bg-(--color-primary) text-(--color-text) border border-(--color-contrast) focus:outline-none focus:border-(--color-active) uppercase"
             :class="{ 'border-(--color-danger)!': fieldError(index, 'code') }"
             @input="
@@ -56,7 +59,7 @@ function fieldError(index: number, field: string): string | undefined {
             type="text"
             :value="item.description"
             :disabled="disabled"
-            placeholder="Description"
+            :placeholder="t('description')"
             class="flex-1 px-3 py-2 rounded-(--radius-btn) bg-(--color-primary) text-(--color-text) border border-(--color-contrast) focus:outline-none focus:border-(--color-active)"
             :class="{
               'border-(--color-danger)!': fieldError(index, 'description'),
@@ -78,3 +81,13 @@ function fieldError(index: number, field: string): string | undefined {
     </template>
   </ListEditor>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "addCode": "Add Code",
+    "code": "Code",
+    "description": "Description"
+  }
+}
+</i18n>

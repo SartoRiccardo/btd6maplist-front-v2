@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 import {
@@ -29,6 +30,8 @@ import type { User } from "@/services/api/users/types";
 const route = useRoute();
 const router = useRouter();
 const auth = useAuthStore();
+
+const { t } = useI18n({ inheritLocale: true });
 
 // --- Query params ---
 
@@ -196,11 +199,11 @@ async function handleSubmit() {
       apiErrors.value = errorResult.fieldErrors;
       await formRef.value.clearTouched();
       if (errorResult.fieldErrors.length === 0) {
-        const message = errorResult.message || "Something went wrong. Please try again.";
-        toast.error(`${message} (Error code: ${errorResult.status})`);
+        const message = errorResult.message || t("somethingWentWrong");
+        toast.error(`${message} ${t("errorCode", { code: errorResult.status })}`);
       }
     } else {
-      toast.error("Something went wrong. Please try again.");
+      toast.error(t("somethingWentWrong"));
     }
   }
 }
@@ -208,7 +211,9 @@ async function handleSubmit() {
 
 <template>
   <div>
-    <h1 class="font-['Luckiest_Guy'] text-3xl text-center mb-6">New Map</h1>
+    <h1 class="font-['Luckiest_Guy'] text-3xl text-center mb-6">
+      {{ t("newMap") }}
+    </h1>
 
     <!-- Map Code + Preview row -->
     <div
@@ -253,12 +258,12 @@ async function handleSubmit() {
 
     <!-- Map already exists -->
     <Panel v-if="alreadyExists" class="text-center py-8">
-      <p class="text-lg font-bold mb-3">This map already exists!</p>
+      <p class="text-lg font-bold mb-3">{{ t("mapAlreadyExists") }}</p>
       <router-link
         :to="`/map/${maplistMap!.code}/edit`"
         class="text-(--color-highlight) hover:underline"
       >
-        Edit {{ maplistMap!.name }}
+        {{ t("editNamedMap", { name: maplistMap!.name }) }}
       </router-link>
     </Panel>
 
@@ -277,8 +282,23 @@ async function handleSubmit() {
       />
 
       <div class="flex justify-end gap-2 mt-15">
-        <Button :disabled="busy" @click="handleSubmit"> Create Map </Button>
+        <Button :disabled="busy" @click="handleSubmit">
+          {{ t("createMap") }}
+        </Button>
       </div>
     </Panel>
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "newMap": "New Map",
+    "createMap": "Create Map",
+    "mapAlreadyExists": "This map already exists!",
+    "editNamedMap": "Edit {name}",
+    "somethingWentWrong": "Something went wrong. Please try again.",
+    "errorCode": "(Error code: {code})"
+  }
+}
+</i18n>

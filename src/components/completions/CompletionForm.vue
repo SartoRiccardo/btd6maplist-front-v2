@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
+import { useI18n } from "vue-i18n";
 import { useTouchedProvider } from "@/composables/useTouchedFields";
 import { useEmitOnChange } from "@/composables/useEmitOnChange";
 import type { FormFieldError } from "@/services/api/formErrors";
@@ -43,6 +44,8 @@ const emit = defineEmits<{
   (e: "update:modelValue", value: CompletionFormModel): void;
   (e: "errors", value: FormFieldError[]): void;
 }>();
+
+const { t } = useI18n({ inheritLocale: true });
 
 const { touchAll, clearTouched, isTouched, touch } = useTouchedProvider();
 defineExpose({ touchAll, clearTouched });
@@ -106,7 +109,7 @@ const ownErrors = computed<FormFieldError[]>(() => {
   if (props.modelValue.format_id == null) {
     errors.push({
       path: "format_id",
-      message: "Please select a format.",
+      message: t("selectFormat"),
       source: "validation",
     });
   }
@@ -115,7 +118,7 @@ const ownErrors = computed<FormFieldError[]>(() => {
     if (!props.modelValue.players[i]) {
       errors.push({
         path: `players.${i}`,
-        message: "A player must be selected.",
+        message: t("selectPlayer"),
         source: "validation",
       });
     }
@@ -129,7 +132,7 @@ const ownErrors = computed<FormFieldError[]>(() => {
   ) {
     errors.push({
       path: "lcc_leftover",
-      message: "Saveup must be a non-negative number.",
+      message: t("saveupInvalid"),
       source: "validation",
     });
   }
@@ -159,7 +162,7 @@ function fieldError(field: string): string | undefined {
   <div class="flex flex-col gap-6">
     <!-- Additional Image Proofs -->
     <div>
-      <label class="block font-bold mb-2">Additional Images</label>
+      <label class="block font-bold mb-2">{{ t("additionalImages") }}</label>
       <ProofImageUploader
         :model-value="modelValue.additional_image_proofs"
         :existing-urls="modelValue.existing_image_proofs"
@@ -171,7 +174,7 @@ function fieldError(field: string): string | undefined {
 
     <!-- Format Selector -->
     <div>
-      <label class="block font-bold mb-2">Format</label>
+      <label class="block font-bold mb-2">{{ t("format") }}</label>
       <div class="flex flex-wrap gap-2">
         <Button
           v-for="fmt in formats"
@@ -198,33 +201,33 @@ function fieldError(field: string): string | undefined {
 
     <!-- Run Modifiers -->
     <div>
-      <label class="block font-bold mb-2">Run Modifiers</label>
+      <label class="block font-bold mb-2">{{ t("runModifiers") }}</label>
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <BoxedCheckbox
           :model-value="modelValue.black_border"
           :disabled="disabled"
-          label="Black Border"
+          :label="t('blackBorder')"
           icon="/images/medals/medal_bb.webp"
           @update:model-value="update({ black_border: $event })"
         />
         <BoxedCheckbox
           :model-value="modelValue.no_geraldo"
           :disabled="disabled"
-          label="No Optimal Hero"
+          :label="t('noOptimalHero')"
           icon="/images/medals/medal_nogerry.webp"
           @update:model-value="update({ no_geraldo: $event })"
         />
         <BoxedCheckbox
           :model-value="modelValue.lcc_enabled"
           :disabled="disabled"
-          label="LCC"
+          :label="t('lcc')"
           icon="/images/medals/medal_lcc.webp"
           @update:model-value="update({ lcc_enabled: $event })"
         />
       </div>
 
       <div v-if="modelValue.lcc_enabled" class="mt-2">
-        <label for="lcc-leftover" class="block text-sm mb-1">Saveup</label>
+        <label for="lcc-leftover" class="block text-sm mb-1">{{ t("saveup") }}</label>
         <input
           id="lcc-leftover"
           type="number"
@@ -247,13 +250,13 @@ function fieldError(field: string): string | undefined {
 
     <!-- Players -->
     <div>
-      <label class="block font-bold mb-2">Players</label>
+      <label class="block font-bold mb-2">{{ t("players") }}</label>
       <ListEditor
         :model-value="modelValue.players"
         default=""
         :disabled="disabled"
         :min-items="1"
-        add-label="Add Player"
+        :add-label="t('addPlayer')"
         @update:model-value="onPlayersChange"
       >
         <template #item="{ index }">
@@ -263,7 +266,7 @@ function fieldError(field: string): string | undefined {
               :search-fn="searchUsers"
               :display-value="(u: User) => u.name"
               :disabled="disabled"
-              placeholder="Search players..."
+              :placeholder="t('searchPlayers')"
               :min-chars="3"
               @update:model-value="updatePlayerAt(index, $event)"
             />
@@ -279,3 +282,23 @@ function fieldError(field: string): string | undefined {
     </div>
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "additionalImages": "Additional Images",
+    "format": "Format",
+    "runModifiers": "Run Modifiers",
+    "blackBorder": "Black Border",
+    "noOptimalHero": "No Optimal Hero",
+    "lcc": "LCC",
+    "saveup": "Saveup",
+    "players": "Players",
+    "addPlayer": "Add Player",
+    "searchPlayers": "Search players...",
+    "selectFormat": "Please select a format.",
+    "selectPlayer": "A player must be selected.",
+    "saveupInvalid": "Saveup must be a non-negative number."
+  }
+}
+</i18n>

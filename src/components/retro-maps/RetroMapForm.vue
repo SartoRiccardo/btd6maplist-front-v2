@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 import { useTouchedProvider } from "@/composables/useTouchedFields";
 import { useEmitOnChange } from "@/composables/useEmitOnChange";
 import type { FormFieldError } from "@/services/api/formErrors";
@@ -28,6 +29,8 @@ const emit = defineEmits<{
   (e: "errors", value: FormFieldError[]): void;
 }>();
 
+const { t } = useI18n({ inheritLocale: true });
+
 const { touchAll, clearTouched, isTouched, touch } = useTouchedProvider();
 defineExpose({ touchAll, clearTouched });
 
@@ -54,14 +57,14 @@ const ownErrors = computed<FormFieldError[]>(() => {
   if (!props.modelValue.name.trim()) {
     errors.push({
       path: "name",
-      message: "Name is required.",
+      message: t("nameRequired"),
       source: "validation",
     });
   }
   if (props.modelValue.retro_game_id === null) {
     errors.push({
       path: "retro_game_id",
-      message: "Retro game is required.",
+      message: t("retroGameRequired"),
       source: "validation",
     });
   }
@@ -99,13 +102,15 @@ function formatGameOption(
     <div class="flex flex-col gap-6">
       <!-- Name -->
       <div>
-        <label for="retro-map-name" class="block font-bold mb-2">Name</label>
+        <label for="retro-map-name" class="block font-bold mb-2">{{
+          t("common.name")
+        }}</label>
         <input
           id="retro-map-name"
           type="text"
           :value="modelValue.name"
           :disabled="disabled"
-          placeholder="Map name"
+          :placeholder="t('mapName')"
           class="w-full px-3 py-2 rounded-(--radius-btn) bg-(--color-primary) text-(--color-text) border border-(--color-contrast) focus:outline-none focus:border-(--color-active)"
           :class="{ 'border-(--color-danger)!': fieldError('name') }"
           @input="update({ name: ($event.target as HTMLInputElement).value })"
@@ -118,7 +123,7 @@ function formatGameOption(
       <!-- Sort Order -->
       <div>
         <label for="retro-map-sort-order" class="block font-bold mb-2"
-          >Sort Order</label
+          >{{ t("sortOrder") }}</label
         >
         <input
           id="retro-map-sort-order"
@@ -140,13 +145,15 @@ function formatGameOption(
           {{ fieldError("sort_order") }}
         </p>
         <p v-else class="text-(--color-text-muted) text-sm mt-1">
-          yeah this is terrible UX, but for now this is what you get
+          {{ t("sortOrderHint") }}
         </p>
       </div>
 
       <!-- Retro Game -->
       <div>
-        <label for="retro-game" class="block font-bold mb-2">Retro Game</label>
+        <label for="retro-game" class="block font-bold mb-2">{{
+          t("retroGame")
+        }}</label>
         <select
           id="retro-game"
           :value="modelValue.retro_game_id ?? ''"
@@ -162,7 +169,7 @@ function formatGameOption(
             })
           "
         >
-          <option value="">Select a game...</option>
+          <option value="">{{ t("selectGame") }}</option>
           <option
             v-for="game in retroGameOptions"
             :key="game.id"
@@ -182,12 +189,12 @@ function formatGameOption(
 
     <!-- Column 2: Preview Image -->
     <div>
-      <label class="block font-bold mb-2">Preview Image</label>
+      <label class="block font-bold mb-2">{{ t("previewImage") }}</label>
       <ImageDrop
         :model-value="modelValue.preview_file"
         :initial-url="modelValue.preview_url"
         :disabled="disabled"
-        placeholder="Drop image here or click to browse"
+        :placeholder="t('dropImage')"
         @update:model-value="update({ preview_file: $event })"
         @clear-initial-url="update({ preview_url: '' })"
       />
@@ -200,3 +207,19 @@ function formatGameOption(
     </div>
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "mapName": "Map name",
+    "sortOrder": "Sort Order",
+    "sortOrderHint": "yeah this is terrible UX, but for now this is what you get",
+    "retroGame": "Retro Game",
+    "selectGame": "Select a game...",
+    "previewImage": "Preview Image",
+    "dropImage": "Drop image here or click to browse",
+    "nameRequired": "Name is required.",
+    "retroGameRequired": "Retro game is required."
+  }
+}
+</i18n>

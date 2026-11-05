@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 import type { Completion } from "@/services/api/completions/types";
 import type { MapWithMetadata } from "@/services/api/maps/types";
 import { FORMAT_ICONS } from "@/constants/formats";
@@ -26,6 +27,7 @@ const emit = defineEmits<{
 }>();
 
 const auth = useAuthStore();
+const { t } = useI18n({ inheritLocale: true });
 const { data: formats } = useFormats();
 const { mutateAsync: deleteAdminNote } = useDeleteAdminNote();
 
@@ -55,11 +57,11 @@ const isPending = computed(() => props.completion.accepted_by == null);
 
 const statusPill = computed(() => {
   if (isDeleted.value && isPending.value)
-    return { label: "Rejected", class: "bg-(--color-deleted)" };
+    return { label: t("statusRejected"), class: "bg-(--color-deleted)" };
   if (isDeleted.value)
-    return { label: "Deleted", class: "bg-(--color-deleted)" };
+    return { label: t("statusDeleted"), class: "bg-(--color-deleted)" };
   if (isPending.value)
-    return { label: "Pending", class: "bg-(--color-pending)" };
+    return { label: t("statusPending"), class: "bg-(--color-pending)" };
   return null;
 });
 
@@ -151,7 +153,7 @@ const difficultyInfo = computed(() => {
           <div class="flex items-center gap-2">
             <div class="flex items-center gap-2">
               <Tooltip
-                :text="completion.black_border ? 'Black Border' : 'CHIMPS'"
+                :text="completion.black_border ? t('blackBorder') : t('chimps')"
               >
                 <img
                   :src="
@@ -162,7 +164,7 @@ const difficultyInfo = computed(() => {
                   class="w-[40px] h-[40px]"
                 />
               </Tooltip>
-              <Tooltip text="No Optimal Hero" :disabled="hideNoGeraldo">
+              <Tooltip :text="t('noOptimalHero')" :disabled="hideNoGeraldo">
                 <img
                   src="/images/medals/medal_nogerry.webp"
                   class="w-[40px] h-[40px]"
@@ -174,7 +176,7 @@ const difficultyInfo = computed(() => {
                 />
               </Tooltip>
               <Tooltip
-                text="Current LCC"
+                :text="t('currentLcc')"
                 :disabled="!completion.is_current_lcc"
               >
                 <img
@@ -190,7 +192,7 @@ const difficultyInfo = computed(() => {
                 :alt="formatInfo.name"
                 class="translate-y-0 scale-[125%] mr-1"
               />
-              <span class="text-sm">{{ formatInfo.name }} ruleset</span>
+              <span class="text-sm">{{ t("ruleset", { name: formatInfo.name }) }}</span>
             </div>
           </div>
         </slot>
@@ -234,7 +236,7 @@ const difficultyInfo = computed(() => {
           <!-- Medals -->
           <div class="flex items-center gap-2">
             <Tooltip
-              :text="completion.black_border ? 'Black Border' : 'CHIMPS'"
+              :text="completion.black_border ? t('blackBorder') : t('chimps')"
             >
               <img
                 :src="
@@ -245,7 +247,7 @@ const difficultyInfo = computed(() => {
                 class="w-[40px] h-[40px]"
               />
             </Tooltip>
-            <Tooltip text="No Optimal Hero">
+            <Tooltip :text="t('noOptimalHero')">
               <img
                 src="/images/medals/medal_nogerry.webp"
                 class="w-[40px] h-[40px]"
@@ -256,7 +258,7 @@ const difficultyInfo = computed(() => {
                 "
               />
             </Tooltip>
-            <Tooltip text="Current LCC">
+            <Tooltip :text="t('currentLcc')">
               <img
                 src="/images/medals/medal_lcc.webp"
                 class="w-[40px] h-[40px]"
@@ -276,7 +278,7 @@ const difficultyInfo = computed(() => {
               :alt="formatInfo.name"
               class="translate-y-0 scale-[125%] mr-1"
             />
-            <span class="text-sm">{{ formatInfo.name }} ruleset</span>
+            <span class="text-sm">{{ t("ruleset", { name: formatInfo.name }) }}</span>
           </div>
         </slot>
       </div>
@@ -307,3 +309,18 @@ const difficultyInfo = computed(() => {
   box-shadow: 0 0 0.4rem 0 var(--color-highlight);
 }
 </style>
+
+<i18n lang="json">
+{
+  "en": {
+    "statusPending": "Pending",
+    "statusDeleted": "Deleted",
+    "statusRejected": "Rejected",
+    "blackBorder": "Black Border",
+    "chimps": "CHIMPS",
+    "noOptimalHero": "No Optimal Hero",
+    "currentLcc": "Current LCC",
+    "ruleset": "{name} ruleset"
+  }
+}
+</i18n>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { useAuthStore } from "@/stores/auth";
 import {
   useMapSubmissions,
@@ -12,6 +13,9 @@ import Button from "@/components/ui/Button.vue";
 import ConfirmModal from "@/components/common/ConfirmModal.vue";
 
 const auth = useAuthStore();
+
+const { t } = useI18n({ inheritLocale: true });
+
 const page = ref(1);
 const confirmModal = ref<InstanceType<typeof ConfirmModal>>();
 
@@ -49,24 +53,24 @@ async function confirmDelete(id: number) {
     <h1
       class="font-['Luckiest_Guy'] text-3xl md:text-4xl text-center mt-6 mb-4"
     >
-      My Submissions
+      {{ t("mySubmissions") }}
     </h1>
 
     <div class="flex justify-center gap-4 mb-4">
       <LinkButton to="/my-submissions/maps" active>
-        Map Submissions
+        {{ t("mapSubmissions") }}
       </LinkButton>
       <LinkButton to="/my-submissions/completions">
-        Completion Submissions
+        {{ t("completionSubmissions") }}
       </LinkButton>
     </div>
 
     <p class="text-center text-(--color-text-muted) mb-6">
-      Here are your pending and rejected map submissions.
+      {{ t("pageDescription") }}
     </p>
 
     <div v-if="isLoading" class="flex justify-center">
-      <p class="text-(--color-text-muted)">Loading...</p>
+      <p class="text-(--color-text-muted)">{{ t("common.loading") }}</p>
     </div>
 
     <template v-else-if="submissions && submissions.data.length > 0">
@@ -88,7 +92,7 @@ async function confirmDelete(id: number) {
     </template>
 
     <p v-else class="text-center text-(--color-text-muted)">
-      No pending or rejected map submissions.
+      {{ t("noSubmissions") }}
     </p>
 
     <Pagination
@@ -100,7 +104,20 @@ async function confirmDelete(id: number) {
     />
 
     <ConfirmModal ref="confirmModal">
-      <p class="text-center mb-0">Do you want to delete your submission?</p>
+      <p class="text-center mb-0">{{ t("deleteSubmissionConfirm") }}</p>
     </ConfirmModal>
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "mySubmissions": "My Submissions",
+    "mapSubmissions": "Map Submissions",
+    "completionSubmissions": "Completion Submissions",
+    "pageDescription": "Here are your pending and rejected map submissions.",
+    "noSubmissions": "No pending or rejected map submissions.",
+    "deleteSubmissionConfirm": "Do you want to delete your submission?"
+  }
+}
+</i18n>

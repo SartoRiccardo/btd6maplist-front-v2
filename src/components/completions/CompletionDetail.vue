@@ -12,6 +12,7 @@ import {
   useUnpinCompletion,
 } from "@/services/api/completions/queries";
 import { toast } from "vue-sonner";
+import { useI18n } from "vue-i18n";
 import { ApiError } from "@/services/api/client";
 import UserEntry from "@/components/users/UserEntry.vue";
 import LinkButton from "@/components/ui/LinkButton.vue";
@@ -22,6 +23,7 @@ const props = defineProps<{
   completion: CompletionDetail;
 }>();
 
+const { t } = useI18n({ inheritLocale: true });
 const auth = useAuthStore();
 const actions = useCompletionActions();
 const {
@@ -73,7 +75,7 @@ const togglePin = () => {
     toast.error(
       error instanceof ApiError
         ? error.message
-        : "Failed to update pin. Please try again.",
+        : t("pinFailed"),
     );
   }
 };
@@ -95,7 +97,7 @@ const showActions = computed(
     >
       <template v-if="acceptedByUser" #notes-footer>
         <p class="text-(--color-text-muted) mt-2 ml-4 italic flex items-center">
-          <span class="mr-1">Completion approved by</span>
+          <span class="mr-1">{{ t("approvedBy") }}</span>
           <UserEntry :user="acceptedByUser" inline class="ml-2" />
         </p>
       </template>
@@ -119,36 +121,50 @@ const showActions = computed(
         @click="togglePin"
       >
         <i :class="isPinned ? 'bi bi-pin-fill' : 'bi bi-pin-angle'" class="mr-1" />
-        {{ isPinned ? "Unpin" : "Pin" }}
+        {{ isPinned ? t("unpin") : t("pin") }}
       </Button>
       <Button
         v-if="canEdit && !completion.admin_note && actions.onAddNote"
         :disabled="isActionsDisabled"
         @click="actions.onAddNote!(completion)"
       >
-        Add Note
+        {{ t("addNote") }}
       </Button>
       <Button
         v-if="isPending && !isOwnCompletion && actions.onReject"
         :disabled="isActionsDisabled"
         @click="actions.onReject!(completion)"
       >
-        Reject
+        {{ t("reject") }}
       </Button>
       <Button
         v-if="isPending && !isOwnCompletion && actions.onApprove"
         :disabled="isActionsDisabled"
         @click="actions.onApprove!(completion)"
       >
-        Approve
+        {{ t("approve") }}
       </Button>
       <LinkButton
         v-if="canEdit"
         :to="`/completions/${completion.id}/edit`"
         :disabled="isActionsDisabled"
       >
-        Edit
+        {{ t("common.edit") }}
       </LinkButton>
     </div>
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "pin": "Pin",
+    "unpin": "Unpin",
+    "addNote": "Add Note",
+    "approve": "Approve",
+    "reject": "Reject",
+    "approvedBy": "Completion approved by",
+    "pinFailed": "Failed to update pin. Please try again."
+  }
+}
+</i18n>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
+import { useI18n } from "vue-i18n";
 import { useTouchedProvider } from "@/composables/useTouchedFields";
 import { useEmitOnChange } from "@/composables/useEmitOnChange";
 import type { FormFieldError } from "@/services/api/formErrors";
@@ -46,6 +47,8 @@ const emit = defineEmits<{
   (e: "errors", value: FormFieldError[]): void;
 }>();
 
+const { t } = useI18n({ inheritLocale: true });
+
 const { touchAll, clearTouched, isTouched, touch } = useTouchedProvider();
 defineExpose({ touchAll, clearTouched });
 
@@ -77,7 +80,7 @@ const ownErrors = computed<FormFieldError[]>(() => {
   if (props.eligibleFormats.length > 1 && props.modelValue.format_id == null) {
     errors.push({
       path: "format_id",
-      message: "Please select a format.",
+      message: t("selectFormat"),
       source: "validation",
     });
   }
@@ -85,7 +88,7 @@ const ownErrors = computed<FormFieldError[]>(() => {
   if (props.modelValue.proof_images.length === 0) {
     errors.push({
       path: "proof_images",
-      message: "At least one proof image is required.",
+      message: t("proofImageRequired"),
       source: "validation",
     });
   }
@@ -93,7 +96,7 @@ const ownErrors = computed<FormFieldError[]>(() => {
   if (props.modelValue.subm_notes.length > 5000) {
     errors.push({
       path: "subm_notes",
-      message: "Notes must be 5000 characters or less.",
+      message: t("notesTooLong"),
       source: "validation",
     });
   }
@@ -104,7 +107,7 @@ const ownErrors = computed<FormFieldError[]>(() => {
   if (props.videoRequired && nonEmptyVideos.length === 0) {
     errors.push({
       path: "proof_videos",
-      message: "At least one video URL is required.",
+      message: t("videoUrlRequired"),
       source: "validation",
     });
   }
@@ -112,7 +115,7 @@ const ownErrors = computed<FormFieldError[]>(() => {
     if (!isValidUrl(url)) {
       errors.push({
         path: "proof_videos",
-        message: `"${url}" is not a valid URL.`,
+        message: t("invalidUrl", { url }),
         source: "validation",
       });
       break;
@@ -125,7 +128,7 @@ const ownErrors = computed<FormFieldError[]>(() => {
   ) {
     errors.push({
       path: "lcc_leftover",
-      message: "LCC leftover must be a non-negative number.",
+      message: t("lccLeftoverInvalid"),
       source: "validation",
     });
   }
@@ -161,7 +164,7 @@ function indexedFieldErrors(field: string, length: number): (string | undefined)
   <div class="flex flex-col gap-6">
     <!-- Proof Images -->
     <div>
-      <label class="block font-bold mb-2">Proof Images</label>
+      <label class="block font-bold mb-2">{{ t("proofImages") }}</label>
       <ProofImageUploader
         :model-value="modelValue.proof_images"
         :disabled="disabled"
@@ -180,7 +183,7 @@ function indexedFieldErrors(field: string, length: number): (string | undefined)
     <BoxedCheckbox
       :model-value="modelValue.hide_videos"
       :disabled="disabled"
-      label="Hide my video proofs"
+      :label="t('hideVideos')"
       @update:model-value="update({ hide_videos: $event })"
     />
 
@@ -189,7 +192,7 @@ function indexedFieldErrors(field: string, length: number): (string | undefined)
       :model-value="modelValue.proof_videos"
       :disabled="disabled"
       :required="videoRequired"
-      label="Proof Videos"
+      :label="t('proofVideos')"
       :max="10"
       :item-errors="indexedFieldErrors('proof_videos', modelValue.proof_videos.length)"
       @update:model-value="update({ proof_videos: $event })"
@@ -200,13 +203,12 @@ function indexedFieldErrors(field: string, length: number): (string | undefined)
 
     <!-- List Ruleset Picker -->
     <div v-if="eligibleFormats.length > 1">
-      <label class="block font-bold mb-1">List Ruleset</label>
+      <label class="block font-bold mb-1">{{ t("listRuleset") }}</label>
       <p class="text-(--color-text-muted) text-sm mb-2">
-        This map is in multiple lists which may have different rulesets. Please
-        specify which list's ruleset you followed. Check the
+        {{ t("listRulesetIntro") }}
         <template v-for="(fmt, i) in eligibleFormats" :key="fmt.id">
           <template v-if="i > 0">{{
-            i === eligibleFormats.length - 1 ? " or " : ", "
+            i === eligibleFormats.length - 1 ? t("listSeparatorLast") : t("listSeparator")
           }}</template>
           <RouterLink
             :to="`/maps/${fmt.slug}/completion-rules`"
@@ -214,7 +216,7 @@ function indexedFieldErrors(field: string, length: number): (string | undefined)
             >{{ fmt.name }}</RouterLink
           >
         </template>
-        completion rules for details.
+        {{ t("listRulesetOutro") }}
       </p>
       <div class="flex flex-wrap gap-2">
         <Button
@@ -242,12 +244,12 @@ function indexedFieldErrors(field: string, length: number): (string | undefined)
 
     <!-- Run Modifiers -->
     <div>
-      <label class="block font-bold mb-2">Run Modifiers</label>
+      <label class="block font-bold mb-2">{{ t("runModifiers") }}</label>
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <BoxedCheckbox
           :model-value="modelValue.black_border"
           :disabled="disabled"
-          label="Black Border"
+          :label="t('blackBorder')"
           icon="/images/medals/medal_bb.webp"
           :error="fieldError('black_border')"
           @update:model-value="update({ black_border: $event })"
@@ -256,7 +258,7 @@ function indexedFieldErrors(field: string, length: number): (string | undefined)
         <BoxedCheckbox
           :model-value="modelValue.no_geraldo"
           :disabled="disabled"
-          label="No Optimal Hero"
+          :label="t('noOptimalHero')"
           icon="/images/medals/medal_nogerry.webp"
           :error="fieldError('no_geraldo')"
           @update:model-value="update({ no_geraldo: $event })"
@@ -266,7 +268,7 @@ function indexedFieldErrors(field: string, length: number): (string | undefined)
           :model-value="modelValue.lcc_enabled"
           :disabled="disabled"
           :locked="lccOnly"
-          label="LCC"
+          :label="t('lcc')"
           icon="/images/medals/medal_lcc.webp"
           :error="fieldError('lcc_enabled')"
           @update:model-value="update({ lcc_enabled: $event })"
@@ -275,7 +277,7 @@ function indexedFieldErrors(field: string, length: number): (string | undefined)
 
       <div v-if="modelValue.lcc_enabled" class="mt-2">
         <label for="lcc-leftover" class="block text-sm mb-1"
-          >Leftover cash</label
+          >{{ t("leftoverCash") }}</label
         >
         <input
           id="lcc-leftover"
@@ -300,8 +302,8 @@ function indexedFieldErrors(field: string, length: number): (string | undefined)
     <!-- Submission Notes -->
     <div>
       <label for="subm-notes" class="block font-bold mb-1">
-        Notes
-        <span class="text-(--color-text-muted) font-normal">(optional)</span>
+        {{ t("notes") }}
+        <span class="text-(--color-text-muted) font-normal">{{ t("optional") }}</span>
       </label>
       <textarea
         id="subm-notes"
@@ -334,3 +336,31 @@ function indexedFieldErrors(field: string, length: number): (string | undefined)
     </div>
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "proofImages": "Proof Images",
+    "proofVideos": "Proof Videos",
+    "hideVideos": "Hide my video proofs",
+    "listRuleset": "List Ruleset",
+    "listRulesetIntro": "This map is in multiple lists which may have different rulesets. Please specify which list's ruleset you followed. Check the",
+    "listRulesetOutro": "completion rules for details.",
+    "listSeparator": ", ",
+    "listSeparatorLast": " or ",
+    "runModifiers": "Run Modifiers",
+    "blackBorder": "Black Border",
+    "noOptimalHero": "No Optimal Hero",
+    "lcc": "LCC",
+    "leftoverCash": "Leftover cash",
+    "notes": "Notes",
+    "optional": "(optional)",
+    "selectFormat": "Please select a format.",
+    "proofImageRequired": "At least one proof image is required.",
+    "notesTooLong": "Notes must be 5000 characters or less.",
+    "videoUrlRequired": "At least one video URL is required.",
+    "invalidUrl": "\"{url}\" is not a valid URL.",
+    "lccLeftoverInvalid": "LCC leftover must be a non-negative number."
+  }
+}
+</i18n>

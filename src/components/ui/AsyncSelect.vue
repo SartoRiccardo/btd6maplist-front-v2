@@ -1,6 +1,7 @@
 <script setup lang="ts" generic="T extends Record<string, any>">
 import { ref, shallowRef, watch } from "vue";
 import { refDebounced } from "@vueuse/core";
+import { useI18n } from "vue-i18n";
 import {
   ComboboxAnchor,
   ComboboxContent,
@@ -22,12 +23,14 @@ const props = withDefaults(
     minChars?: number;
   }>(),
   {
-    placeholder: "Search...",
+    placeholder: undefined,
     disabled: false,
     debounce: 400,
     minChars: 1,
   },
 );
+
+const { t, tc } = useI18n({ inheritLocale: true });
 
 const emit = defineEmits<{
   "update:modelValue": [value: T | null];
@@ -77,7 +80,7 @@ function onUpdate(value: T) {
       <ComboboxInput
         v-model="searchTerm"
         :display-value="(v: T) => (v ? displayValue(v) : '')"
-        :placeholder="placeholder"
+        :placeholder="placeholder ?? t('search')"
         :disabled="disabled"
         class="flex-1 px-3 py-2 bg-transparent text-(--color-text) outline-none placeholder:text-(--color-text-muted)"
       />
@@ -93,7 +96,7 @@ function onUpdate(value: T) {
           v-if="loading"
           class="px-3 py-2 text-sm text-(--color-text-muted) text-center"
         >
-          Loading...
+          {{ t("common.loading") }}
         </div>
 
         <ComboboxEmpty
@@ -102,8 +105,8 @@ function onUpdate(value: T) {
         >
           {{
             debouncedSearch.length < minChars
-              ? `Type at least ${minChars} character${minChars > 1 ? "s" : ""}`
-              : "No results found."
+              ? t("typeAtLeast", minChars)
+              : t("noResults")
           }}
         </ComboboxEmpty>
 
@@ -121,3 +124,13 @@ function onUpdate(value: T) {
     </ComboboxContent>
   </ComboboxRoot>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "search": "Search...",
+    "typeAtLeast": "Type at least {n} character | Type at least {n} characters",
+    "noResults": "No results found."
+  }
+}
+</i18n>

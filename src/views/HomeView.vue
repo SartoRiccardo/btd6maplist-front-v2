@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 import { useFormats } from "@/services/api/formats/queries";
 import { useCompletions } from "@/services/api/completions/queries";
 import { useUser } from "@/services/api/users/queries";
@@ -10,6 +11,8 @@ import CompletionMapRowSkeleton from "@/components/completions/CompletionMapRowS
 import UserEntry from "@/components/users/UserEntry.vue";
 
 const { data: formats } = useFormats();
+
+const { t } = useI18n({ inheritLocale: true });
 const { data: creditUser1 } = useUser("508409944736006154", {
   include: ["flair"],
 });
@@ -55,24 +58,21 @@ function formatIcon(id: number): string {
 <template>
   <div class="text-center">
     <h1 class="font-['Luckiest_Guy'] text-4xl md:text-5xl mt-4">
-      Bloons TD 6 Maplist
+      {{ t("title") }}
     </h1>
     <p class="text-lg px-4 md:px-12 mt-3 mb-3">
-      The BTD6 Maplist showcases a collection of challenging custom maps for
-      Bloons TD 6, created by the community. These maps range from cleverly
-      designed to incredibly difficult, offering a variety of experiences for
-      players looking to test their tower defense skills.
+      {{ t("intro") }}
     </p>
     <div class="text-sm mb-6">
       <a href="https://www.youtube.com/@btd6maplist" target="_blank">
-        <i class="bi bi-youtube" />&nbsp;YouTube
+        <i class="bi bi-youtube" />&nbsp;{{ t("youtube") }}
       </a>
       {{ " | " }}
       <a
         href="https://github.com/stars/SartoRiccardo/lists/btd6-maplist"
         target="_blank"
       >
-        <i class="bi bi-github" />&nbsp;GitHub
+        <i class="bi bi-github" />&nbsp;{{ t("github") }}
       </a>
     </div>
 
@@ -99,7 +99,7 @@ function formatIcon(id: number): string {
 
     <!-- Recent Completions -->
     <h2 class="font-['Oswald'] text-2xl md:text-3xl font-bold mt-10">
-      Recent Completions
+      {{ t("recentCompletions") }}
     </h2>
     <div class="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-2">
       <template v-if="recentCompletions">
@@ -117,27 +117,40 @@ function formatIcon(id: number): string {
     <!-- Credits -->
     <hr class="my-10 border-(--color-secondary)" />
     <div class="text-left px-4">
-      <p class="mb-5">Special thanks to:</p>
+      <p class="mb-5">{{ t("specialThanks") }}</p>
       <ul class="list-disc pl-6 space-y-2">
         <li>
-          The Geometry Dash Demon List, which was the primary inspiration behind
-          this project, as well as smaller projects like the 2 Player List and
-          Insane Demon List.
+          {{ t("creditDemonList") }}
         </li>
         <li v-if="creditUser1">
           <span class="inline-block">
             <UserEntry :user="creditUser1" :centered="true" :inline="true" />
           </span>
-          for helping to set up the Discord server and designing the project's
-          icon
+          {{ t("creditUser1") }}
         </li>
         <li v-if="creditUser2">
           <span class="inline-block">
             <UserEntry :user="creditUser2" :centered="true" :inline="true" />
           </span>
-          for making and hosting both the website and the Discord bot
+          {{ t("creditUser2") }}
         </li>
       </ul>
     </div>
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "title": "Bloons TD 6 Maplist",
+    "intro": "The BTD6 Maplist showcases a collection of challenging custom maps for Bloons TD 6, created by the community. These maps range from cleverly designed to incredibly difficult, offering a variety of experiences for players looking to test their tower defense skills.",
+    "youtube": "YouTube",
+    "github": "GitHub",
+    "recentCompletions": "Recent Completions",
+    "specialThanks": "Special thanks to:",
+    "creditDemonList": "The Geometry Dash Demon List, which was the primary inspiration behind this project, as well as smaller projects like the 2 Player List and Insane Demon List.",
+    "creditUser1": "for helping to set up the Discord server and designing the project's icon",
+    "creditUser2": "for making and hosting both the website and the Discord bot"
+  }
+}
+</i18n>

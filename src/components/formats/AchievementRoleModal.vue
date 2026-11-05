@@ -8,6 +8,7 @@ import type { FormFieldError } from "@/services/api/formErrors";
 import { parseApiErrors } from "@/services/api/formErrors";
 import { ApiError } from "@/services/api/client";
 import { intToHex, hexToInt } from "@/utils/colors";
+import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import Button from "@/components/ui/Button.vue";
 import AchievementRoleForm, {
@@ -15,6 +16,8 @@ import AchievementRoleForm, {
 } from "./AchievementRoleForm.vue";
 
 const props = defineProps<{ formatId: number }>();
+
+const { t } = useI18n({ inheritLocale: true });
 
 const open = ref(false);
 const isEdit = ref(false);
@@ -107,11 +110,11 @@ async function handleSave() {
       apiErrors.value = errorResult.fieldErrors;
       await formRef.value.clearTouched();
       if (errorResult.fieldErrors.length === 0) {
-        const message = errorResult.message || "Something went wrong. Please try again.";
-        toast.error(`${message} (Error code: ${errorResult.status})`);
+        const message = errorResult.message || t("tryAgainError");
+        toast.error(`${message} ${t("errorCode", { code: errorResult.status })}`);
       }
     } else {
-      toast.error("Something went wrong. Please try again.");
+      toast.error(t("tryAgainError"));
     }
   } finally {
     saving.value = false;
@@ -144,7 +147,7 @@ defineExpose({ openModal });
           @click.stop
         >
           <h2 class="font-['Luckiest_Guy'] text-xl mb-4">
-            {{ isEdit ? "Edit Achievement Role" : "Add Achievement Role" }}
+            {{ isEdit ? t("editTitle") : t("addTitle") }}
           </h2>
 
           <div class="overflow-y-auto flex-1 pr-1">
@@ -158,9 +161,9 @@ defineExpose({ openModal });
           </div>
 
           <div class="flex justify-end gap-3 mt-4">
-            <Button :disabled="saving" @click="close(false)">Cancel</Button>
+            <Button :disabled="saving" @click="close(false)">{{ t("common.cancel") }}</Button>
             <Button active :disabled="saving" @click="handleSave">
-              {{ saving ? "Saving..." : "Save" }}
+              {{ saving ? t("saving") : t("common.save") }}
             </Button>
           </div>
         </div>
@@ -168,6 +171,18 @@ defineExpose({ openModal });
     </Transition>
   </Teleport>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "editTitle": "Edit Achievement Role",
+    "addTitle": "Add Achievement Role",
+    "saving": "Saving...",
+    "tryAgainError": "Something went wrong. Please try again.",
+    "errorCode": "(Error code: {code})"
+  }
+}
+</i18n>
 
 <style scoped>
 .achievement-role-modal-enter-active,

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { RouterLink } from "vue-router";
+import { useI18n } from "vue-i18n";
 import DiscordLoginButton from "./DiscordLoginButton.vue";
 import Icon from "@/components/common/Icon.vue";
 import {
@@ -17,6 +18,8 @@ interface Props {
 }
 
 const { onClose } = defineProps<Props>();
+
+const { t } = useI18n({ inheritLocale: true });
 
 const authStore = useAuthStore();
 
@@ -63,7 +66,7 @@ function handleLogout() {
               class="text-sm text-(--color-text-muted) flex items-center gap-2"
             >
               <Icon src="/images/medals/medal_win.webp" />
-              {{ authStore.user.medals.wins }} Completions
+              {{ t("completions", { n: authStore.user.medals.wins }) }}
             </div>
           </div>
         </button>
@@ -80,7 +83,7 @@ function handleLogout() {
             @click="onClose"
             class="flex text-xl! items-center rounded-lg px-4 font-bold uppercase text-(--color-text)! transition-colors duration-200 hover:bg-(--color-secondary)! cursor-pointer"
           >
-            Profile
+            {{ t("profile") }}
           </RouterLink>
         </DropdownMenuItem>
         <DropdownMenuItem as-child>
@@ -89,7 +92,7 @@ function handleLogout() {
             @click="onClose"
             class="flex text-xl! items-center rounded-lg px-4 font-bold uppercase text-(--color-text)! transition-colors duration-200 hover:bg-(--color-secondary)! cursor-pointer"
           >
-            My Submissions
+            {{ t("mySubmissions") }}
           </RouterLink>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
@@ -97,7 +100,7 @@ function handleLogout() {
           @click="handleLogout"
           class="flex text-xl! items-center rounded-lg px-4 font-bold uppercase text-(--color-danger)! transition-colors duration-200 hover:bg-(--color-secondary)! cursor-pointer"
         >
-          Logout
+          {{ t("logout") }}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -106,3 +109,14 @@ function handleLogout() {
     <DiscordLoginButton v-else @success="onClose" class="w-full" />
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "completions": "{n} Completions",
+    "profile": "Profile",
+    "mySubmissions": "My Submissions",
+    "logout": "Logout"
+  }
+}
+</i18n>

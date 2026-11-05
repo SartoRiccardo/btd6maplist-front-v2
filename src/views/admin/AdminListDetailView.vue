@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { useI18n } from "vue-i18n";
 import { useAuthStore } from "@/stores/auth";
 import { useFormatWithWebhooks, useUpdateFormat } from "@/services/api/formats/queries";
 import { permissions } from "@/constants/permissions";
@@ -14,6 +15,8 @@ import FormatPresentationForm, {
   type FormatPresentationFormModel,
 } from "@/components/formats/FormatPresentationForm.vue";
 import FormatPresentationFormSkeleton from "@/components/formats/FormatPresentationFormSkeleton.vue";
+
+const { t } = useI18n({ inheritLocale: true });
 
 const route = useRoute();
 const router = useRouter();
@@ -90,7 +93,7 @@ async function handleSave() {
   if (!formRef.value || !format.value) return;
   await formRef.value.touchAll();
   if (activeErrors.value.length > 0) {
-    toast.error("Please fix the errors before saving.");
+    toast.error(t("fixErrors"));
     return;
   }
 
@@ -122,20 +125,20 @@ async function handleSave() {
         run_submission_wh: formModel.value.run_submission_wh || null,
       },
     });
-    toast.success("Saved successfully.");
+    toast.success(t("savedSuccessfully"));
   } catch (error: unknown) {
     if (error instanceof ApiError) {
       const errorResult = parseApiErrors(error);
       apiErrors.value = errorResult.fieldErrors;
       await formRef.value.clearTouched();
       if (errorResult.fieldErrors.length > 0) {
-        toast.error("Please fix the errors before saving.");
+        toast.error(t("fixErrors"));
       } else {
-        const message = errorResult.message || "Something went wrong. Please try again.";
-        toast.error(`${message} (Error code: ${errorResult.status})`);
+        const message = errorResult.message || t("somethingWentWrong");
+        toast.error(t("errorWithCode", { message, code: errorResult.status }));
       }
     } else {
-      toast.error("Something went wrong. Please try again.");
+      toast.error(t("somethingWentWrong"));
     }
   } finally {
     isBusy.value = false;
@@ -148,7 +151,7 @@ async function handleSave() {
     <h1
       class="font-['Luckiest_Guy'] text-3xl md:text-4xl text-center mt-6 mb-4"
     >
-      {{ format ? format.name : "List Info" }}
+      {{ format ? format.name : t("title") }}
     </h1>
 
     <Panel v-if="isLoading">
@@ -157,7 +160,7 @@ async function handleSave() {
 
     <div v-else-if="!canEdit" class="flex justify-center py-12">
       <p class="text-(--color-text-muted)">
-        You don't have permission to edit this list.
+        {{ t("noPermission") }}
       </p>
     </div>
 
@@ -178,10 +181,24 @@ async function handleSave() {
     </Panel>
 
     <div class="flex justify-between items-center mt-4">
-      <Button @click="router.push('/admin/lists')">← Back</Button>
+      <Button @click="router.push('/admin/lists')">{{ t("back") }}</Button>
       <Button v-if="canEdit && format" :disabled="isBusy" @click="handleSave"
-        >Save</Button
+        >{{ t("common.save") }}</Button
       >
     </div>
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "title": "List Info",
+    "noPermission": "You don't have permission to edit this list.",
+    "back": "← Back",
+    "fixErrors": "Please fix the errors before saving.",
+    "savedSuccessfully": "Saved successfully.",
+    "somethingWentWrong": "Something went wrong. Please try again.",
+    "errorWithCode": "{message} (Error code: {code})"
+  }
+}
+</i18n>

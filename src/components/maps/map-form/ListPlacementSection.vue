@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { useTouchedFields } from "@/composables/useTouchedFields";
 import { useEmitOnChange } from "@/composables/useEmitOnChange";
 import type { FormFieldError } from "@/services/api/formErrors";
@@ -41,6 +42,8 @@ const emit = defineEmits<{
 }>();
 
 const { isTouched, touch } = useTouchedFields();
+
+const { t } = useI18n({ inheritLocale: true });
 
 function update(partial: Partial<ListPlacementSlice>) {
   for (const key of Object.keys(partial)) touch(key);
@@ -187,7 +190,7 @@ const ownErrors = computed<FormFieldError[]>(() => {
   ) {
     errors.push({
       path: "placement_curver",
-      message: "Placement must be at least 1.",
+      message: t("placementMin"),
       source: "validation",
     });
   }
@@ -197,7 +200,7 @@ const ownErrors = computed<FormFieldError[]>(() => {
   ) {
     errors.push({
       path: "placement_allver",
-      message: "Placement must be at least 1.",
+      message: t("placementMin"),
       source: "validation",
     });
   }
@@ -248,7 +251,7 @@ function onDifficultyChange(
           class="flex items-center gap-2 font-bold mb-2"
         >
           <Badge :src="formatIcon(FORMAT_MAPLIST)!" />
-          Maplist Placement
+          {{ t("maplistPlacement") }}
         </label>
         <input
           id="placement-curver"
@@ -256,7 +259,7 @@ function onDifficultyChange(
           min="1"
           :value="modelValue.placement_curver ?? ''"
           :disabled="disabled || !canEditMaplist"
-          placeholder="Position"
+          :placeholder="t('position')"
           class="w-full px-3 py-2 rounded-(--radius-btn) bg-(--color-primary) text-(--color-text) border border-(--color-contrast) focus:outline-none focus:border-(--color-active)"
           :class="{
             'border-(--color-danger)!': fieldError('placement_curver'),
@@ -283,7 +286,7 @@ function onDifficultyChange(
           class="flex items-center gap-2 font-bold mb-2"
         >
           <Badge :src="formatIcon(FORMAT_MAPLIST_ALL_VER)!" />
-          Maplist (All Versions) Placement
+          {{ t("maplistAllVerPlacement") }}
         </label>
         <input
           id="placement-allver"
@@ -291,7 +294,7 @@ function onDifficultyChange(
           min="1"
           :value="modelValue.placement_allver ?? ''"
           :disabled="disabled || !canEditAllVer"
-          placeholder="Position"
+          :placeholder="t('position')"
           class="w-full px-3 py-2 rounded-(--radius-btn) bg-(--color-primary) text-(--color-text) border border-(--color-contrast) focus:outline-none focus:border-(--color-active)"
           :class="{
             'border-(--color-danger)!': fieldError('placement_allver'),
@@ -318,7 +321,7 @@ function onDifficultyChange(
       <div>
         <label for="difficulty" class="flex items-center gap-2 font-bold mb-2">
           <Badge :src="formatIcon(FORMAT_EXPERT_LIST)!" />
-          Expert List Difficulty
+          {{ t("expertListDifficulty") }}
         </label>
         <select
           id="difficulty"
@@ -333,7 +336,7 @@ function onDifficultyChange(
             )
           "
         >
-          <option value="">None</option>
+          <option value="">{{ t("common.none") }}</option>
           <option
             v-for="diff in EXPERT_DIFFICULTIES"
             :key="typeof diff.value === 'number' ? diff.value : diff.value[0]"
@@ -356,7 +359,7 @@ function onDifficultyChange(
           class="flex items-center gap-2 font-bold mb-2"
         >
           <Badge :src="formatIcon(FORMAT_BEST_OF_THE_BEST)!" />
-          Best of the Best Difficulty
+          {{ t("botbDifficulty") }}
         </label>
         <select
           id="botb-difficulty"
@@ -371,7 +374,7 @@ function onDifficultyChange(
             )
           "
         >
-          <option value="">None</option>
+          <option value="">{{ t("common.none") }}</option>
           <option
             v-for="diff in BOTB_DIFFICULTIES"
             :key="typeof diff.value === 'number' ? diff.value : diff.value[0]"
@@ -393,7 +396,7 @@ function onDifficultyChange(
     <div>
       <label class="flex items-center gap-2 font-bold mb-2">
         <Badge :src="formatIcon(FORMAT_NOSTALGIA_PACK)!" />
-        Nostalgia Pack Remake Of
+        {{ t("npRemakeOf") }}
       </label>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <select
@@ -409,7 +412,7 @@ function onDifficultyChange(
             )
           "
         >
-          <option value="">None</option>
+          <option value="">{{ t("common.none") }}</option>
           <option
             v-for="game in uniqueGames"
             :key="game.game_id"
@@ -428,7 +431,7 @@ function onDifficultyChange(
           :disabled="disabled || !canEditNP"
           :min-chars="0"
           :debounce="400"
-          placeholder="Search maps..."
+          :placeholder="t('searchMaps')"
           @update:model-value="onRetroMapSelect"
         />
       </div>
@@ -442,7 +445,7 @@ function onDifficultyChange(
 
     <!-- Optimal Heroes -->
     <div>
-      <label class="block font-bold mb-2">Optimal Heroes</label>
+      <label class="block font-bold mb-2">{{ t("optimalHeroes") }}</label>
       <OptimalHeroesInput
         :model-value="modelValue.optimal_heros"
         :disabled="disabled"
@@ -457,3 +460,19 @@ function onDifficultyChange(
     </div>
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "maplistPlacement": "Maplist Placement",
+    "maplistAllVerPlacement": "Maplist (All Versions) Placement",
+    "expertListDifficulty": "Expert List Difficulty",
+    "botbDifficulty": "Best of the Best Difficulty",
+    "npRemakeOf": "Nostalgia Pack Remake Of",
+    "optimalHeroes": "Optimal Heroes",
+    "position": "Position",
+    "searchMaps": "Search maps...",
+    "placementMin": "Placement must be at least 1."
+  }
+}
+</i18n>

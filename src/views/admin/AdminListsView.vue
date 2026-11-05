@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 import { useAuthStore } from "@/stores/auth";
 import { useFormats } from "@/services/api/formats/queries";
 import { permissions } from "@/constants/permissions";
 import { FORMAT_ICONS } from "@/constants/formats";
 import Badge from "@/components/common/Badge.vue";
 import LinkButton from "@/components/ui/LinkButton.vue";
+
+const { t } = useI18n({ inheritLocale: true });
 
 const auth = useAuthStore();
 
@@ -30,11 +33,11 @@ function iconFor(formatId: number) {
     <h1
       class="font-['Luckiest_Guy'] text-3xl md:text-4xl text-center mt-6 mb-6"
     >
-      Lists
+      {{ t("title") }}
     </h1>
 
     <div v-if="isLoading" class="flex justify-center py-12">
-      <p class="text-(--color-text-muted)">Loading...</p>
+      <p class="text-(--color-text-muted)">{{ t("common.loading") }}</p>
     </div>
 
     <div
@@ -42,7 +45,7 @@ function iconFor(formatId: number) {
       class="flex justify-center py-12"
     >
       <p class="text-(--color-text-muted)">
-        You don't have permission to manage any lists.
+        {{ t("noPermission") }}
       </p>
     </div>
 
@@ -69,7 +72,7 @@ function iconFor(formatId: number) {
             v-if="auth.hasPermission(permissions.achievementRoles.edit, fmt.id)"
             :to="`/admin/lists/${fmt.id}/achievement-roles`"
           >
-            Achievement Roles
+            {{ t("achievementRoles") }}
           </LinkButton>
           <LinkButton
             v-if="
@@ -77,10 +80,21 @@ function iconFor(formatId: number) {
             "
             :to="`/admin/lists/${fmt.id}`"
           >
-            List Info
+            {{ t("listInfo") }}
           </LinkButton>
         </div>
       </div>
     </div>
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "title": "Lists",
+    "noPermission": "You don't have permission to manage any lists.",
+    "achievementRoles": "Achievement Roles",
+    "listInfo": "List Info"
+  }
+}
+</i18n>

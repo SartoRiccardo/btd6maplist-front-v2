@@ -9,6 +9,7 @@ import type { SubmitCompletionRequest } from "@/services/api/completions/types";
 import { ApiError } from "@/services/api/client";
 import { parseApiErrors, type FormFieldError } from "@/services/api/formErrors";
 import { toast } from "vue-sonner";
+import { useI18n } from "vue-i18n";
 import { getFormatsMapIsIn } from "@/utils/formatBadges";
 import { permissions } from "@/constants/permissions";
 import { FORMAT_EXPERT_LIST, GLOBAL_FORMAT } from "@/constants/formats";
@@ -24,6 +25,7 @@ import SubmitCompletionFormSkeleton from "@/components/completions/SubmitComplet
 const route = useRoute();
 const router = useRouter();
 const auth = useAuthStore();
+const { t } = useI18n({ inheritLocale: true });
 
 const code = computed(() => route.params["code"] as string);
 const mapUrl = computed(() => `/map/${code.value}`);
@@ -153,11 +155,11 @@ async function handleSubmit() {
       apiErrors.value = errorResult.fieldErrors;
       await formRef.value.clearTouched();
       if (errorResult.fieldErrors.length === 0) {
-        const message = errorResult.message || "Something went wrong. Please try again.";
-        toast.error(`${message} (Error code: ${errorResult.status})`);
+        const message = errorResult.message || t("somethingWentWrong");
+        toast.error(`${message} ${t("errorCode", { status: errorResult.status })}`);
       }
     } else {
-      toast.error("Something went wrong. Please try again.");
+      toast.error(t("somethingWentWrong"));
     }
   }
 }
@@ -166,8 +168,8 @@ async function handleSubmit() {
 <template>
   <div>
     <h1 class="font-['Luckiest_Guy'] text-3xl text-center mb-6">
-      Submit Completion
-      <template v-if="mapData"> for {{ mapData.name }}</template>
+      {{ t("title") }}
+      <template v-if="mapData"> {{ t("forMap", { name: mapData.name }) }}</template>
     </h1>
 
     <!-- Loading -->
@@ -181,7 +183,7 @@ async function handleSubmit() {
       class="flex flex-col items-center gap-4"
     >
       <p class="text-(--color-text-muted)">
-        You must be logged in to submit a completion.
+        {{ t("mustBeLoggedIn") }}
       </p>
       <DiscordLoginButton />
     </Panel>
@@ -189,14 +191,14 @@ async function handleSubmit() {
     <!-- No permission -->
     <Panel v-else-if="!canSubmit">
       <p class="text-(--color-text-muted) text-center">
-        You don't have permission to submit completions.
+        {{ t("noPermission") }}
       </p>
     </Panel>
 
     <!-- No eligible formats -->
     <Panel v-else-if="eligibleFormats.length === 0">
       <p class="text-(--color-text-muted) text-center">
-        This map is not currently accepting completion submissions.
+        {{ t("notAccepting") }}
       </p>
     </Panel>
 
@@ -215,9 +217,24 @@ async function handleSubmit() {
       />
 
       <div class="flex justify-end gap-2 mt-6">
-        <LinkButton :to="mapUrl" :disabled="busy">Cancel</LinkButton>
-        <Button :disabled="busy" @click="handleSubmit"> Submit </Button>
+        <LinkButton :to="mapUrl" :disabled="busy">{{ t("common.cancel") }}</LinkButton>
+        <Button :disabled="busy" @click="handleSubmit"> {{ t("submit") }} </Button>
       </div>
     </Panel>
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "title": "Submit Completion",
+    "forMap": "for {name}",
+    "mustBeLoggedIn": "You must be logged in to submit a completion.",
+    "noPermission": "You don't have permission to submit completions.",
+    "notAccepting": "This map is not currently accepting completion submissions.",
+    "submit": "Submit",
+    "errorCode": "(Error code: {status})",
+    "somethingWentWrong": "Something went wrong. Please try again."
+  }
+}
+</i18n>

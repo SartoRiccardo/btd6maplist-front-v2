@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { useMaps } from "@/services/api/maps/queries";
 import type { MapWithMetadata } from "@/services/api/maps/types";
 import Btd6Map from "@/components/maps/Btd6Map.vue";
@@ -9,6 +10,8 @@ import Pagination from "@/components/ui/Pagination.vue";
 const props = defineProps<{
   formatId: number;
 }>();
+
+const { t } = useI18n({ inheritLocale: true });
 
 const open = ref(false);
 const page = ref(1);
@@ -71,7 +74,7 @@ defineExpose({ pick });
           class="relative bg-(--color-secondary) rounded-(--radius-panel) p-6 pb-2 w-[90%] max-w-3xl max-h-[80vh] flex flex-col overflow-hidden"
           @click.stop
         >
-          <h2 class="font-['Luckiest_Guy'] text-xl mb-4">Pick a Map</h2>
+          <h2 class="font-['Luckiest_Guy'] text-xl mb-4">{{ t("pickAMap") }}</h2>
 
           <div class="overflow-y-auto py-3 flex-1">
             <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
@@ -110,6 +113,14 @@ defineExpose({ pick });
     </Transition>
   </Teleport>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "pickAMap": "Pick a Map"
+  }
+}
+</i18n>
 
 <style scoped>
 .pick-map-modal-enter-active,

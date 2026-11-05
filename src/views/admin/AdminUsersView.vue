@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 import { refDebounced } from "@vueuse/core";
+import { useI18n } from "vue-i18n";
 import { useUsers } from "@/services/api/users/queries";
 import UserEntry from "@/components/users/UserEntry.vue";
 import NewUserModal from "@/components/users/NewUserModal.vue";
 import Pagination from "@/components/ui/Pagination.vue";
 import Button from "@/components/ui/Button.vue";
+
+const { t } = useI18n({ inheritLocale: true });
 
 const newUserModal = ref<InstanceType<typeof NewUserModal> | null>(null);
 
@@ -42,21 +45,21 @@ watch(
     <h1
       class="font-['Luckiest_Guy'] text-3xl md:text-4xl text-center mt-6 mb-4"
     >
-      Users
+      {{ t("title") }}
     </h1>
 
     <div class="flex gap-2 mb-4">
       <input
         v-model="search"
         type="text"
-        placeholder="Search users..."
+        :placeholder="t('searchPlaceholder')"
         class="flex-1 px-3 py-1.5 rounded-(--radius-btn) bg-(--color-primary) text-(--color-text) border border-(--color-contrast) focus:outline-none focus:border-(--color-active)"
       />
-      <Button @click="newUserModal?.open()">+ New User</Button>
+      <Button @click="newUserModal?.open()">{{ t("newUser") }}</Button>
     </div>
 
     <div v-if="isLoading" class="flex justify-center">
-      <p class="text-(--color-text-muted)">Loading...</p>
+      <p class="text-(--color-text-muted)">{{ t("common.loading") }}</p>
     </div>
 
     <template v-else-if="users && users.data.length > 0">
@@ -71,7 +74,7 @@ watch(
     </template>
 
     <p v-else-if="!isLoading" class="text-center text-(--color-text-muted)">
-      No users found.
+      {{ t("noneFound") }}
     </p>
 
     <Pagination
@@ -85,3 +88,14 @@ watch(
     <NewUserModal ref="newUserModal" />
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "title": "Users",
+    "searchPlaceholder": "Search users...",
+    "newUser": "+ New User",
+    "noneFound": "No users found."
+  }
+}
+</i18n>

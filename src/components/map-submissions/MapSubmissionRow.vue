@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { useQuery } from "@tanstack/vue-query";
+import { useI18n } from "vue-i18n";
 import type { MapSubmission } from "@/services/api/map-submissions/types";
 import { getCustomMap } from "@/services/ninjakiwi";
 import { getRetroMap } from "@/services/api/retro-maps";
@@ -13,6 +14,8 @@ import ImageLightbox from "@/components/common/ImageLightbox.vue";
 import UserEntry from "@/components/users/UserEntry.vue";
 
 const lightbox = ref<InstanceType<typeof ImageLightbox>>();
+
+const { t } = useI18n({ inheritLocale: true });
 
 const props = withDefaults(
   defineProps<{
@@ -63,11 +66,11 @@ const proposedLabel = computed(() => {
 
 const statusPill = computed(() => {
   if (props.submission.status === "rejected")
-    return { label: "Rejected", class: "bg-(--color-deleted)" };
+    return { label: t("rejected"), class: "bg-(--color-deleted)" };
   if (props.submission.status === "pending")
-    return { label: "Pending", class: "bg-(--color-pending)" };
+    return { label: t("pending"), class: "bg-(--color-pending)" };
   if (props.submission.status === "accepted")
-    return { label: "Accepted", class: "bg-(--color-success)" };
+    return { label: t("accepted"), class: "bg-(--color-success)" };
   return null;
 });
 
@@ -150,12 +153,12 @@ const createdOn = computed(() => {
 
     <ul class="list-['-_'] list-inside text-sm mt-1 mb-0 space-y-0.5">
       <li v-if="proposedLabel">
-        {{ isNP ? "Remake of:" : "Submitted as:" }}
+        {{ isNP ? t("remakeOf") : t("submittedAs") }}
         <span class="font-bold">{{ proposedLabel }}</span>
       </li>
 
       <li v-if="!hideSubmitter">
-        Submitted by:
+        {{ t("submittedBy") }}
         <UserEntry :user="submission.submitter" inline class="inline" />
       </li>
     </ul>
@@ -182,3 +185,16 @@ const createdOn = computed(() => {
     <ImageLightbox ref="lightbox" />
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "rejected": "Rejected",
+    "pending": "Pending",
+    "accepted": "Accepted",
+    "remakeOf": "Remake of:",
+    "submittedAs": "Submitted as:",
+    "submittedBy": "Submitted by:"
+  }
+}
+</i18n>

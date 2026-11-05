@@ -2,10 +2,13 @@
 import { ref, watch } from "vue";
 import { ApiError } from "@/services/api/client";
 import { parseApiErrors, type FormFieldError } from "@/services/api/formErrors";
+import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
 import { useCreateUser } from "@/services/api/users/queries";
 import Button from "@/components/ui/Button.vue";
 import UserForm, { type UserFormModel } from "./UserForm.vue";
+
+const { t } = useI18n({ inheritLocale: true });
 
 const emit = defineEmits<{
   created: [];
@@ -47,11 +50,11 @@ async function handleSubmit() {
       apiErrors.value = errorResult.fieldErrors;
       await formRef.value.clearTouched();
       if (errorResult.fieldErrors.length === 0) {
-        const message = errorResult.message || "Something went wrong. Please try again.";
-        toast.error(`${message} (Error code: ${errorResult.status})`);
+        const message = errorResult.message || t("tryAgainError");
+        toast.error(`${message} ${t("errorCode", { code: errorResult.status })}`);
       }
     } else {
-      toast.error("Something went wrong. Please try again.");
+      toast.error(t("tryAgainError"));
     }
   } finally {
     busy.value = false;
@@ -82,7 +85,7 @@ defineExpose({ open: openModal });
         class="relative bg-(--color-secondary) rounded-(--radius-panel) p-6 max-w-sm w-[90%]"
         @click.stop
       >
-        <h2 class="font-bold text-lg mb-4">New User</h2>
+        <h2 class="font-bold text-lg mb-4">{{ t("newUser") }}</h2>
 
         <UserForm
           ref="formRef"
@@ -93,12 +96,23 @@ defineExpose({ open: openModal });
         />
 
         <div class="flex justify-end gap-2 mt-4">
-          <Button :disabled="busy" @click="close">Cancel</Button>
+          <Button :disabled="busy" @click="close">{{ t("common.cancel") }}</Button>
           <Button :active="true" :disabled="busy" @click="handleSubmit">
-            Submit
+            {{ t("submit") }}
           </Button>
         </div>
       </div>
     </div>
   </Teleport>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "newUser": "New User",
+    "submit": "Submit",
+    "tryAgainError": "Something went wrong. Please try again.",
+    "errorCode": "(Error code: {code})"
+  }
+}
+</i18n>

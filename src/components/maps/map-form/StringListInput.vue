@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useI18n } from "vue-i18n";
 import type { FormFieldError } from "@/services/api/formErrors";
 import ListEditor from "@/components/ui/ListEditor.vue";
 
@@ -25,6 +26,8 @@ function updateAt(index: number, value: string) {
 function fieldError(index: number): string | undefined {
   return props.externalErrors.find((e) => e.path === `${index}`)?.message;
 }
+
+const { t } = useI18n({ inheritLocale: true });
 </script>
 
 <template>
@@ -32,7 +35,7 @@ function fieldError(index: number): string | undefined {
     :model-value="modelValue"
     :default="''"
     :disabled="disabled"
-    add-label="Add"
+    :add-label="t('add')"
     @update:model-value="emit('update:modelValue', $event)"
   >
     <template #item="{ item, index }">
@@ -53,3 +56,11 @@ function fieldError(index: number): string | undefined {
     </template>
   </ListEditor>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "add": "Add"
+  }
+}
+</i18n>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 import { useFormats } from "@/services/api/formats/queries";
@@ -23,6 +24,8 @@ import SubmitMapForm, {
 const route = useRoute();
 const router = useRouter();
 const auth = useAuthStore();
+
+const { t } = useI18n({ inheritLocale: true });
 
 // --- Query params ---
 
@@ -168,11 +171,11 @@ async function handleSubmit() {
       apiErrors.value = errorResult.fieldErrors;
       await formRef.value.clearTouched();
       if (errorResult.fieldErrors.length === 0) {
-        const message = errorResult.message || "Something went wrong. Please try again.";
-        toast.error(`${message} (Error code: ${errorResult.status})`);
+        const message = errorResult.message || t("somethingWentWrong");
+        toast.error(`${message} ${t("errorCode", { code: errorResult.status })}`);
       }
     } else {
-      toast.error("Something went wrong. Please try again.");
+      toast.error(t("somethingWentWrong"));
     }
   }
 }
@@ -180,7 +183,9 @@ async function handleSubmit() {
 
 <template>
   <div>
-    <h1 class="font-['Luckiest_Guy'] text-3xl text-center mb-6">Submit Map</h1>
+    <h1 class="font-['Luckiest_Guy'] text-3xl text-center mb-6">
+      {{ t("submitMap") }}
+    </h1>
 
     <!-- Not authenticated -->
     <Panel
@@ -188,7 +193,7 @@ async function handleSubmit() {
       class="flex flex-col items-center gap-4"
     >
       <p class="text-(--color-text-muted)">
-        You must be logged in to submit a map.
+        {{ t("mustBeLoggedIn") }}
       </p>
       <DiscordLoginButton />
     </Panel>
@@ -196,7 +201,7 @@ async function handleSubmit() {
     <!-- No permission -->
     <Panel v-else-if="!auth.isLoading && !canSubmit">
       <p class="text-(--color-text-muted) text-center">
-        You don't have permission to submit maps.
+        {{ t("noPermission") }}
       </p>
     </Panel>
 
@@ -248,14 +253,14 @@ async function handleSubmit() {
         <!-- No visible formats -->
         <Panel v-if="visibleFormats.length === 0">
           <p class="text-(--color-text-muted) text-center">
-            No lists are currently accepting map submissions.
+            {{ t("noListsAccepting") }}
           </p>
         </Panel>
 
         <!-- All visible formats are disabled (map already in all) -->
         <Panel v-else-if="eligibleFormats.length === 0">
           <p class="text-(--color-text-muted) text-center">
-            This map is already in all available lists.
+            {{ t("mapAlreadyInAllLists") }}
           </p>
         </Panel>
 
@@ -274,10 +279,27 @@ async function handleSubmit() {
           />
 
           <div class="flex justify-end gap-2 mt-6">
-            <Button :disabled="busy" @click="handleSubmit"> Submit </Button>
+            <Button :disabled="busy" @click="handleSubmit">
+              {{ t("submit") }}
+            </Button>
           </div>
         </Panel>
       </template>
     </template>
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "submitMap": "Submit Map",
+    "submit": "Submit",
+    "mustBeLoggedIn": "You must be logged in to submit a map.",
+    "noPermission": "You don't have permission to submit maps.",
+    "noListsAccepting": "No lists are currently accepting map submissions.",
+    "mapAlreadyInAllLists": "This map is already in all available lists.",
+    "somethingWentWrong": "Something went wrong. Please try again.",
+    "errorCode": "(Error code: {code})"
+  }
+}
+</i18n>

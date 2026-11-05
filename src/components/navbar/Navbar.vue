@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { RouterLink } from "vue-router";
+import { useI18n } from "vue-i18n";
 import DesktopNavbar from "./DesktopNavbar.vue";
 import MobileNav from "./MobileNav.vue";
 import { FORMAT_ICONS } from "@/constants/formats";
@@ -10,19 +11,21 @@ import type { NavItem } from "./types";
 
 const authStore = useAuthStore();
 
-const allAdminLinks = [
+const { t } = useI18n({ inheritLocale: true });
+
+const allAdminLinks = computed(() => [
   {
-    name: "Map Submissions",
+    name: t("mapSubmissions"),
     url: "/admin/submissions/maps",
     perms: [permissions.map.create],
   },
   {
-    name: "Run Submissions",
+    name: t("runSubmissions"),
     url: "/admin/submissions/completions",
     perms: [permissions.completion.edit, permissions.completion.delete],
   },
   {
-    name: "User List",
+    name: t("userList"),
     url: "/admin/users",
     perms: [
       permissions.user.ban,
@@ -31,12 +34,12 @@ const allAdminLinks = [
     ],
   },
   {
-    name: "List Configuration",
+    name: t("listConfiguration"),
     url: "/admin/config",
     perms: [permissions.config.edit, permissions.formatPresentation.edit],
   },
   {
-    name: "Map Lists",
+    name: t("mapLists"),
     url: "/admin/lists",
     perms: [
       permissions.formatPresentation.edit,
@@ -44,7 +47,7 @@ const allAdminLinks = [
     ],
   },
   {
-    name: "Retro Maps",
+    name: t("retroMaps"),
     url: "/admin/retro-maps",
     perms: [
       permissions.retroMap.create,
@@ -53,7 +56,7 @@ const allAdminLinks = [
     ],
   },
   {
-    name: "Hidden Maps",
+    name: t("hiddenMaps"),
     url: "/admin/maps",
     perms: [
       permissions.map.create,
@@ -61,25 +64,25 @@ const allAdminLinks = [
       permissions.map.delete,
     ],
   },
-];
+]);
 
 const navItems = computed<NavItem[]>(() => {
   const items: NavItem[] = [];
   const userPerms = authStore.user?.permissions;
   const visibleAdminLinks = userPerms
-    ? allAdminLinks.filter((link) =>
+    ? allAdminLinks.value.filter((link) =>
         link.perms.some((p) => (userPerms[p]?.length ?? 0) > 0),
       )
     : [];
   if (visibleAdminLinks.length > 0) {
     items.push({
-      name: "Admin",
+      name: t("admin"),
       children: visibleAdminLinks.map(({ name, url }) => ({ name, url })),
     });
   }
   items.push(
     {
-      name: "Leaderboard",
+      name: t("leaderboard"),
       url: "/leaderboard",
     },
     {
@@ -88,7 +91,7 @@ const navItems = computed<NavItem[]>(() => {
         name: f.name,
         url: `/maps/${f.slug}`,
       })),
-      name: "Maps",
+      name: t("maps"),
     },
   );
   return items;
@@ -111,13 +114,13 @@ function openMobileMenu() {
       class="flex items-center no-underline text-(--color-text)! self-center hover:text-inherit! order-2 lg:order-1 ml-auto lg:ml-0"
     >
       <img
-        alt="Logo"
+        :alt="t('logo')"
         class="relative top-[-0.2rem] w-8 h-8 mr-4 rounded-full scale-150"
         src="/images/maplist.webp"
       />
       <span
         class="site-title font-['Luckiest_Guy'] text-[1.8rem] relative top-[0.1rem] hidden lg:inline"
-        >BTD6 Maplist</span
+        >{{ t("brandName") }}</span
       >
     </RouterLink>
 
@@ -131,3 +134,22 @@ function openMobileMenu() {
     </nav>
   </header>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "mapSubmissions": "Map Submissions",
+    "runSubmissions": "Run Submissions",
+    "userList": "User List",
+    "listConfiguration": "List Configuration",
+    "mapLists": "Map Lists",
+    "retroMaps": "Retro Maps",
+    "hiddenMaps": "Hidden Maps",
+    "admin": "Admin",
+    "leaderboard": "Leaderboard",
+    "maps": "Maps",
+    "logo": "Logo",
+    "brandName": "BTD6 Maplist"
+  }
+}
+</i18n>

@@ -2,12 +2,15 @@
 import type { UserFormatRanks, RankEntry } from "@/services/api/users/types";
 import type { Format } from "@/services/api/formats/types";
 import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 import { FORMAT_ICONS, FORMATS_WITH_POINTS } from "@/constants/formats";
 import { getPositionColor } from "@/utils/colors";
 import Badge from "@/components/common/Badge.vue";
 import Tooltip from "@/components/ui/Tooltip.vue";
 
 const props = defineProps<{ ranks: UserFormatRanks; format?: Format; pointsDecimalDigits?: number }>();
+
+const { t } = useI18n({ inheritLocale: true });
 
 const formatInfo = FORMAT_ICONS.find((f) => f.id === props.ranks.format_id);
 
@@ -22,23 +25,23 @@ const ALL_MEDALS: MedalDef[] = [
   {
     key: "points",
     image: "/images/medals/medal_win.webp",
-    tooltip: "Leaderboard points",
+    tooltip: t("leaderboardPoints"),
     suffix: "pt",
   },
   {
     key: "black_border",
     image: "/images/medals/medal_bb.webp",
-    tooltip: "Black Border",
+    tooltip: t("blackBorder"),
   },
   {
     key: "no_geraldo",
     image: "/images/medals/medal_nogerry.webp",
-    tooltip: "No Optimal Hero",
+    tooltip: t("noOptimalHero"),
   },
   {
     key: "lccs",
     image: "/images/medals/medal_lcc.webp",
-    tooltip: "Least Cash CHIMPS",
+    tooltip: t("leastCashChimps"),
   },
 ];
 
@@ -78,7 +81,7 @@ function formatScore(entry: RankEntry | null, key: MedalDef["key"], suffix?: str
         class="translate-y-0!"
       />
       <span class="font-bold font-['Luckiest_Guy']">{{
-        formatInfo?.name ?? `Format ${ranks.format_id}`
+        formatInfo?.name ?? t("unknownFormat", { id: ranks.format_id })
       }}</span>
     </div>
 
@@ -122,3 +125,15 @@ function formatScore(entry: RankEntry | null, key: MedalDef["key"], suffix?: str
     </div>
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "leaderboardPoints": "Leaderboard points",
+    "blackBorder": "Black Border",
+    "noOptimalHero": "No Optimal Hero",
+    "leastCashChimps": "Least Cash CHIMPS",
+    "unknownFormat": "Format {id}"
+  }
+}
+</i18n>

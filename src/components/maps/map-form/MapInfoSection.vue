@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 import { useTouchedFields } from "@/composables/useTouchedFields";
 import { useEmitOnChange } from "@/composables/useEmitOnChange";
 import type { FormFieldError } from "@/services/api/formErrors";
@@ -25,6 +26,8 @@ const emit = defineEmits<{
 
 const { isTouched, touch } = useTouchedFields();
 
+const { t } = useI18n({ inheritLocale: true });
+
 function update(partial: Partial<MapInfoSlice>) {
   for (const key of Object.keys(partial)) touch(key);
   emit("update:modelValue", { ...props.modelValue, ...partial });
@@ -37,7 +40,7 @@ const ownErrors = computed<FormFieldError[]>(() => {
   if (!props.modelValue.name.trim()) {
     errors.push({
       path: "name",
-      message: "Map name is required.",
+      message: t("nameRequired"),
       source: "validation",
     });
   }
@@ -75,13 +78,15 @@ function childErrors(prefix: string): FormFieldError[] {
   <div class="flex flex-col gap-6">
     <!-- Name -->
     <div>
-      <label for="map-name" class="block font-bold mb-2">Name</label>
+      <label for="map-name" class="block font-bold mb-2">{{
+        t("common.name")
+      }}</label>
       <input
         id="map-name"
         type="text"
         :value="modelValue.name"
         :disabled="disabled"
-        placeholder="Map name"
+        :placeholder="t('mapNamePlaceholder')"
         class="w-full px-3 py-2 rounded-(--radius-btn) bg-(--color-primary) text-(--color-text) border border-(--color-contrast) focus:outline-none focus:border-(--color-active)"
         :class="{ 'border-(--color-danger)!': fieldError('name') }"
         @input="update({ name: ($event.target as HTMLInputElement).value })"
@@ -93,12 +98,14 @@ function childErrors(prefix: string): FormFieldError[] {
 
     <!-- Map Notes -->
     <div>
-      <label for="map-notes" class="block font-bold mb-2">Map Notes</label>
+      <label for="map-notes" class="block font-bold mb-2">{{
+        t("mapNotes")
+      }}</label>
       <textarea
         id="map-notes"
         :value="modelValue.map_notes"
         :disabled="disabled"
-        placeholder="Optional notes about this map"
+        :placeholder="t('mapNotesPlaceholder')"
         rows="4"
         class="w-full px-3 py-2 rounded-(--radius-btn) bg-(--color-primary) text-(--color-text) border border-(--color-contrast) focus:outline-none focus:border-(--color-active) resize-y"
         @input="update({ map_notes: ($event.target as HTMLTextAreaElement).value })"
@@ -111,15 +118,17 @@ function childErrors(prefix: string): FormFieldError[] {
     <!-- Preview Image + Round 6 Start -->
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
       <div>
-        <label class="block font-bold mb-2">Custom Preview Image</label>
+        <label class="block font-bold mb-2">{{
+          t("customPreviewImage")
+        }}</label>
         <p class="text-(--color-text-muted) pb-3 pt-2">
-          If none, the site will display the image from the game.
+          {{ t("previewFallback") }}
         </p>
         <ImageDrop
           :model-value="modelValue.custom_map_preview_file"
           :initial-url="modelValue.map_preview_url"
           :disabled="disabled"
-          placeholder="Drop image here or click to browse"
+          :placeholder="t('dropImage')"
           @update:model-value="update({ custom_map_preview_file: $event })"
           @clear-initial-url="update({ map_preview_url: '' })"
         />
@@ -132,7 +141,7 @@ function childErrors(prefix: string): FormFieldError[] {
       </div>
 
       <div>
-        <label class="block font-bold mb-2">Round 6 Start</label>
+        <label class="block font-bold mb-2">{{ t("round6Start") }}</label>
         <R6StartInput
           :r6-start="modelValue.r6_start"
           :r6-start-file="modelValue.r6_start_file"
@@ -154,11 +163,11 @@ function childErrors(prefix: string): FormFieldError[] {
 
     <!-- Aliases -->
     <div>
-      <label class="block font-bold mb-2">Aliases</label>
+      <label class="block font-bold mb-2">{{ t("aliases") }}</label>
       <StringListInput
         :model-value="modelValue.aliases"
         :disabled="disabled"
-        placeholder="Alias"
+        :placeholder="t('alias')"
         :external-errors="childErrors('aliases')"
         @update:model-value="update({ aliases: $event })"
       />
@@ -166,7 +175,7 @@ function childErrors(prefix: string): FormFieldError[] {
 
     <!-- Additional Codes -->
     <div>
-      <label class="block font-bold mb-2">Additional Codes</label>
+      <label class="block font-bold mb-2">{{ t("additionalCodes") }}</label>
       <AdditionalCodesInput
         :model-value="modelValue.additional_codes"
         :disabled="disabled"
@@ -176,3 +185,21 @@ function childErrors(prefix: string): FormFieldError[] {
     </div>
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "mapNamePlaceholder": "Map name",
+    "nameRequired": "Map name is required.",
+    "mapNotes": "Map Notes",
+    "mapNotesPlaceholder": "Optional notes about this map",
+    "customPreviewImage": "Custom Preview Image",
+    "previewFallback": "If none, the site will display the image from the game.",
+    "dropImage": "Drop image here or click to browse",
+    "round6Start": "Round 6 Start",
+    "aliases": "Aliases",
+    "alias": "Alias",
+    "additionalCodes": "Additional Codes"
+  }
+}
+</i18n>

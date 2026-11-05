@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { useI18n } from "vue-i18n";
 import { useFormats } from "@/services/api/formats/queries";
 import { useLeaderboard } from "@/services/api/leaderboard/queries";
 import { useConfig } from "@/services/api/config/queries";
@@ -19,6 +20,7 @@ import Pagination from "@/components/ui/Pagination.vue";
 
 const route = useRoute();
 const router = useRouter();
+const { t } = useI18n({ inheritLocale: true });
 const { data: formats } = useFormats();
 
 // --- Format selector ---
@@ -184,7 +186,7 @@ watch(
     <h1
       class="text-center mt-6 mb-4 font-['Luckiest_Guy'] text-3xl md:text-4xl"
     >
-      Leaderboard
+      {{ t("leaderboard") }}
     </h1>
 
     <!-- Format selector -->
@@ -240,7 +242,7 @@ watch(
     </template>
 
     <p v-else class="text-center my-8 text-(--color-text-muted) text-lg">
-      Nobody's here...
+      {{ t("nobodyHere") }}
     </p>
 
     <!-- Pagination bottom -->
@@ -253,3 +255,12 @@ watch(
     />
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "leaderboard": "Leaderboard",
+    "nobodyHere": "Nobody's here..."
+  }
+}
+</i18n>

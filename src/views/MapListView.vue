@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { useFormats } from "@/services/api/formats/queries";
 import { useMaps } from "@/services/api/maps/queries";
@@ -29,6 +30,8 @@ import DiscordLoginButton from "@/components/navbar/DiscordLoginButton.vue";
 const route = useRoute();
 const router = useRouter();
 const auth = useAuthStore();
+
+const { t } = useI18n({ inheritLocale: true });
 const { data: formats } = useFormats();
 const { data: config } = useConfig();
 
@@ -192,13 +195,15 @@ const mapBorder = computed(() =>
 
 <template>
   <div v-if="formatNotFound" class="text-center mt-12">
-    <h1 class="font-['Luckiest_Guy'] text-4xl mb-4">List Not Found</h1>
+    <h1 class="font-['Luckiest_Guy'] text-4xl mb-4">
+      {{ t("listNotFound") }}
+    </h1>
     <p class="text-(--color-text-muted)">
-      There is no list at <span class="font-mono">{{ slug }}</span
+      {{ t("noListAt") }} <span class="font-mono">{{ slug }}</span
       >.
     </p>
     <RouterLink to="/" class="text-(--color-highlight) mt-4 inline-block">
-      Back to Home
+      {{ t("backToHome") }}
     </RouterLink>
   </div>
 
@@ -206,7 +211,7 @@ const mapBorder = computed(() =>
     <!-- Header -->
     <div class="text-center mt-6 mb-4">
       <h1 class="font-['Luckiest_Guy'] text-3xl md:text-4xl">
-        {{ format?.name ?? "Loading..." }}
+        {{ format?.name ?? t("common.loading") }}
       </h1>
     </div>
 
@@ -250,7 +255,12 @@ const mapBorder = computed(() =>
                 ? (progress.mapsRemade / progress.totalMaps) * 100
                 : 0,
             )
-          }}% remade — {{ progress.mapsRemade }}/{{ progress.totalMaps }}
+          }}{{
+            t("remadeProgress", {
+              remade: progress.mapsRemade,
+              total: progress.totalMaps,
+            })
+          }}
         </span>
       </div>
     </div>
@@ -272,7 +282,7 @@ const mapBorder = computed(() =>
         v-if="format?.map_submission_status !== 'closed'"
         :to="`/maps/${slug}/map-rules`"
       >
-        Map Submission Rules
+        {{ t("mapSubmissionRules") }}
       </RouterLink>
       <template
         v-if="
@@ -286,7 +296,7 @@ const mapBorder = computed(() =>
         v-if="format?.run_submission_status !== 'closed'"
         :to="`/maps/${slug}/completion-rules`"
       >
-        Completion Submission Rules
+        {{ t("completionSubmissionRules") }}
       </RouterLink>
     </p>
 
@@ -296,10 +306,10 @@ const mapBorder = computed(() =>
       class="flex justify-center gap-4 my-4"
     >
       <LinkButton v-if="showSubmitButton" :to="`/map/submit?on=${formatId}`">
-        <i class="bi bi-pencil-fill mr-0.5" /> Submit a Map
+        <i class="bi bi-pencil-fill mr-0.5" /> {{ t("submitAMap") }}
       </LinkButton>
       <LinkButton v-if="showAddButton" :to="`/map/new?on=${formatId}`">
-        <i class="bi bi-plus-lg mr-0.5" /> Add Map
+        <i class="bi bi-plus-lg mr-0.5" /> {{ t("addMap") }}
       </LinkButton>
     </div>
     <div
@@ -310,16 +320,16 @@ const mapBorder = computed(() =>
       "
       class="flex justify-center my-4"
     >
-      <DiscordLoginButton text="Log in to submit maps" />
+      <DiscordLoginButton :text="t('logInToSubmitMaps')" />
     </div>
 
     <!-- Discord Link -->
     <p v-if="format?.discord_server_url" class="text-center my-4">
-      Join the
+      {{ t("joinThe") }}
       <a :href="format.discord_server_url" target="_blank">
-        <i class="bi bi-discord" />&nbsp;Discord server
+        <i class="bi bi-discord" />&nbsp;{{ t("discordServer") }}
       </a>
-      if you would like to interact with the community more!
+      {{ t("discordCommunityHint") }}
     </p>
 
     <!-- Map Groups -->
@@ -363,21 +373,23 @@ const mapBorder = computed(() =>
                     ? '/images/medals/medal_bb.webp'
                     : '/images/medals/medal_win.webp'
                 "
-                :title="map.medals.black_border ? 'Black Border' : 'CHIMPS'"
+                :title="
+                  map.medals.black_border ? t('blackBorder') : t('chimps')
+                "
                 class="w-[40px] h-[40px] md:w-[60px] md:h-[60px]"
                 :class="{ 'medal-blocked': !map.medals.completed }"
               />
               <img
                 v-if="!hideNoGeraldo"
                 src="/images/medals/medal_nogerry.webp"
-                title="No Optimal Hero"
+                :title="t('noOptimalHero')"
                 class="w-[40px] h-[40px] md:w-[60px] md:h-[60px]"
                 :class="{ 'medal-blocked': !map.medals.no_geraldo }"
               />
               <img
                 v-if="map.medals.current_lcc"
                 src="/images/medals/medal_lcc.webp"
-                title="Current LCC"
+                :title="t('currentLcc')"
                 class="w-[40px] h-[40px] md:w-[60px] md:h-[60px]"
               />
             </div>
@@ -391,6 +403,29 @@ const mapBorder = computed(() =>
     <MapGrid v-else :btd6-version="btd6Version" />
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "listNotFound": "List Not Found",
+    "noListAt": "There is no list at",
+    "backToHome": "Back to Home",
+    "remadeProgress": "% remade — {remade}/{total}",
+    "mapSubmissionRules": "Map Submission Rules",
+    "completionSubmissionRules": "Completion Submission Rules",
+    "submitAMap": "Submit a Map",
+    "addMap": "Add Map",
+    "logInToSubmitMaps": "Log in to submit maps",
+    "joinThe": "Join the",
+    "discordServer": "Discord server",
+    "discordCommunityHint": "if you would like to interact with the community more!",
+    "blackBorder": "Black Border",
+    "chimps": "CHIMPS",
+    "noOptimalHero": "No Optimal Hero",
+    "currentLcc": "Current LCC"
+  }
+}
+</i18n>
 
 <style scoped>
 .medal-blocked {

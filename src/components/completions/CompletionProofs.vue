@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import { useI18n } from "vue-i18n";
 import type { CompletionProofImage } from "@/services/api/completions/types";
 import ImageLightbox from "@/components/common/ImageLightbox.vue";
 
@@ -8,6 +9,8 @@ defineProps<{
   proofImages: CompletionProofImage[];
   proofVideos: string[];
 }>();
+
+const { t } = useI18n({ inheritLocale: true });
 
 const lightbox = ref<InstanceType<typeof ImageLightbox>>();
 
@@ -21,19 +24,19 @@ function youtubeEmbedUrl(url: string): string | null {
 <template>
   <div>
     <div v-if="submNotes || $slots['notes-footer']" class="mb-6">
-      <h3 class="font-['Luckiest_Guy'] text-xl mb-3">Submission Notes</h3>
+      <h3 class="font-['Luckiest_Guy'] text-xl mb-3">{{ t("submissionNotes") }}</h3>
       <p class="whitespace-pre-wrap">{{ submNotes }}</p>
       <slot name="notes-footer" />
     </div>
 
     <div v-if="proofImages.length > 0" class="mb-6">
-      <h3 class="font-['Luckiest_Guy'] text-xl mb-3">Submission Images</h3>
+      <h3 class="font-['Luckiest_Guy'] text-xl mb-3">{{ t("submissionImages") }}</h3>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         <img
           v-for="(img, i) in proofImages"
           :key="i"
           :src="img.url"
-          alt="Submission proof"
+          :alt="t('submissionProof')"
           class="w-full rounded-(--radius-panel) object-cover cursor-zoom-in hover:opacity-80 transition-opacity"
           @click="lightbox?.show(img.url)"
         />
@@ -41,7 +44,7 @@ function youtubeEmbedUrl(url: string): string | null {
     </div>
 
     <div v-if="proofVideos.length > 0" class="mb-6">
-      <h3 class="font-['Luckiest_Guy'] text-xl mb-3">Submission Videos</h3>
+      <h3 class="font-['Luckiest_Guy'] text-xl mb-3">{{ t("submissionVideos") }}</h3>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         <template v-for="(url, i) in proofVideos" :key="i">
           <iframe
@@ -75,3 +78,14 @@ function youtubeEmbedUrl(url: string): string | null {
     <ImageLightbox ref="lightbox" />
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "submissionNotes": "Submission Notes",
+    "submissionImages": "Submission Images",
+    "submissionVideos": "Submission Videos",
+    "submissionProof": "Submission proof"
+  }
+}
+</i18n>

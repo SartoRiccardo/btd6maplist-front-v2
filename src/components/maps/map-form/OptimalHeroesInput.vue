@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import { useI18n } from "vue-i18n";
 import BoxedCheckbox from "@/components/ui/BoxedCheckbox.vue";
 import Button from "@/components/ui/Button.vue";
 import {
@@ -20,6 +21,8 @@ const emit = defineEmits<{
 
 const noOptimalHero = ref(props.modelValue.length === 0);
 let cachedHeroes: string[] = [];
+
+const { t } = useI18n({ inheritLocale: true });
 
 function toggleNoOptimal(checked: boolean) {
   noOptimalHero.value = checked;
@@ -46,7 +49,7 @@ function toggleHero(hero: Hero) {
     <BoxedCheckbox
       :model-value="noOptimalHero"
       :disabled="disabled"
-      label="This map has no optimal hero"
+      :label="t('noOptimalHero')"
       @update:model-value="toggleNoOptimal"
     />
 
@@ -73,3 +76,11 @@ function toggleHero(hero: Hero) {
     </div>
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "noOptimalHero": "This map has no optimal hero"
+  }
+}
+</i18n>

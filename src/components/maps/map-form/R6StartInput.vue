@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import { useI18n } from "vue-i18n";
 import ImageDrop from "@/components/ui/ImageDrop.vue";
 import Button from "@/components/ui/Button.vue";
 
@@ -15,6 +16,8 @@ const emit = defineEmits<{
 
 const mode = ref<"url" | "file">(props.r6StartFile ? "file" : "url");
 
+const { t } = useI18n({ inheritLocale: true });
+
 function setMode(m: "url" | "file") {
   mode.value = m;
   emit("update", { r6_start: "", r6_start_file: null });
@@ -29,14 +32,14 @@ function setMode(m: "url" | "file") {
         :disabled="disabled"
         @click="setMode('url')"
       >
-        URL
+        {{ t("url") }}
       </Button>
       <Button
         :active="mode === 'file'"
         :disabled="disabled"
         @click="setMode('file')"
       >
-        Upload
+        {{ t("upload") }}
       </Button>
     </div>
 
@@ -59,10 +62,20 @@ function setMode(m: "url" | "file") {
       v-else
       :model-value="r6StartFile"
       :disabled="disabled"
-      placeholder="Drop image here or click to browse"
+      :placeholder="t('dropImage')"
       @update:model-value="
         emit('update', { r6_start: '', r6_start_file: $event })
       "
     />
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "url": "URL",
+    "upload": "Upload",
+    "dropImage": "Drop image here or click to browse"
+  }
+}
+</i18n>

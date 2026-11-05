@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { RouterLink } from "vue-router";
+import { useI18n } from "vue-i18n";
 import Badge from "@/components/common/Badge.vue";
 import DiscordLoginButton from "./DiscordLoginButton.vue";
 import { useAuthStore } from "@/stores/auth";
 import { useThemeStore } from "@/stores/theme";
+import { useLocaleStore } from "@/stores/locale";
+import { LOCALES } from "@/i18n";
 import { DEFAULT_AVATAR_URL } from "@/constants/user";
 import { themes } from "@/constants/themes";
 import type { NavItem } from "./types";
@@ -14,8 +17,11 @@ interface Props {
 
 defineProps<Props>();
 
+const { t } = useI18n({ inheritLocale: true });
+
 const authStore = useAuthStore();
 const themeStore = useThemeStore();
+const localeStore = useLocaleStore();
 
 function handleLogout() {
   authStore.logout();
@@ -28,7 +34,7 @@ function handleLogout() {
     <RouterLink
       to="/search"
       class="flex items-center no-underline text-(--color-text)! transition-colors duration-200 ease rounded-xl px-4 py-2 hover:cursor-pointer hover:bg-(--color-secondary) hover:text-inherit!"
-      aria-label="Search"
+      :aria-label="t('search')"
     >
       <i class="bi bi-search"></i>
     </RouterLink>
@@ -90,7 +96,7 @@ function handleLogout() {
         <button
           type="button"
           class="w-12 h-12 overflow-hidden border-2 rounded-md border-[#E0E3FF] transition-colors cursor-pointer ml-2"
-          :aria-label="`Logged in as ${authStore.user.name}`"
+          :aria-label="t('loggedInAs', { name: authStore.user.name })"
         >
           <img
             :src="authStore.user.avatar_url || DEFAULT_AVATAR_URL"
@@ -111,7 +117,7 @@ function handleLogout() {
                 :to="`/users/${authStore.user.discord_id}`"
                 class="no-underline text-(--color-text)! inline-block w-full hover:text-(--color-active)!"
               >
-                Profile
+                {{ t("profile") }}
               </RouterLink>
             </li>
             <li class="py-[0.1rem]">
@@ -119,15 +125,16 @@ function handleLogout() {
                 to="/my-submissions/maps"
                 class="no-underline text-(--color-text)! inline-block w-full hover:text-(--color-active)!"
               >
-                My Submissions
+                {{ t("mySubmissions") }}
               </RouterLink>
             </li>
             <li class="py-[0.1rem] relative theme-trigger">
               <span
                 class="no-underline text-(--color-text)! inline-block w-full hover:text-(--color-active)! cursor-pointer select-none"
               >
-                Theme
+                {{ t("theme") }}
               </span>
+
               <!-- Theme sub-panel -->
               <div
                 class="absolute right-full top-0 mr-2 pointer-events-none opacity-0 translate-x-2 transition-all duration-200 ease theme-panel"
@@ -155,6 +162,39 @@ function handleLogout() {
                 </ul>
               </div>
             </li>
+            <li class="py-[0.1rem] relative locale-trigger">
+              <span
+                class="no-underline text-(--color-text)! inline-block w-full hover:text-(--color-active)! cursor-pointer select-none"
+              >
+                {{ t("language") }}
+              </span>
+
+              <!-- Language sub-panel -->
+              <div
+                class="absolute right-full top-0 mr-2 pointer-events-none opacity-0 translate-x-2 transition-all duration-200 ease locale-panel"
+              >
+                <ul
+                  class="bg-(--color-secondary) px-2 py-1 rounded-lg list-none min-w-44 text-[1.5rem]"
+                >
+                  <li v-for="locale in LOCALES" :key="locale.id">
+                    <button
+                      type="button"
+                      @click="localeStore.setLocale(locale.id)"
+                      class="flex items-center gap-2 w-full text-left bg-transparent border-none text-(--color-text) hover:text-(--color-active) cursor-pointer px-1 py-0.5 rounded"
+                    >
+                      <i
+                        v-if="localeStore.localeId === locale.id"
+                        class="bi bi-check-lg shrink-0"
+                      />
+                      <span v-else class="w-4 shrink-0" />
+                      <span class="whitespace-nowrap">{{
+                        locale.name
+                      }}</span>
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            </li>
             <li class="py-[0.1rem]">
               <hr class="border-(--color-contrast) my-1 opacity-50" />
             </li>
@@ -167,7 +207,7 @@ function handleLogout() {
                 type="button"
                 @click="handleLogout"
                 class="bg-(--color-danger) brightness-100 hover:brightness-110 saturate-100 hover:saturate-125 text-white px-3 py-2 rounded-lg text-sm cursor-pointer"
-                aria-label="Logout"
+                :aria-label="t('logout')"
               >
                 <i class="bi bi-box-arrow-right"></i>
               </button>
@@ -183,9 +223,24 @@ function handleLogout() {
 </template>
 
 <style scoped>
-.theme-trigger:hover .theme-panel {
+.theme-trigger:hover .theme-panel,
+.locale-trigger:hover .locale-panel {
   pointer-events: auto;
   opacity: 1;
   transform: translateX(0);
 }
 </style>
+
+<i18n lang="json">
+{
+  "en": {
+    "search": "Search",
+    "loggedInAs": "Logged in as {name}",
+    "profile": "Profile",
+    "mySubmissions": "My Submissions",
+    "theme": "Theme",
+    "language": "Language",
+    "logout": "Logout"
+  }
+}
+</i18n>

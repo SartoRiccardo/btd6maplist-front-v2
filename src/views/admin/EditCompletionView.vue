@@ -17,6 +17,7 @@ import type {
 import { ApiError } from "@/services/api/client";
 import { parseApiErrors, type FormFieldError } from "@/services/api/formErrors";
 import { toast } from "vue-sonner";
+import { useI18n } from "vue-i18n";
 import { permissions } from "@/constants/permissions";
 import type { User } from "@/services/api/users/types";
 import Panel from "@/components/ui/Panel.vue";
@@ -33,6 +34,7 @@ import CompletionForm, {
 const route = useRoute();
 const router = useRouter();
 const auth = useAuthStore();
+const { t } = useI18n({ inheritLocale: true });
 
 const id = computed(() => Number(route.params["id"]));
 
@@ -126,17 +128,17 @@ async function handleAddNote() {
   try {
     await setAdminNoteMutation.mutateAsync({ id: id.value, note });
   } catch {
-    toast.error("Something went wrong. Please try again.");
+    toast.error(t("somethingWentWrong"));
   }
 }
 
 async function handleDelete() {
   try {
     await deleteMutation.mutateAsync(id.value);
-    toast.success("Completion deleted.");
+    toast.success(t("completionDeleted"));
     router.back();
   } catch {
-    toast.error("Something went wrong. Please try again.");
+    toast.error(t("somethingWentWrong"));
   }
 }
 const formRef = ref<InstanceType<typeof CompletionForm> | null>(null);
@@ -152,7 +154,7 @@ async function handleSave() {
   await formRef.value.touchAll();
 
   if (activeErrors.value.length > 0) {
-    toast.error("Please fix the form errors.");
+    toast.error(t("fixFormErrors"));
     return;
   }
 
@@ -174,7 +176,7 @@ async function handleSave() {
 
   try {
     await updateMutation.mutateAsync({ id: id.value, data: request });
-    toast.success("Completion updated.");
+    toast.success(t("completionUpdated"));
   } catch (error: unknown) {
     if (error instanceof ApiError) {
       const errorResult = parseApiErrors(error);
@@ -182,11 +184,11 @@ async function handleSave() {
       if (errorResult.fieldErrors.length > 0) {
         await formRef.value.clearTouched();
       } else {
-        const message = errorResult.message || "Something went wrong. Please try again.";
-        toast.error(`${message} (Error code: ${errorResult.status})`);
+        const message = errorResult.message || t("somethingWentWrong");
+        toast.error(`${message} ${t("errorCode", { status: errorResult.status })}`);
       }
     } else {
-      toast.error("Something went wrong. Please try again.");
+      toast.error(t("somethingWentWrong"));
     }
   }
 }
@@ -195,21 +197,21 @@ async function handleSave() {
 <template>
   <div>
     <h1 class="font-['Luckiest_Guy'] text-3xl text-center mb-6">
-      Edit Completion
+      {{ t("title") }}
     </h1>
 
     <Panel v-if="isLoading">
-      <p class="text-(--color-text-muted) text-center">Loading...</p>
+      <p class="text-(--color-text-muted) text-center">{{ t("common.loading") }}</p>
     </Panel>
 
     <Panel v-else-if="!canEdit">
       <p class="text-(--color-text-muted) text-center">
-        You don't have permission to edit completions.
+        {{ t("noPermission") }}
       </p>
     </Panel>
 
     <Panel v-else-if="!completionData">
-      <p class="text-(--color-text-muted) text-center">Completion not found.</p>
+      <p class="text-(--color-text-muted) text-center">{{ t("notFound") }}</p>
     </Panel>
 
     <Panel v-else>
@@ -220,7 +222,7 @@ async function handleSave() {
       >
         <template v-if="acceptedByUser" #notes-footer>
           <p class="text-(--color-text-muted) mt-2 ml-4 italic flex items-center">
-            <span class="mr-1">Completion approved by</span>
+            <span class="mr-1">{{ t("approvedBy") }}</span>
             <UserEntry :user="acceptedByUser" inline class="ml-2" />
           </p>
         </template>
@@ -249,7 +251,7 @@ async function handleSave() {
         v-if="isDeleted"
         class="mt-6 px-4 py-3 rounded-(--radius-panel) border border-(--color-danger)/50 bg-(--color-danger)/10 text-(--color-danger) text-sm"
       >
-        This completion was deleted.
+        {{ t("deletedNotice") }}
       </p>
 
       <CompletionAdminNote
@@ -262,27 +264,48 @@ async function handleSave() {
       <div class="flex justify-between mt-6">
         <template v-if="!isDeleted">
           <div class="flex gap-2">
-            <Button :disabled="busy || !!completionData.admin_note" @click="handleDelete">Delete</Button>
-            <Button v-if="!completionData.admin_note" :disabled="busy" @click="handleAddNote">Add Note</Button>
+            <Button :disabled="busy || !!completionData.admin_note" @click="handleDelete">{{ t("common.delete") }}</Button>
+            <Button v-if="!completionData.admin_note" :disabled="busy" @click="handleAddNote">{{ t("addNote") }}</Button>
           </div>
           <div class="flex gap-2">
             <LinkButton :to="cancelUrl" :disabled="busy" @click="handleCancel"
-              >Cancel</LinkButton
+              >{{ t("common.cancel") }}</LinkButton
             >
-            <Button :disabled="busy || !!completionData.admin_note" @click="handleSave">Save</Button>
+            <Button :disabled="busy || !!completionData.admin_note" @click="handleSave">{{ t("common.save") }}</Button>
           </div>
         </template>
         <LinkButton v-else :to="cancelUrl" @click="handleCancel"
-          >Cancel</LinkButton
+          >{{ t("common.cancel") }}</LinkButton
         >
       </div>
     </Panel>
 
     <PromptModal
       ref="addNoteModal"
-      title="Add Admin Note"
-      confirm-label="Save Note"
-      placeholder="Write a note visible to admins only..."
+      :title="t('addAdminNote')"
+      :confirm-label="t('saveNote')"
+      :placeholder="t('notePlaceholder')"
     />
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "title": "Edit Completion",
+    "noPermission": "You don't have permission to edit completions.",
+    "notFound": "Completion not found.",
+    "approvedBy": "Completion approved by",
+    "deletedNotice": "This completion was deleted.",
+    "addNote": "Add Note",
+    "addAdminNote": "Add Admin Note",
+    "saveNote": "Save Note",
+    "notePlaceholder": "Write a note visible to admins only...",
+    "completionDeleted": "Completion deleted.",
+    "completionUpdated": "Completion updated.",
+    "fixFormErrors": "Please fix the form errors.",
+    "errorCode": "(Error code: {status})",
+    "somethingWentWrong": "Something went wrong. Please try again."
+  }
+}
+</i18n>

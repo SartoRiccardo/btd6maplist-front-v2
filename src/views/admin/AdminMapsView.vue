@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { useMaps } from "@/services/api/maps/queries";
 import MapGrid from "@/components/maps/MapGrid.vue";
 import PlacementBadge from "@/components/maps/badges/PlacementBadge.vue";
 import Pagination from "@/components/ui/Pagination.vue";
+
+const { t } = useI18n({ inheritLocale: true });
 
 const page = ref(1);
 
@@ -27,7 +30,7 @@ watch(
 
 <template>
   <div>
-    <h1 class="font-['Luckiest_Guy'] text-3xl text-center my-6">Maps</h1>
+    <h1 class="font-['Luckiest_Guy'] text-3xl text-center my-6">{{ t("title") }}</h1>
 
     <MapGrid :maps="mapsResponse?.data" :skeleton-count="50">
       <template #badge="{ map }">
@@ -49,3 +52,11 @@ watch(
     </div>
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "title": "Maps"
+  }
+}
+</i18n>

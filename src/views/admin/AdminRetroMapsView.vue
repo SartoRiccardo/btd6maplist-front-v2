@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 import { refDebounced } from "@vueuse/core";
+import { useI18n } from "vue-i18n";
 import { useRetroMaps } from "@/services/api/retro-maps/queries";
 import { useRetroGames } from "@/services/api/retro-games/queries";
 import { NP_DIFFICULTIES } from "@/constants/difficulties";
@@ -8,6 +9,8 @@ import { RouterLink } from "vue-router";
 import Pagination from "@/components/ui/Pagination.vue";
 import Badge from "@/components/common/Badge.vue";
 import Button from "@/components/ui/Button.vue";
+
+const { t } = useI18n({ inheritLocale: true });
 
 const page = ref(1);
 const search = ref("");
@@ -65,14 +68,20 @@ const filterOptions = computed<FilterOption[]>(() => {
   )) {
     if (!seenGames.has(g.game_id)) {
       seenGames.set(g.game_id, g.game_name);
-      options.push({ key: String(g.game_id), label: `${g.game_name} (All)` });
+      options.push({
+        key: String(g.game_id),
+        label: t("filterAllGames", { name: g.game_name }),
+      });
     }
     const catKey = `${g.game_id}:${g.category_id}`;
     if (!seenCats.has(catKey)) {
       seenCats.add(catKey);
       options.push({
         key: catKey,
-        label: `${g.game_name} (${g.category_name})`,
+        label: t("filterGameCategory", {
+          name: g.game_name,
+          category: g.category_name,
+        }),
       });
     }
   }
@@ -90,21 +99,21 @@ function gameIcon(gameId: number): string | undefined {
     <h1
       class="font-['Luckiest_Guy'] text-3xl md:text-4xl text-center mt-6 mb-4"
     >
-      Retro Maps
+      {{ t("title") }}
     </h1>
 
     <div class="flex flex-wrap gap-2 mb-4">
       <input
         v-model="search"
         type="text"
-        placeholder="Search maps..."
+        :placeholder="t('searchPlaceholder')"
         class="flex-1 px-3 py-1.5 rounded-(--radius-btn) bg-(--color-primary) text-(--color-text) border border-(--color-contrast) focus:outline-none focus:border-(--color-active)"
       />
       <select
         v-model="filterKey"
         class="w-full sm:w-auto px-3 py-1.5 rounded-(--radius-btn) bg-(--color-primary) text-(--color-text) border border-(--color-contrast) focus:outline-none focus:border-(--color-active)"
       >
-        <option value="">All games</option>
+        <option value="">{{ t("allGames") }}</option>
         <option v-for="opt in filterOptions" :key="opt.key" :value="opt.key">
           {{ opt.label }}
         </option>
@@ -113,12 +122,12 @@ function gameIcon(gameId: number): string | undefined {
 
     <div class="flex justify-end mb-4">
       <RouterLink to="/admin/retro-maps/new">
-        <Button>+ Add Retro Map</Button>
+        <Button>{{ t("addRetroMap") }}</Button>
       </RouterLink>
     </div>
 
     <div v-if="isLoading" class="flex justify-center">
-      <p class="text-(--color-text-muted)">Loading...</p>
+      <p class="text-(--color-text-muted)">{{ t("common.loading") }}</p>
     </div>
 
     <template v-else-if="maps && maps.data.length > 0">
@@ -155,7 +164,7 @@ function gameIcon(gameId: number): string | undefined {
     </template>
 
     <p v-else-if="!isLoading" class="text-center text-(--color-text-muted)">
-      No maps found.
+      {{ t("noneFound") }}
     </p>
 
     <Pagination
@@ -167,3 +176,17 @@ function gameIcon(gameId: number): string | undefined {
     />
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "title": "Retro Maps",
+    "searchPlaceholder": "Search maps...",
+    "allGames": "All games",
+    "addRetroMap": "+ Add Retro Map",
+    "noneFound": "No maps found.",
+    "filterAllGames": "{name} (All)",
+    "filterGameCategory": "{name} ({category})"
+  }
+}
+</i18n>

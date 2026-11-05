@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { useI18n } from "vue-i18n";
 import { ApiError } from "@/services/api/client";
 import { parseApiErrors, type FormFieldError } from "@/services/api/formErrors";
 import { toast } from "vue-sonner";
@@ -15,6 +16,8 @@ import ConfirmModal from "@/components/common/ConfirmModal.vue";
 import RetroMapForm, {
   type RetroMapFormModel,
 } from "@/components/retro-maps/RetroMapForm.vue";
+
+const { t } = useI18n({ inheritLocale: true });
 
 const route = useRoute();
 const router = useRouter();
@@ -84,11 +87,11 @@ async function handleSave() {
       apiErrors.value = errorResult.fieldErrors;
       await formRef.value.clearTouched();
       if (errorResult.fieldErrors.length === 0) {
-        const message = errorResult.message || "Something went wrong. Please try again.";
-        toast.error(`${message} (Error code: ${errorResult.status})`);
+        const message = errorResult.message || t("somethingWentWrong");
+        toast.error(t("errorWithCode", { message, code: errorResult.status }));
       }
     } else {
-      toast.error("Something went wrong. Please try again.");
+      toast.error(t("somethingWentWrong"));
     }
   } finally {
     isBusy.value = false;
@@ -102,7 +105,7 @@ async function handleDelete() {
     await deleteMutation.mutateAsync(id);
     router.push("/admin/retro-maps");
   } catch {
-    toast.error("Failed to delete. Please try again.");
+    toast.error(t("deleteFailed"));
   } finally {
     isBusy.value = false;
   }
@@ -114,11 +117,11 @@ async function handleDelete() {
     <h1
       class="font-['Luckiest_Guy'] text-3xl md:text-4xl text-center mt-6 mb-4"
     >
-      Edit Retro Map
+      {{ t("title") }}
     </h1>
 
     <div v-if="isLoading" class="flex justify-center py-12">
-      <p class="text-(--color-text-muted)">Loading...</p>
+      <p class="text-(--color-text-muted)">{{ t("common.loading") }}</p>
     </div>
 
     <Panel v-else-if="retroMap">
@@ -132,17 +135,30 @@ async function handleDelete() {
     </Panel>
 
     <div class="flex justify-between items-center mt-4">
-      <Button @click="router.push('/admin/retro-maps')">← Back</Button>
+      <Button @click="router.push('/admin/retro-maps')">{{ t("back") }}</Button>
       <div class="flex gap-2">
-        <Button danger :disabled="isBusy" @click="handleDelete">Delete</Button>
-        <Button :disabled="isBusy" @click="handleSave">Save</Button>
+        <Button danger :disabled="isBusy" @click="handleDelete">{{ t("common.delete") }}</Button>
+        <Button :disabled="isBusy" @click="handleSave">{{ t("common.save") }}</Button>
       </div>
     </div>
 
     <ConfirmModal ref="deleteModal">
       <p class="text-center mb-0">
-        Delete this retro map? This cannot be undone.
+        {{ t("deleteConfirm") }}
       </p>
     </ConfirmModal>
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "title": "Edit Retro Map",
+    "back": "← Back",
+    "deleteConfirm": "Delete this retro map? This cannot be undone.",
+    "deleteFailed": "Failed to delete. Please try again.",
+    "somethingWentWrong": "Something went wrong. Please try again.",
+    "errorWithCode": "{message} (Error code: {code})"
+  }
+}
+</i18n>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
+import { useI18n } from "vue-i18n";
 import { useTouchedFields } from "@/composables/useTouchedFields";
 import { useEmitOnChange } from "@/composables/useEmitOnChange";
 import type { FormFieldError } from "@/services/api/formErrors";
@@ -30,6 +31,8 @@ const emit = defineEmits<{
 }>();
 
 const { touch } = useTouchedFields();
+
+const { t } = useI18n({ inheritLocale: true });
 
 function update(partial: Partial<CreditsSlice>) {
   for (const key of Object.keys(partial)) touch(key);
@@ -66,7 +69,7 @@ function externalErrorsFor(prefix: string): FormFieldError[] {
   <div class="flex flex-col gap-6">
     <!-- Creators -->
     <div>
-      <label class="block font-bold mb-2">Creators</label>
+      <label class="block font-bold mb-2">{{ t("creators") }}</label>
       <CreatorsInput
         :model-value="modelValue.creators"
         :disabled="disabled"
@@ -79,7 +82,7 @@ function externalErrorsFor(prefix: string): FormFieldError[] {
 
     <!-- Verifiers -->
     <div>
-      <label class="block font-bold mb-2">Verifiers</label>
+      <label class="block font-bold mb-2">{{ t("verifiers") }}</label>
       <VerifiersInput
         :model-value="modelValue.verifiers"
         :disabled="disabled"
@@ -91,3 +94,12 @@ function externalErrorsFor(prefix: string): FormFieldError[] {
     </div>
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "creators": "Creators",
+    "verifiers": "Verifiers"
+  }
+}
+</i18n>

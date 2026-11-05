@@ -5,11 +5,14 @@ import Navbar from "@/components/navbar/Navbar.vue";
 import Footer from "@/components/layout/Footer.vue";
 import ErrorFallback from "@/components/ui/ErrorFallback.vue";
 import { useThemeStore } from "@/stores/theme";
+import { useLocaleStore } from "@/stores/locale";
 import { Toaster } from "vue-sonner";
 
 const route = useRoute();
 // Initialize theme store so saved theme is applied on load
 useThemeStore();
+// Initialize locale store so saved language is applied on load
+useLocaleStore();
 
 const renderError = ref<unknown>(null);
 

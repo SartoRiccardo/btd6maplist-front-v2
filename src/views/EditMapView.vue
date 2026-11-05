@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 import {
@@ -31,6 +32,8 @@ import {
 const route = useRoute();
 const router = useRouter();
 const auth = useAuthStore();
+
+const { t } = useI18n({ inheritLocale: true });
 
 const code = computed(() => route.params["code"] as string);
 
@@ -166,37 +169,39 @@ async function handleSave() {
       apiErrors.value = errorResult.fieldErrors;
       await formRef.value.clearTouched();
       if (errorResult.fieldErrors.length === 0) {
-        const message = errorResult.message || "Something went wrong. Please try again.";
-        toast.error(`${message} (Error code: ${errorResult.status})`);
+        const message = errorResult.message || t("somethingWentWrong");
+        toast.error(`${message} ${t("errorCode", { code: errorResult.status })}`);
       }
     } else {
-      toast.error("Something went wrong. Please try again.");
+      toast.error(t("somethingWentWrong"));
     }
   }
 }
 
 async function handleDelete() {
-  if (!confirm("Are you sure you want to delete this map?")) return;
+  if (!confirm(t("deleteConfirm"))) return;
 
   try {
     await deleteMutation.mutateAsync(code.value);
     router.push("/");
   } catch {
-    toast.error("Failed to delete map. Please try again.");
+    toast.error(t("deleteFailed"));
   }
 }
 </script>
 
 <template>
   <div>
-    <h1 class="font-['Luckiest_Guy'] text-3xl text-center mb-6">Edit Map</h1>
+    <h1 class="font-['Luckiest_Guy'] text-3xl text-center mb-6">
+      {{ t("editMap") }}
+    </h1>
 
     <Panel v-if="isLoading" class="text-center py-8">
-      <p class="text-(--color-text-muted)">Loading...</p>
+      <p class="text-(--color-text-muted)">{{ t("common.loading") }}</p>
     </Panel>
 
     <Panel v-else-if="isError" class="text-center py-8">
-      <p class="text-(--color-danger)">Failed to load map.</p>
+      <p class="text-(--color-danger)">{{ t("loadFailed") }}</p>
     </Panel>
 
     <Panel v-else-if="formModel">
@@ -216,7 +221,7 @@ async function handleDelete() {
           :to="`/map/${code}`"
           class="text-(--color-highlight) hover:underline"
         >
-          Back to map
+          {{ t("backToMap") }}
         </router-link>
 
         <div class="ml-auto flex gap-2">
@@ -225,11 +230,27 @@ async function handleDelete() {
             class="bg-(--color-danger)! hover:bg-red-700!"
             @click="handleDelete"
           >
-            Delete
+            {{ t("common.delete") }}
           </Button>
-          <Button :disabled="busy" @click="handleSave"> Save </Button>
+          <Button :disabled="busy" @click="handleSave">
+            {{ t("common.save") }}
+          </Button>
         </div>
       </div>
     </Panel>
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "editMap": "Edit Map",
+    "backToMap": "Back to map",
+    "loadFailed": "Failed to load map.",
+    "somethingWentWrong": "Something went wrong. Please try again.",
+    "errorCode": "(Error code: {code})",
+    "deleteConfirm": "Are you sure you want to delete this map?",
+    "deleteFailed": "Failed to delete map. Please try again."
+  }
+}
+</i18n>

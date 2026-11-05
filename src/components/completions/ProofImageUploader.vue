@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onBeforeUnmount } from "vue";
+import { useI18n } from "vue-i18n";
 import DropZone from "@/components/ui/DropZone.vue";
 import ImageLightbox from "@/components/common/ImageLightbox.vue";
 
@@ -12,6 +13,8 @@ const props = withDefaults(
   }>(),
   { existingUrls: () => [], disabled: false, maxFiles: 4 },
 );
+
+const { t } = useI18n({ inheritLocale: true });
 
 const emit = defineEmits<{
   "update:modelValue": [files: File[]];
@@ -77,7 +80,7 @@ onBeforeUnmount(() => {
           >
             <img
               :src="url"
-              alt="Proof image"
+              :alt="t('proofImage')"
               class="w-full aspect-[4/3] object-cover rounded-(--radius-panel) cursor-zoom-in hover:opacity-80 transition-opacity"
               @click="lightboxRef?.show(url)"
             />
@@ -97,7 +100,7 @@ onBeforeUnmount(() => {
           >
             <img
               :src="url"
-              alt="Proof image"
+              :alt="t('proofImage')"
               class="w-full aspect-[4/3] object-cover rounded-(--radius-panel) cursor-zoom-in hover:opacity-80 transition-opacity"
               @click="lightboxRef?.show(url)"
             />
@@ -117,3 +120,11 @@ onBeforeUnmount(() => {
     <ImageLightbox ref="lightboxRef" />
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "proofImage": "Proof image"
+  }
+}
+</i18n>

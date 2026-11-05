@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 import { useTouchedProvider } from "@/composables/useTouchedFields";
 import { useEmitOnChange } from "@/composables/useEmitOnChange";
 import type { FormFieldError } from "@/services/api/formErrors";
@@ -23,6 +24,8 @@ const emit = defineEmits<{
   (e: "errors", value: FormFieldError[]): void;
 }>();
 
+const { t } = useI18n({ inheritLocale: true });
+
 const { touchAll, clearTouched, isTouched, touch } = useTouchedProvider();
 defineExpose({ touchAll, clearTouched });
 
@@ -36,13 +39,13 @@ const ownErrors = computed<FormFieldError[]>(() => {
   if (!props.modelValue.discord_id?.trim())
     errors.push({
       path: "discord_id",
-      message: "Discord ID is required",
+      message: t("discordIdRequired"),
       source: "validation",
     });
   if (!props.modelValue.name?.trim())
     errors.push({
       path: "name",
-      message: "Username is required",
+      message: t("usernameRequired"),
       source: "validation",
     });
   return errors;
@@ -69,7 +72,7 @@ function fieldError(field: string): string | undefined {
 <template>
   <div class="space-y-3">
     <div>
-      <label class="block text-sm font-bold mb-1">Discord ID</label>
+      <label class="block text-sm font-bold mb-1">{{ t("discordId") }}</label>
       <input
         :value="modelValue.discord_id"
         type="text"
@@ -86,11 +89,11 @@ function fieldError(field: string): string | undefined {
     </div>
 
     <div>
-      <label class="block text-sm font-bold mb-1">Username</label>
+      <label class="block text-sm font-bold mb-1">{{ t("username") }}</label>
       <input
         :value="modelValue.name"
         type="text"
-        placeholder="Username"
+        :placeholder="t('username')"
         :disabled="disabled"
         class="w-full px-3 py-1.5 rounded-(--radius-btn) bg-(--color-primary) text-(--color-text) border border-(--color-contrast) focus:outline-none focus:border-(--color-active) disabled:opacity-50"
         @input="update({ name: ($event.target as HTMLInputElement).value })"
@@ -101,3 +104,14 @@ function fieldError(field: string): string | undefined {
     </div>
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "discordId": "Discord ID",
+    "username": "Username",
+    "discordIdRequired": "Discord ID is required",
+    "usernameRequired": "Username is required"
+  }
+}
+</i18n>

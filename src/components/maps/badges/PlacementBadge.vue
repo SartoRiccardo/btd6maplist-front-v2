@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 import type { Config } from "@/services/api/config/types";
 import { calcMapPoints } from "@/utils/points";
 
@@ -7,6 +8,8 @@ const props = defineProps<{
   placement: number;
   config?: Config;
 }>();
+
+const { t } = useI18n({ inheritLocale: true });
 
 const points = computed(() =>
   props.config != null ? calcMapPoints(props.placement, props.config) : null,
@@ -23,8 +26,16 @@ const points = computed(() =>
         v-if="points != null"
         class="absolute w-full left-0 bottom-[-0.7rem] text-[1.1rem]"
       >
-        {{ points }}<span class="ml-0.5">pt</span>
+        {{ points }}<span class="ml-0.5">{{ t("points") }}</span>
       </span>
     </p>
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "points": "pt"
+  }
+}
+</i18n>

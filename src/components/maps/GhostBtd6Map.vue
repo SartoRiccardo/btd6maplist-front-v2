@@ -1,9 +1,12 @@
 <script setup lang="ts">
+import { useI18n } from "vue-i18n";
 import type { GhostMap } from "@/services/api/maps/types";
 
 defineProps<{
   map: GhostMap;
 }>();
+
+const { t } = useI18n({ inheritLocale: true });
 </script>
 
 <template>
@@ -31,8 +34,17 @@ defineProps<{
       <p
         class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-['Luckiest_Guy'] font-border text-2xl text-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10"
       >
-        Submit Your<br />Recreation
+        {{ t("submitYour") }}<br />{{ t("recreation") }}
       </p>
     </div>
   </RouterLink>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "submitYour": "Submit Your",
+    "recreation": "Recreation"
+  }
+}
+</i18n>

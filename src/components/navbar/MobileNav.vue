@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { RouterLink } from "vue-router";
+import { useI18n } from "vue-i18n";
 import {
   Drawer,
   DrawerClose,
@@ -26,6 +27,8 @@ const emit = defineEmits<{
 
 const isDrawerOpen = ref(false);
 
+const { t } = useI18n({ inheritLocale: true });
+
 function openDrawer() {
   isDrawerOpen.value = true;
   emit("open");
@@ -42,18 +45,15 @@ function closeDrawer() {
       <DrawerTrigger
         @click="openDrawer"
         class="flex items-center rounded-xl px-4 py-2 bg-(--color-secondary) text-(--color-text) transition-colors duration-200"
-        aria-label="Toggle menu"
+        :aria-label="t('toggleMenu')"
       >
         <i class="bi bi-list text-xl"></i>
       </DrawerTrigger>
 
       <DrawerContent class="h-dvh bg-(--color-primary) text-(--color-text)">
         <div class="sr-only">
-          <DrawerTitle>Navigation Menu</DrawerTitle>
-          <DrawerDescription
-            >Mobile navigation menu with links and user
-            profile</DrawerDescription
-          >
+          <DrawerTitle>{{ t("navigationMenu") }}</DrawerTitle>
+          <DrawerDescription>{{ t("drawerDescription") }}</DrawerDescription>
         </div>
         <div class="flex flex-col h-full font-['Oswald']">
           <!-- Header -->
@@ -66,20 +66,20 @@ function closeDrawer() {
               class="flex items-center gap-4 text-(--color-text)!"
             >
               <img
-                alt="Logo"
+                :alt="t('logo')"
                 src="/images/maplist.webp"
                 class="w-8 h-8 translate-y-[-0.1rem] rounded-full scale-125"
               />
               <span
                 class="font-['Luckiest_Guy'] text-[1.4rem] translate-y-[0.2rem] uppercase"
               >
-                BTD6 Maplist
+                {{ t("brandName") }}
               </span>
             </RouterLink>
             <DrawerClose
               @click="isDrawerOpen = false"
               class="rounded-lg p-2 text-(--color-text) transition-colors hover:bg-(--color-secondary) -translate-y-0.5"
-              aria-label="Close menu"
+              :aria-label="t('closeMenu')"
             >
               <i class="bi bi-x-lg text-xl"></i>
             </DrawerClose>
@@ -94,7 +94,7 @@ function closeDrawer() {
                   class="flex items-center gap-2 rounded-xl px-4 text-[1.4rem] font-bold uppercase text-(--color-text)!"
                 >
                   <i class="bi bi-search"></i>
-                  Search
+                  {{ t("search") }}
                 </RouterLink>
               </li>
               <template v-for="item in navItems" :key="item.name">
@@ -146,3 +146,17 @@ function closeDrawer() {
     </Drawer>
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "toggleMenu": "Toggle menu",
+    "navigationMenu": "Navigation Menu",
+    "drawerDescription": "Mobile navigation menu with links and user profile",
+    "logo": "Logo",
+    "brandName": "BTD6 Maplist",
+    "closeMenu": "Close menu",
+    "search": "Search"
+  }
+}
+</i18n>

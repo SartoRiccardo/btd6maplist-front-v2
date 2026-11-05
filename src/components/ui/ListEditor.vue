@@ -1,4 +1,5 @@
 <script setup lang="ts" generic="T">
+import { useI18n } from "vue-i18n";
 import Button from "@/components/ui/Button.vue";
 
 const props = withDefaults(
@@ -9,8 +10,10 @@ const props = withDefaults(
     addLabel?: string;
     minItems?: number;
   }>(),
-  { disabled: false, addLabel: "Add", minItems: 0 },
+  { disabled: false, addLabel: undefined, minItems: 0 },
 );
+
+const { t } = useI18n({ inheritLocale: true });
 
 const emit = defineEmits<{
   "update:modelValue": [value: T[]];
@@ -52,7 +55,15 @@ function removeAt(index: number) {
     </div>
 
     <Button v-if="!disabled" @click="add">
-      <i class="bi bi-plus-lg" /> {{ addLabel }}
+      <i class="bi bi-plus-lg" /> {{ addLabel ?? t("add") }}
     </Button>
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "add": "Add"
+  }
+}
+</i18n>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { useI18n } from "vue-i18n";
 import { useAuthStore } from "@/stores/auth";
 import { useFormat } from "@/services/api/formats/queries";
 import {
@@ -18,6 +19,8 @@ import Button from "@/components/ui/Button.vue";
 import ConfirmModal from "@/components/common/ConfirmModal.vue";
 import AchievementRoleModal from "@/components/formats/AchievementRoleModal.vue";
 import Icon from "@/components/common/Icon.vue";
+
+const { t } = useI18n({ inheritLocale: true });
 
 const route = useRoute();
 const router = useRouter();
@@ -83,7 +86,7 @@ async function handleAdd(lbType: string) {
     undefined,
     lbType,
   );
-  if (ok) toast.success("Role created.");
+  if (ok) toast.success(t("roleCreated"));
 }
 
 async function handleEdit(role: AchievementRole) {
@@ -91,7 +94,7 @@ async function handleEdit(role: AchievementRole) {
     (data) => updateRole({ id: role.id, data }),
     role,
   );
-  if (ok) toast.success("Role updated.");
+  if (ok) toast.success(t("roleUpdated"));
 }
 
 async function handleDelete(role: AchievementRole) {
@@ -100,9 +103,9 @@ async function handleDelete(role: AchievementRole) {
   isBusy.value = true;
   try {
     await deleteRole({ id: role.id, formatId: id });
-    toast.success("Role deleted.");
+    toast.success(t("roleDeleted"));
   } catch {
-    toast.error("Failed to delete role.");
+    toast.error(t("roleDeleteFailed"));
   } finally {
     isBusy.value = false;
   }
@@ -114,16 +117,16 @@ async function handleDelete(role: AchievementRole) {
     <h1
       class="font-['Luckiest_Guy'] text-3xl md:text-4xl text-center mt-6 mb-4"
     >
-      {{ format ? format.name : "Achievement Roles" }}
+      {{ format ? format.name : t("title") }}
     </h1>
 
     <div v-if="isLoading" class="flex justify-center py-12">
-      <p class="text-(--color-text-muted)">Loading...</p>
+      <p class="text-(--color-text-muted)">{{ t("common.loading") }}</p>
     </div>
 
     <div v-else-if="!canEdit" class="flex justify-center py-12">
       <p class="text-(--color-text-muted)">
-        You don't have permission to edit achievement roles.
+        {{ t("noPermission") }}
       </p>
     </div>
 
@@ -143,7 +146,7 @@ async function handleDelete(role: AchievementRole) {
             <h2 class="font-['Luckiest_Guy'] text-2xl">{{ group.label }}</h2>
           </div>
           <Button :disabled="isBusy" @click="handleAdd(group.key)">
-            <i class="bi bi-plus-lg" /> Add
+            <i class="bi bi-plus-lg" /> {{ t("add") }}
           </Button>
         </div>
         <hr class="border-(--color-contrast) mb-4" />
@@ -152,7 +155,7 @@ async function handleDelete(role: AchievementRole) {
           v-if="group.roles.length === 0"
           class="text-(--color-text-muted) text-sm mb-2"
         >
-          No roles yet.
+          {{ t("noRoles") }}
         </p>
 
         <div v-else class="flex flex-col gap-2 mb-2">
@@ -182,9 +185,9 @@ async function handleDelete(role: AchievementRole) {
               </div>
               <!-- Line 2: threshold + description -->
               <p class="text-sm text-(--color-text-muted) mt-0.5 mb-0 truncate">
-                <span v-if="role.for_first"><strong>1st place</strong></span>
+                <span v-if="role.for_first"><strong>{{ t("firstPlace") }}</strong></span>
                 <span v-else
-                  ><strong>Score threshold:</strong> {{ role.threshold }}</span
+                  ><strong>{{ t("scoreThreshold") }}</strong> {{ role.threshold }}</span
                 >
                 <span v-if="role.discord_roles.length">
                   &nbsp;&mdash;&nbsp;
@@ -209,13 +212,32 @@ async function handleDelete(role: AchievementRole) {
     </template>
 
     <div class="flex justify-between items-center mt-6">
-      <Button @click="router.push('/admin/lists')">← Back</Button>
+      <Button @click="router.push('/admin/lists')">{{ t("back") }}</Button>
     </div>
 
     <AchievementRoleModal ref="modalRef" :format-id="id" />
 
     <ConfirmModal ref="confirmRef">
-      <p class="text-center">Delete this achievement role?</p>
+      <p class="text-center">{{ t("deleteRoleConfirm") }}</p>
     </ConfirmModal>
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "title": "Achievement Roles",
+    "noPermission": "You don't have permission to edit achievement roles.",
+    "add": "Add",
+    "noRoles": "No roles yet.",
+    "firstPlace": "1st place",
+    "scoreThreshold": "Score threshold:",
+    "back": "← Back",
+    "deleteRoleConfirm": "Delete this achievement role?",
+    "roleCreated": "Role created.",
+    "roleUpdated": "Role updated.",
+    "roleDeleted": "Role deleted.",
+    "roleDeleteFailed": "Failed to delete role."
+  }
+}
+</i18n>

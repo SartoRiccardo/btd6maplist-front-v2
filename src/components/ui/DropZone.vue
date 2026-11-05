@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
+import { useI18n } from "vue-i18n";
 
 const props = withDefaults(
   defineProps<{
@@ -14,7 +15,7 @@ const props = withDefaults(
     accept: "image/*",
     maxFiles: 4,
     maxSizeBytes: 10 * 1024 * 1024,
-    placeholder: "Drop files here or click to browse",
+    placeholder: undefined,
   },
 );
 
@@ -22,6 +23,8 @@ const emit = defineEmits<{
   "update:modelValue": [files: File[]];
   error: [message: string];
 }>();
+
+const { t } = useI18n({ inheritLocale: true });
 
 const dragging = ref(false);
 const fileInput = ref<HTMLInputElement | null>(null);
@@ -65,11 +68,11 @@ function addFiles(incoming: File[]) {
   const valid: File[] = [];
   for (const file of incoming) {
     if (!matchesAccept(file, accepted)) {
-      emit("error", `"${file.name}" is not an accepted file type.`);
+      emit("error", t("notAcceptedType", { name: file.name }));
       continue;
     }
     if (file.size > props.maxSizeBytes) {
-      emit("error", `"${file.name}" exceeds the maximum file size.`);
+      emit("error", t("tooLarge", { name: file.name }));
       continue;
     }
     valid.push(file);
@@ -77,7 +80,7 @@ function addFiles(incoming: File[]) {
 
   const room = props.maxFiles - props.modelValue.length;
   if (valid.length > room) {
-    emit("error", `You can only upload up to ${props.maxFiles} files.`);
+    emit("error", t("uploadLimit", { n: props.maxFiles }));
   }
 
   const toAdd = valid.slice(0, room);
@@ -137,7 +140,9 @@ defineExpose({ removeFile });
       >
         <p class="text-(--color-text-muted)">
           {{
-            canAddMore ? placeholder : `Maximum of ${maxFiles} files reached`
+            canAddMore
+              ? (placeholder ?? t("dropHere"))
+              : t("maxReached", { n: maxFiles })
           }}
         </p>
       </slot>
@@ -160,3 +165,15 @@ defineExpose({ removeFile });
     />
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "dropHere": "Drop files here or click to browse",
+    "maxReached": "Maximum of {n} files reached",
+    "notAcceptedType": "\"{name}\" is not an accepted file type.",
+    "tooLarge": "\"{name}\" exceeds the maximum file size.",
+    "uploadLimit": "You can only upload up to {n} files."
+  }
+}
+</i18n>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
+import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import { useMap } from "@/services/api/maps/queries";
 import { useConfig } from "@/services/api/config/queries";
@@ -25,6 +26,8 @@ import { formatDate } from "@/utils/dates";
 const route = useRoute();
 const auth = useAuthStore();
 const code = computed(() => route.params["code"] as string);
+
+const { t } = useI18n({ inheritLocale: true });
 
 const { data: mapData, isError: mapError } = useMap(code, {
   include: "creators.flair,verifiers.flair",
@@ -142,13 +145,15 @@ const showSubmitCompletion = computed(
 
 <template>
   <div v-if="mapError" class="text-center mt-12">
-    <h1 class="font-['Luckiest_Guy'] text-4xl mb-4">Map Not Found</h1>
+    <h1 class="font-['Luckiest_Guy'] text-4xl mb-4">
+      {{ t("mapNotFound") }}
+    </h1>
     <p class="text-(--color-text-muted)">
-      The map code <span class="font-mono">{{ code }}</span> doesn't exist or
-      couldn't be loaded.
+      {{ t("mapCodePrefix") }} <span class="font-mono">{{ code }}</span>
+      {{ t("mapCodeSuffix") }}
     </p>
     <RouterLink to="/" class="text-(--color-highlight) mt-4 inline-block">
-      Back to Home
+      {{ t("backToHome") }}
     </RouterLink>
   </div>
 
@@ -173,7 +178,8 @@ const showSubmitCompletion = computed(
 
     <!-- Code + Copy -->
     <p class="text-center text-lg mb-6">
-      Code: <span class="underline">{{ mapData.code }}</span>
+      {{ t("codeLabel") }}
+      <span class="underline">{{ mapData.code }}</span>
       <button
         class="ml-2 text-(--color-highlight) hover:text-(--color-highlight) transition-colors duration-150 cursor-pointer bg-transparent border-none p-0"
         @click="copyCode"
@@ -185,7 +191,7 @@ const showSubmitCompletion = computed(
 
     <div v-if="canEditMap" class="flex justify-center mb-2">
       <LinkButton :to="`/map/${code}/edit`">
-        <i class="bi bi-pencil-fill mr-0.5" /> Edit Map
+        <i class="bi bi-pencil-fill mr-0.5" /> {{ t("editMap") }}
       </LinkButton>
     </div>
 
@@ -219,7 +225,7 @@ const showSubmitCompletion = computed(
     <!-- Round 6 Start -->
     <div v-if="r6Start" class="my-6">
       <h2 class="text-center font-['Luckiest_Guy'] text-2xl mb-4">
-        Round 6 Start
+        {{ t("round6Start") }}
       </h2>
       <div v-if="youtubeEmbedUrl" class="flex justify-center">
         <iframe
@@ -240,7 +246,7 @@ const showSubmitCompletion = computed(
       <div v-else-if="isR6Image" class="flex justify-center">
         <StandaloneImage
           :src="r6Start!"
-          alt="Round 6 Start"
+          :alt="t('round6Start')"
           class="max-w-2xl"
         />
       </div>
@@ -249,7 +255,7 @@ const showSubmitCompletion = computed(
     <!-- My Completions -->
     <div v-if="auth.isAuthenticated && auth.user" class="my-6">
       <h2 class="text-center font-['Luckiest_Guy'] text-2xl mb-4">
-        My Completions
+        {{ t("myCompletions") }}
       </h2>
       <div
         v-if="showSubmitCompletion"
@@ -260,10 +266,10 @@ const showSubmitCompletion = computed(
           :to="`/maps/${completionRulesSlug}/completion-rules`"
           class="text-sm text-(--color-highlight)"
         >
-          Completion Submission Rules
+          {{ t("completionSubmissionRules") }}
         </RouterLink>
         <LinkButton :to="`/map/${code}/submit-completion`">
-          <i class="bi bi-trophy-fill mr-0.5" /> Submit Completion
+          <i class="bi bi-trophy-fill mr-0.5" /> {{ t("submitCompletion") }}
         </LinkButton>
       </div>
       <CompletionList
@@ -277,22 +283,22 @@ const showSubmitCompletion = computed(
           canEditCompletion ? (id) => `/completions/${id}/edit` : undefined
         "
         :show-filters="false"
-        empty-message="You haven't completed this map yet."
+        :empty-message="t('noCompletionsYet')"
       />
     </div>
     <div v-else-if="!auth.isAuthenticated" class="my-6">
       <h2 class="text-center font-['Luckiest_Guy'] text-2xl mb-4">
-        My Completions
+        {{ t("myCompletions") }}
       </h2>
       <div class="flex justify-center">
-        <DiscordLoginButton text="Log in to submit completions" />
+        <DiscordLoginButton :text="t('logInToSubmitCompletions')" />
       </div>
     </div>
 
     <!-- Current LCC -->
     <div class="my-6">
       <h2 class="text-center font-['Luckiest_Guy'] text-2xl mb-4">
-        Current LCC
+        {{ t("currentLcc") }}
       </h2>
       <CompletionRowSkeleton v-if="lccLoading">
         <UserEntrySkeleton />
@@ -318,7 +324,7 @@ const showSubmitCompletion = computed(
           <div class="flex items-center justify-end gap-2 pr-5">
             <img
               src="/images/medals/medal_lcc.webp"
-              title="Current LCC"
+              :title="t('currentLcc')"
               class="w-[40px] h-[40px]"
             />
             <span class="font-bold font-border text-lg"
@@ -331,18 +337,18 @@ const showSubmitCompletion = computed(
         </template>
       </CompletionRow>
       <p v-else class="text-center text-(--color-text-muted)">
-        No LCC recorded yet.
+        {{ t("noLccYet") }}
       </p>
     </div>
 
     <!-- Completions -->
     <div class="my-6">
       <h2 class="text-center font-['Luckiest_Guy'] text-2xl mb-4">
-        Completions
+        {{ t("completions") }}
       </h2>
       <div v-if="canCreateCompletion" class="flex justify-center mb-4">
         <LinkButton :to="`/map/${code}/insert-completion`">
-          <i class="bi bi-plus-lg mr-0.5" /> Insert Completion
+          <i class="bi bi-plus-lg mr-0.5" /> {{ t("insertCompletion") }}
         </LinkButton>
       </div>
       <CompletionList
@@ -358,3 +364,26 @@ const showSubmitCompletion = computed(
     </div>
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "mapNotFound": "Map Not Found",
+    "mapCodePrefix": "The map code",
+    "mapCodeSuffix": "doesn't exist or couldn't be loaded.",
+    "backToHome": "Back to Home",
+    "codeLabel": "Code:",
+    "editMap": "Edit Map",
+    "round6Start": "Round 6 Start",
+    "myCompletions": "My Completions",
+    "completionSubmissionRules": "Completion Submission Rules",
+    "submitCompletion": "Submit Completion",
+    "logInToSubmitCompletions": "Log in to submit completions",
+    "currentLcc": "Current LCC",
+    "completions": "Completions",
+    "insertCompletion": "Insert Completion",
+    "noCompletionsYet": "You haven't completed this map yet.",
+    "noLccYet": "No LCC recorded yet."
+  }
+}
+</i18n>

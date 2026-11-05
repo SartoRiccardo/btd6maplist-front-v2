@@ -9,6 +9,7 @@ import type { SaveCompletionRequest } from "@/services/api/completions/types";
 import { ApiError } from "@/services/api/client";
 import { parseApiErrors, type FormFieldError } from "@/services/api/formErrors";
 import { toast } from "vue-sonner";
+import { useI18n } from "vue-i18n";
 import { getFormatsMapIsIn } from "@/utils/formatBadges";
 import { permissions } from "@/constants/permissions";
 import Panel from "@/components/ui/Panel.vue";
@@ -24,6 +25,7 @@ import UrlListInput from "@/components/completions/UrlListInput.vue";
 const route = useRoute();
 const router = useRouter();
 const auth = useAuthStore();
+const { t } = useI18n({ inheritLocale: true });
 
 const code = computed(() => route.params["code"] as string);
 const mapUrl = computed(() => `/map/${code.value}`);
@@ -91,7 +93,7 @@ async function handleSubmit() {
   await formRef.value.touchAll();
 
   if (proofImages.value.length === 0) {
-    toast.error("At least one proof image is required.");
+    toast.error(t("proofImageRequired"));
     return;
   }
 
@@ -122,10 +124,10 @@ async function handleSubmit() {
       apiErrors.value = parseApiErrors(error).fieldErrors;
       await formRef.value.clearTouched();
       if (apiErrors.value.length === 0) {
-        toast.error("Something went wrong. Please try again.");
+        toast.error(t("somethingWentWrong"));
       }
     } else {
-      toast.error("Something went wrong. Please try again.");
+      toast.error(t("somethingWentWrong"));
     }
   }
 }
@@ -134,8 +136,8 @@ async function handleSubmit() {
 <template>
   <div>
     <h1 class="font-['Luckiest_Guy'] text-3xl text-center mb-6">
-      Insert Completion
-      <template v-if="mapData"> for {{ mapData.name }}</template>
+      {{ t("title") }}
+      <template v-if="mapData"> {{ t("forMap", { name: mapData.name }) }}</template>
     </h1>
 
     <!-- Loading -->
@@ -144,14 +146,14 @@ async function handleSubmit() {
     <!-- No permission -->
     <Panel v-else-if="!canInsert">
       <p class="text-(--color-text-muted) text-center">
-        You don't have permission to insert completions.
+        {{ t("noPermission") }}
       </p>
     </Panel>
 
     <!-- No eligible formats -->
     <Panel v-else-if="eligibleFormats.length === 0">
       <p class="text-(--color-text-muted) text-center">
-        There are no formats you can insert completions for on this map.
+        {{ t("noEligibleFormats") }}
       </p>
     </Panel>
 
@@ -159,7 +161,7 @@ async function handleSubmit() {
     <Panel v-else class="flex flex-col gap-6">
       <!-- Proof Images -->
       <div>
-        <label class="block font-bold mb-2">Proof Images</label>
+        <label class="block font-bold mb-2">{{ t("proofImages") }}</label>
         <ProofImageUploader
           :model-value="proofImages"
           :disabled="busy"
@@ -175,14 +177,14 @@ async function handleSubmit() {
       <BoxedCheckbox
         v-model="hideVideos"
         :disabled="busy"
-        label="Hide my video proofs"
+        :label="t('hideVideos')"
       />
 
       <!-- Proof Videos -->
       <UrlListInput
         :model-value="proofVideos"
         :disabled="busy"
-        label="Proof Videos"
+        :label="t('proofVideos')"
         :max="10"
         @update:model-value="proofVideos = $event"
       />
@@ -197,9 +199,26 @@ async function handleSubmit() {
       />
 
       <div class="flex justify-end gap-2 mt-2">
-        <LinkButton :to="mapUrl" :disabled="busy">Cancel</LinkButton>
-        <Button :disabled="busy" @click="handleSubmit">Insert</Button>
+        <LinkButton :to="mapUrl" :disabled="busy">{{ t("common.cancel") }}</LinkButton>
+        <Button :disabled="busy" @click="handleSubmit">{{ t("insert") }}</Button>
       </div>
     </Panel>
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "title": "Insert Completion",
+    "forMap": "for {name}",
+    "noPermission": "You don't have permission to insert completions.",
+    "noEligibleFormats": "There are no formats you can insert completions for on this map.",
+    "proofImages": "Proof Images",
+    "proofVideos": "Proof Videos",
+    "hideVideos": "Hide my video proofs",
+    "insert": "Insert",
+    "proofImageRequired": "At least one proof image is required.",
+    "somethingWentWrong": "Something went wrong. Please try again."
+  }
+}
+</i18n>

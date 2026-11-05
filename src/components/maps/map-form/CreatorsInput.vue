@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
+import { useI18n } from "vue-i18n";
 import { useTouchedFields } from "@/composables/useTouchedFields";
 import { useEmitOnChange } from "@/composables/useEmitOnChange";
 import type { FormFieldError } from "@/services/api/formErrors";
@@ -26,6 +27,8 @@ const emit = defineEmits<{
 }>();
 
 const { isTouched, touch } = useTouchedFields();
+
+const { t } = useI18n({ inheritLocale: true });
 
 const creatorsUnknown = ref(props.modelValue.length === 0);
 let cachedCreators: CreatorEntry[] = [];
@@ -83,7 +86,7 @@ const ownErrors = computed<FormFieldError[]>(() => {
     if (!c.user_id) {
       errors.push({
         path: `creators.${i}.user_id`,
-        message: "A creator must be selected.",
+        message: t("creatorRequired"),
         source: "validation",
       });
     }
@@ -114,7 +117,7 @@ function fieldError(field: string): string | undefined {
     <BoxedCheckbox
       :model-value="creatorsUnknown"
       :disabled="disabled"
-      label="This map's creator is not known on Discord and hasn't interacted with the community"
+      :label="t('creatorUnknown')"
       @update:model-value="toggleUnknown"
     />
 
@@ -125,7 +128,7 @@ function fieldError(field: string): string | undefined {
           :default="{ user_id: null, role: null } as CreatorEntry"
           :disabled="disabled"
           :min-items="1"
-          add-label="Add Creator"
+          :add-label="t('addCreator')"
           @update:model-value="onRemove"
         >
           <template #item="{ index }">
@@ -136,7 +139,7 @@ function fieldError(field: string): string | undefined {
                   :search-fn="searchUsers"
                   :display-value="(u: User) => u.name"
                   :disabled="disabled"
-                  placeholder="Search users..."
+                  :placeholder="t('searchUsers')"
                   :min-chars="3"
                   @update:model-value="onUserSelect(index, $event)"
                 />
@@ -152,7 +155,7 @@ function fieldError(field: string): string | undefined {
                   type="text"
                   :value="modelValue[index]!.role"
                   :disabled="disabled"
-                  placeholder="Role (optional)"
+                  :placeholder="t('roleOptional')"
                   class="w-full px-3 py-2 rounded-(--radius-btn) bg-(--color-primary) text-(--color-text) border border-(--color-contrast) focus:outline-none focus:border-(--color-active)"
                   :class="{
                     'border-(--color-danger)!': fieldError(
@@ -179,3 +182,15 @@ function fieldError(field: string): string | undefined {
     </template>
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "creatorUnknown": "This map's creator is not known on Discord and hasn't interacted with the community",
+    "addCreator": "Add Creator",
+    "searchUsers": "Search users...",
+    "roleOptional": "Role (optional)",
+    "creatorRequired": "A creator must be selected."
+  }
+}
+</i18n>

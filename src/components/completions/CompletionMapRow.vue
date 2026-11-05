@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 import { RouterLink } from "vue-router";
 import type { Completion } from "@/services/api/completions/types";
 import UserEntry from "@/components/users/UserEntry.vue";
@@ -11,6 +12,7 @@ const props = defineProps<{
   completion: Completion;
 }>();
 
+const { t } = useI18n({ inheritLocale: true });
 const { data: formats } = useFormats();
 
 const hideNoGeraldo = computed(() => {
@@ -54,8 +56,8 @@ const hideNoGeraldo = computed(() => {
         <Tooltip
           :text="
             completion.black_border
-              ? 'CHIMPS (Black Border)'
-              : 'CHIMPS completion'
+              ? t('chimpsBlackBorder')
+              : t('chimpsCompletion')
           "
         >
           <img
@@ -67,14 +69,14 @@ const hideNoGeraldo = computed(() => {
             class="w-[45px] h-[45px]"
           />
         </Tooltip>
-        <Tooltip v-if="!hideNoGeraldo" text="No Optimal Hero">
+        <Tooltip v-if="!hideNoGeraldo" :text="t('noOptimalHero')">
           <img
             src="/images/medals/medal_nogerry.webp"
             class="w-[45px] h-[45px]"
             :class="{ 'medal-blocked': !completion.no_geraldo }"
           />
         </Tooltip>
-        <Tooltip v-if="completion.is_current_lcc" text="Current LCC">
+        <Tooltip v-if="completion.is_current_lcc" :text="t('currentLcc')">
           <img src="/images/medals/medal_lcc.webp" class="w-[45px] h-[45px]" />
         </Tooltip>
       </div>
@@ -88,3 +90,14 @@ const hideNoGeraldo = computed(() => {
     drop-shadow(-1px -1px 0 white);
 }
 </style>
+
+<i18n lang="json">
+{
+  "en": {
+    "chimpsBlackBorder": "CHIMPS (Black Border)",
+    "chimpsCompletion": "CHIMPS completion",
+    "noOptimalHero": "No Optimal Hero",
+    "currentLcc": "Current LCC"
+  }
+}
+</i18n>

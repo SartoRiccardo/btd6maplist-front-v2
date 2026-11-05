@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 import { useTouchedProvider } from "@/composables/useTouchedFields";
 import { useEmitOnChange } from "@/composables/useEmitOnChange";
 import type { FormFieldError } from "@/services/api/formErrors";
@@ -23,6 +24,8 @@ const emit = defineEmits<{
   (e: "errors", value: FormFieldError[]): void;
 }>();
 
+const { t } = useI18n({ inheritLocale: true });
+
 const { touchAll, clearTouched, isTouched, touch } = useTouchedProvider();
 defineExpose({ touchAll, clearTouched });
 
@@ -36,13 +39,13 @@ const ownErrors = computed<FormFieldError[]>(() => {
   if (!props.modelValue.name.trim()) {
     errors.push({
       path: "name",
-      message: "Display name is required.",
+      message: t("displayNameRequired"),
       source: "validation",
     });
   } else if (props.modelValue.name.length > 50) {
     errors.push({
       path: "name",
-      message: "Display name must be 50 characters or less.",
+      message: t("displayNameTooLong"),
       source: "validation",
     });
   }
@@ -72,7 +75,7 @@ function fieldError(field: string): string | undefined {
     <!-- Display Name -->
     <div>
       <label for="profile-name" class="block font-bold mb-1"
-        >Display Name</label
+        >{{ t("displayName") }}</label
       >
       <input
         id="profile-name"
@@ -92,7 +95,7 @@ function fieldError(field: string): string | undefined {
     <!-- Ninja Kiwi Open API Key -->
     <div>
       <label for="profile-nk-oak" class="block font-bold mb-1"
-        >Ninja Kiwi Open API Key</label
+        >{{ t("nkOakKey") }}</label
       >
       <input
         id="profile-nk-oak"
@@ -109,3 +112,14 @@ function fieldError(field: string): string | undefined {
     </div>
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "displayName": "Display Name",
+    "nkOakKey": "Ninja Kiwi Open API Key",
+    "displayNameRequired": "Display name is required.",
+    "displayNameTooLong": "Display name must be 50 characters or less."
+  }
+}
+</i18n>

@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
+import { useI18n } from "vue-i18n";
 import { handleDiscordCallback } from "@/services/api/auth";
 import type { DiscordCallbackRequest } from "@/services/api/auth/types";
 
 const route = useRoute();
+const { t } = useI18n({ inheritLocale: true });
 const hasOpener = ref(false);
 const error = ref<string | null>(null);
 
@@ -16,8 +18,8 @@ onMounted(async () => {
   const errorParam = route.query["error"] as string | undefined;
 
   if (!state) {
-    showError("State parameter is required");
-    sendError("missing_state", "State parameter is required");
+    showError(t("stateRequired"));
+    sendError("missing_state", t("stateRequired"));
     return;
   }
 
@@ -42,7 +44,7 @@ onMounted(async () => {
     });
   } catch (err) {
     const errorMessage =
-      err instanceof Error ? err.message : "Authentication failed";
+      err instanceof Error ? err.message : t("authFailed");
     showError(errorMessage);
     sendError("oauth_failed", errorMessage);
   }
@@ -79,15 +81,26 @@ function showError(message: string) {
 <template>
   <div class="flex items-center justify-center min-h-screen bg-gray-100">
     <div class="text-center">
-      <h1 class="text-2xl font-bold mb-4">Authenticating...</h1>
+      <h1 class="text-2xl font-bold mb-4">{{ t("authenticating") }}</h1>
       <p v-if="!error" class="text-gray-600">
-        Please wait while we complete your sign-in.
+        {{ t("pleaseWait") }}
       </p>
       <p v-if="error" class="text-red-500 mt-4">{{ error }}</p>
       <p v-if="!hasOpener" class="text-yellow-600 mt-4">
-        This window should close automatically. If it doesn't, you can close it
-        manually.
+        {{ t("closeManually") }}
       </p>
     </div>
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "stateRequired": "State parameter is required",
+    "authFailed": "Authentication failed",
+    "authenticating": "Authenticating...",
+    "pleaseWait": "Please wait while we complete your sign-in.",
+    "closeManually": "This window should close automatically. If it doesn't, you can close it manually."
+  }
+}
+</i18n>

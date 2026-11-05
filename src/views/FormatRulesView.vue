@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { useI18n } from "vue-i18n";
 import { useFormats } from "@/services/api/formats/queries";
 import { FORMAT_ICONS } from "@/constants/formats";
 import IconSelector from "@/components/ui/IconSelector.vue";
@@ -12,6 +13,7 @@ const props = defineProps<{
 
 const route = useRoute();
 const router = useRouter();
+const { t } = useI18n({ inheritLocale: true });
 const { data: formats, isLoading } = useFormats();
 
 const visibleFormats = computed(() => {
@@ -63,10 +65,9 @@ function onFormatChange(slug: string) {
   router.replace({ name: routeName, params: { slug } });
 }
 
-const title = computed(() => {
-  const type = props.kind === "map" ? "Map" : "Completion";
-  return `${type} Submission Rules`;
-});
+const title = computed(() =>
+  props.kind === "map" ? t("mapRules") : t("completionRules"),
+);
 
 const rules = computed(() =>
   props.kind === "map"
@@ -78,7 +79,7 @@ const rules = computed(() =>
 <template>
   <div>
     <div v-if="isLoading" class="text-center text-(--color-text-muted) my-6">
-      Loading...
+      {{ t("common.loading") }}
     </div>
     <template v-else>
       <h1 class="text-center font-['Luckiest_Guy'] text-3xl mt-6 mb-4">
@@ -94,12 +95,23 @@ const rules = computed(() =>
       <div v-if="format" class="mt-6">
         <MarkdownContent v-if="rules" :text="rules" />
         <p v-else class="text-center text-(--color-text-muted)">
-          No rules published yet.
+          {{ t("noRules") }}
         </p>
       </div>
       <p v-else class="text-center text-(--color-text-muted) mt-6">
-        Format not found.
+        {{ t("formatNotFound") }}
       </p>
     </template>
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "mapRules": "Map Submission Rules",
+    "completionRules": "Completion Submission Rules",
+    "noRules": "No rules published yet.",
+    "formatNotFound": "Format not found."
+  }
+}
+</i18n>

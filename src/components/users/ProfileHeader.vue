@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useI18n } from "vue-i18n";
 import type { User } from "@/services/api/users/types";
 import { DEFAULT_AVATAR_URL, DEFAULT_BANNER_URL } from "@/constants/user";
 import Tooltip from "@/components/ui/Tooltip.vue";
@@ -6,26 +7,28 @@ import UserRoles from "@/components/users/UserRoles.vue";
 
 defineProps<{ user: User }>();
 
+const { t } = useI18n({ inheritLocale: true });
+
 const medalTypes = [
   {
     key: "wins" as const,
     image: "/images/medals/medal_win.webp",
-    tooltip: "CHIMPS Completions",
+    tooltip: t("chimpsCompletions"),
   },
   {
     key: "black_border" as const,
     image: "/images/medals/medal_bb.webp",
-    tooltip: "CHIMPS Completions (Black Border)",
+    tooltip: t("chimpsBlackBorder"),
   },
   {
     key: "no_geraldo" as const,
     image: "/images/medals/medal_nogerry.webp",
-    tooltip: "No Optimal Hero",
+    tooltip: t("noOptimalHero"),
   },
   {
     key: "current_lcc" as const,
     image: "/images/medals/medal_lcc.webp",
-    tooltip: "Least Cash CHIMPS",
+    tooltip: t("leastCashChimps"),
   },
 ];
 </script>
@@ -84,3 +87,14 @@ const medalTypes = [
     </div>
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "chimpsCompletions": "CHIMPS Completions",
+    "chimpsBlackBorder": "CHIMPS Completions (Black Border)",
+    "noOptimalHero": "No Optimal Hero",
+    "leastCashChimps": "Least Cash CHIMPS"
+  }
+}
+</i18n>

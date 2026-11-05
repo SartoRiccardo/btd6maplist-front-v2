@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 import type { MapWithMetadata } from "@/services/api/maps/types";
 import { useFireEffect } from "@/composables/useFireEffect";
 
@@ -36,6 +37,8 @@ const versionLabel = computed(() => {
 });
 
 const { containerRef: _fireContainer } = useFireEffect(() => props.burning);
+
+const { t } = useI18n({ inheritLocale: true });
 </script>
 
 <template>
@@ -75,7 +78,7 @@ const { containerRef: _fireContainer } = useFireEffect(() => props.burning);
         target="_blank"
         class="bg-(--color-highlight) hover:brightness-110 text-(--color-text)! no-underline font-['Luckiest_Guy'] font-border text-2xl px-5 pt-3 pb-2 rounded-(--radius-btn) shadow transition-[filter] duration-200 text-center"
       >
-        Play
+        {{ t("play") }}
       </a>
     </div>
 
@@ -99,6 +102,14 @@ const { containerRef: _fireContainer } = useFireEffect(() => props.burning);
     </template>
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "play": "Play"
+  }
+}
+</i18n>
 
 <style scoped>
 .btd6map-black-border {

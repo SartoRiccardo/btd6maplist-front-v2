@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useI18n } from "vue-i18n";
+
 const props = withDefaults(
   defineProps<{
     modelValue: string[];
@@ -15,6 +17,8 @@ const props = withDefaults(
     itemErrors: () => [],
   },
 );
+
+const { t } = useI18n({ inheritLocale: true });
 
 const emit = defineEmits<{
   "update:modelValue": [value: string[]];
@@ -42,10 +46,10 @@ function addUrl() {
     <label v-if="label" class="block font-bold mb-1">
       {{ label }}
       <span v-if="required" class="text-(--color-highlight) font-normal"
-        >(required)</span
+        >{{ t("required") }}</span
       >
       <span v-else class="text-(--color-text-muted) font-normal"
-        >(optional)</span
+        >{{ t("optional") }}</span
       >
     </label>
 
@@ -84,7 +88,17 @@ function addUrl() {
       class="mt-2 text-sm text-(--color-highlight) hover:text-(--color-active) transition-colors disabled:opacity-50"
       @click="addUrl"
     >
-      <i class="bi bi-plus-lg" /> Add URL
+      <i class="bi bi-plus-lg" /> {{ t("addUrl") }}
     </button>
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "required": "(required)",
+    "optional": "(optional)",
+    "addUrl": "Add URL"
+  }
+}
+</i18n>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onBeforeUnmount } from "vue";
+import { useI18n } from "vue-i18n";
 import DropZone from "@/components/ui/DropZone.vue";
 import ImageLightbox from "@/components/common/ImageLightbox.vue";
 
@@ -18,6 +19,8 @@ const emit = defineEmits<{
   "clear-initial-url": [];
   error: [message: string];
 }>();
+
+const { t } = useI18n({ inheritLocale: true });
 
 const lightboxRef = ref<InstanceType<typeof ImageLightbox> | null>(null);
 const initialUrlCleared = ref(false);
@@ -70,7 +73,7 @@ onBeforeUnmount(revokeUrl);
       <div class="relative inline-block">
         <img
           :src="getPreviewUrl()"
-          alt="Uploaded image"
+          :alt="t('uploadedImage')"
           class="max-w-xs aspect-[4/3] object-cover rounded-(--radius-panel) cursor-zoom-in hover:opacity-80 transition-opacity"
           @click="lightboxRef?.show(getPreviewUrl())"
         />
@@ -90,7 +93,7 @@ onBeforeUnmount(revokeUrl);
       <div class="relative inline-block">
         <img
           :src="initialUrl"
-          alt="Current image"
+          :alt="t('currentImage')"
           class="max-w-xs aspect-[4/3] object-cover rounded-(--radius-panel) cursor-zoom-in hover:opacity-80 transition-opacity"
           @click="lightboxRef?.show(initialUrl)"
         />
@@ -125,3 +128,12 @@ onBeforeUnmount(revokeUrl);
     <ImageLightbox ref="lightboxRef" />
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "uploadedImage": "Uploaded image",
+    "currentImage": "Current image"
+  }
+}
+</i18n>

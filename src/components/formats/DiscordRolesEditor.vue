@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 import { useDiscordGuilds } from "@/services/discord/queries";
 import { canManageRoles } from "@/services/discord/index";
 import Button from "@/components/ui/Button.vue";
@@ -17,6 +18,8 @@ const props = withDefaults(
   }>(),
   { disabled: false },
 );
+
+const { t } = useI18n({ inheritLocale: true });
 
 const emit = defineEmits<{
   (e: "update:modelValue", value: DiscordRoleEntry[]): void;
@@ -82,7 +85,7 @@ const inputClass =
         "
       >
         <option value="" disabled>
-          {{ guildsLoading ? "Loading..." : "Select server..." }}
+          {{ guildsLoading ? t("common.loading") : t("selectServer") }}
         </option>
         <option v-for="guild in guilds" :key="guild.id" :value="guild.id">
           {{ guild.name }}
@@ -106,12 +109,21 @@ const inputClass =
     </div>
 
     <p v-if="hiddenRoles.length" class="text-(--color-text-muted) text-sm">
-      +{{ hiddenRoles.length }} role{{ hiddenRoles.length !== 1 ? "s" : "" }} in
-      servers you are not in
+{{ t("hiddenRolesNote", { n: hiddenRoles.length }, hiddenRoles.length) }}
     </p>
 
     <Button v-if="!disabled" @click="add">
-      <i class="bi bi-plus-lg" /> Add Discord Role
+      <i class="bi bi-plus-lg" /> {{ t("addDiscordRole") }}
     </Button>
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "selectServer": "Select server...",
+    "hiddenRolesNote": "+{n} role in servers you are not in | +{n} roles in servers you are not in",
+    "addDiscordRole": "Add Discord Role"
+  }
+}
+</i18n>

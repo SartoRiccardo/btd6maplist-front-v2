@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
+import { useI18n } from "vue-i18n";
 import { useTouchedProvider } from "@/composables/useTouchedFields";
 import { useEmitOnChange } from "@/composables/useEmitOnChange";
 import type { FormFieldError } from "@/services/api/formErrors";
@@ -41,6 +42,8 @@ const emit = defineEmits<{
 
 const { touchAll, clearTouched } = useTouchedProvider();
 defineExpose({ touchAll, clearTouched });
+
+const { t } = useI18n({ inheritLocale: true });
 
 // --- Model slicing ---
 
@@ -133,7 +136,9 @@ useEmitOnChange(flatErrors, (errors) => emit("errors", errors));
 <template>
   <div class="flex flex-col gap-3">
     <!-- Section 1: Map Information -->
-    <h2 class="font-['Luckiest_Guy'] text-2xl text-center">Map Information</h2>
+    <h2 class="font-['Luckiest_Guy'] text-2xl text-center">
+      {{ t("mapInformation") }}
+    </h2>
     <hr class="border-(--color-contrast)" />
     <MapInfoSection
       v-model="infoSlice"
@@ -144,7 +149,7 @@ useEmitOnChange(flatErrors, (errors) => emit("errors", errors));
 
     <!-- Section 2: List Placement -->
     <h2 class="font-['Luckiest_Guy'] text-2xl text-center pt-12">
-      List Placements
+      {{ t("listPlacements") }}
     </h2>
     <hr class="border-(--color-contrast) pb-4" />
     <ListPlacementSection
@@ -162,7 +167,9 @@ useEmitOnChange(flatErrors, (errors) => emit("errors", errors));
     />
 
     <!-- Section 3: Credits -->
-    <h2 class="font-['Luckiest_Guy'] text-2xl text-center pt-12">Credits</h2>
+    <h2 class="font-['Luckiest_Guy'] text-2xl text-center pt-12">
+      {{ t("credits") }}
+    </h2>
     <hr class="border-(--color-contrast)" />
     <CreditsSection
       v-model="creditsSlice"
@@ -174,3 +181,13 @@ useEmitOnChange(flatErrors, (errors) => emit("errors", errors));
     />
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "mapInformation": "Map Information",
+    "listPlacements": "List Placements",
+    "credits": "Credits"
+  }
+}
+</i18n>

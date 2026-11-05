@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import { useAuthStore } from "@/stores/auth";
 import { useConfig, useUpdateConfig } from "@/services/api/config/queries";
 import { ApiError } from "@/services/api/client";
@@ -14,6 +15,8 @@ import Panel from "@/components/ui/Panel.vue";
 import Button from "@/components/ui/Button.vue";
 import Badge from "@/components/common/Badge.vue";
 import { MARKDOWN_ICONS } from "@/utils/markdownIcons";
+
+const { t } = useI18n({ inheritLocale: true });
 
 interface ConfigFieldDef {
   key: string;
@@ -59,69 +62,69 @@ const MISC_KEYS = new Set(["current_btd6_ver"]);
 
 const MAPLIST_CATEGORY: ConfigCategoryDef = {
   id: "maplist",
-  label: "Maplist",
+  label: t("categories.maplist"),
   icon: FORMAT_ICONS.find((f) => f.id === FORMAT_MAPLIST)?.image,
   fields: [
-    { key: "points_top_map", label: "Points (Top Map)" },
-    { key: "points_bottom_map", label: "Points (Bottom Map)" },
-    { key: "formula_slope", label: "Formula Slope", step: 0.001 },
-    { key: "points_extra_lcc", label: "LCC Bonus Points", icon: "lcc" },
+    { key: "points_top_map", label: t("fields.pointsTopMap") },
+    { key: "points_bottom_map", label: t("fields.pointsBottomMap") },
+    { key: "formula_slope", label: t("fields.formulaSlope"), step: 0.001 },
+    { key: "points_extra_lcc", label: t("fields.lccBonusPoints"), icon: "lcc" },
     {
       key: "points_multi_gerry",
-      label: "No Optimal Hero Multiplier",
+      label: t("fields.noOptimalHeroMultiplier"),
       icon: "no_optimal_hero",
     },
     {
       key: "points_multi_bb",
-      label: "Black Border Multiplier",
+      label: t("fields.blackBorderMultiplier"),
       icon: "black_border",
     },
-    { key: "decimal_digits", label: "Decimal Digits" },
-    { key: "map_count", label: "Map Count" },
+    { key: "decimal_digits", label: t("fields.decimalDigits") },
+    { key: "map_count", label: t("fields.mapCount") },
   ],
 };
 
 const EXPERT_CATEGORY: ConfigCategoryDef = {
   id: "expert_list",
-  label: "Expert List",
+  label: t("categories.expertList"),
   icon: FORMAT_ICONS.find((f) => f.id === FORMAT_EXPERT_LIST)?.image,
   fields: [
-    { key: "exp_points_casual", label: "Casual Expert Points" },
-    { key: "exp_points_medium", label: "Medium Expert Points" },
-    { key: "exp_points_high", label: "High Expert Points" },
-    { key: "exp_points_true", label: "True Expert Points" },
-    { key: "exp_points_extreme", label: "Extreme Expert Points" },
+    { key: "exp_points_casual", label: t("fields.casualExpertPoints") },
+    { key: "exp_points_medium", label: t("fields.mediumExpertPoints") },
+    { key: "exp_points_high", label: t("fields.highExpertPoints") },
+    { key: "exp_points_true", label: t("fields.trueExpertPoints") },
+    { key: "exp_points_extreme", label: t("fields.extremeExpertPoints") },
     {
       key: "exp_nogerry_points_casual",
-      label: "Casual Expert No Optimal Hero Points",
+      label: t("fields.casualExpertNoOptimalHeroPoints"),
       icon: "no_optimal_hero",
     },
     {
       key: "exp_nogerry_points_medium",
-      label: "Medium Expert No Optimal Hero Points",
+      label: t("fields.mediumExpertNoOptimalHeroPoints"),
       icon: "no_optimal_hero",
     },
     {
       key: "exp_nogerry_points_high",
-      label: "High Expert No Optimal Hero Points",
+      label: t("fields.highExpertNoOptimalHeroPoints"),
       icon: "no_optimal_hero",
     },
     {
       key: "exp_nogerry_points_true",
-      label: "True Expert No Optimal Hero Points",
+      label: t("fields.trueExpertNoOptimalHeroPoints"),
       icon: "no_optimal_hero",
     },
     {
       key: "exp_nogerry_points_extreme",
-      label: "Extreme Expert No Optimal Hero Points",
+      label: t("fields.extremeExpertNoOptimalHeroPoints"),
       icon: "no_optimal_hero",
     },
     {
       key: "exp_bb_multi",
-      label: "Black Border Multiplier",
+      label: t("fields.blackBorderMultiplier"),
       icon: "black_border",
     },
-    { key: "exp_lcc_extra", label: "LCC Extra Points", icon: "lcc" },
+    { key: "exp_lcc_extra", label: t("fields.lccExtraPoints"), icon: "lcc" },
   ],
 };
 
@@ -167,9 +170,9 @@ const extraMiscFields = computed<ConfigFieldDef[]>(() => {
 
 const miscCategory = computed<ConfigCategoryDef>(() => ({
   id: "miscellaneous",
-  label: "Miscellaneous",
+  label: t("categories.miscellaneous"),
   fields: [
-    { key: "current_btd6_ver", label: "Current BTD6 Version", step: 0.1 },
+    { key: "current_btd6_ver", label: t("fields.currentBtd6Version"), step: 0.1 },
     ...extraMiscFields.value,
   ],
 }));
@@ -191,12 +194,12 @@ async function handleSave() {
       ...formModel.value,
       current_btd6_ver: Math.round(formModel.value["current_btd6_ver"]! * 10),
     } as never);
-    toast.success("Config saved successfully.");
+    toast.success(t("configSaved"));
   } catch (error: unknown) {
     toast.error(
       error instanceof ApiError
-        ? "Failed to save config. Please try again."
-        : "Something went wrong. Please try again.",
+        ? t("configSaveFailed")
+        : t("somethingWentWrong"),
     );
   } finally {
     isBusy.value = false;
@@ -209,16 +212,16 @@ async function handleSave() {
     <h1
       class="font-['Luckiest_Guy'] text-3xl md:text-4xl text-center mt-6 mb-6"
     >
-      Config
+      {{ t("title") }}
     </h1>
 
     <div v-if="isLoading" class="flex justify-center py-12">
-      <p class="text-(--color-text-muted)">Loading...</p>
+      <p class="text-(--color-text-muted)">{{ t("common.loading") }}</p>
     </div>
 
     <div v-else-if="!canEditAny" class="flex justify-center py-12">
       <p class="text-(--color-text-muted)">
-        You don't have permission to edit config.
+        {{ t("noPermission") }}
       </p>
     </div>
 
@@ -268,8 +271,47 @@ async function handleSave() {
       </Panel>
 
       <div class="flex justify-end mt-4">
-        <Button :disabled="isBusy" @click="handleSave">Save</Button>
+        <Button :disabled="isBusy" @click="handleSave">{{ t("common.save") }}</Button>
       </div>
     </template>
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "title": "Config",
+    "noPermission": "You don't have permission to edit config.",
+    "configSaved": "Config saved successfully.",
+    "configSaveFailed": "Failed to save config. Please try again.",
+    "somethingWentWrong": "Something went wrong. Please try again.",
+    "categories": {
+      "maplist": "Maplist",
+      "expertList": "Expert List",
+      "miscellaneous": "Miscellaneous"
+    },
+    "fields": {
+      "pointsTopMap": "Points (Top Map)",
+      "pointsBottomMap": "Points (Bottom Map)",
+      "formulaSlope": "Formula Slope",
+      "lccBonusPoints": "LCC Bonus Points",
+      "noOptimalHeroMultiplier": "No Optimal Hero Multiplier",
+      "blackBorderMultiplier": "Black Border Multiplier",
+      "decimalDigits": "Decimal Digits",
+      "mapCount": "Map Count",
+      "casualExpertPoints": "Casual Expert Points",
+      "mediumExpertPoints": "Medium Expert Points",
+      "highExpertPoints": "High Expert Points",
+      "trueExpertPoints": "True Expert Points",
+      "extremeExpertPoints": "Extreme Expert Points",
+      "casualExpertNoOptimalHeroPoints": "Casual Expert No Optimal Hero Points",
+      "mediumExpertNoOptimalHeroPoints": "Medium Expert No Optimal Hero Points",
+      "highExpertNoOptimalHeroPoints": "High Expert No Optimal Hero Points",
+      "trueExpertNoOptimalHeroPoints": "True Expert No Optimal Hero Points",
+      "extremeExpertNoOptimalHeroPoints": "Extreme Expert No Optimal Hero Points",
+      "lccExtraPoints": "LCC Extra Points",
+      "currentBtd6Version": "Current BTD6 Version"
+    }
+  }
+}
+</i18n>

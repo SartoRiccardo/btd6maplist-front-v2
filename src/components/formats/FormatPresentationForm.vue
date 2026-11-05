@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
+import { useI18n } from "vue-i18n";
 import { useTouchedProvider } from "@/composables/useTouchedFields";
 import { useEmitOnChange } from "@/composables/useEmitOnChange";
 import type { FormFieldError } from "@/services/api/formErrors";
@@ -8,9 +9,11 @@ import BoxedCheckbox from "@/components/ui/BoxedCheckbox.vue";
 import PasswordField from "@/components/ui/PasswordField.vue";
 import { MARKDOWN_ICONS } from "@/utils/markdownIcons";
 
+const { t } = useI18n({ inheritLocale: true });
+
 const ICON_GROUPS = [
   {
-    label: "Medals",
+    label: t("iconGroup.medals"),
     names: [
       "completion",
       "no_geraldo",
@@ -20,7 +23,7 @@ const ICON_GROUPS = [
     ],
   },
   {
-    label: "Formats",
+    label: t("iconGroup.formats"),
     names: [
       "maplist",
       "maplist_all_versions",
@@ -33,7 +36,7 @@ const ICON_GROUPS = [
     ],
   },
   {
-    label: "Expert List difficulties",
+    label: t("iconGroup.expertListDifficulties"),
     names: [
       "explist_casual",
       "expert_list_casual",
@@ -48,7 +51,7 @@ const ICON_GROUPS = [
     ],
   },
   {
-    label: "BotB difficulties",
+    label: t("iconGroup.botbDifficulties"),
     names: [
       "botb_beginner",
       "best_of_the_best_beginner",
@@ -61,7 +64,7 @@ const ICON_GROUPS = [
     ],
   },
   {
-    label: "Nostalgia Pack games",
+    label: t("iconGroup.nostalgiaPackGames"),
     names: [
       "np_btd1",
       "nostalgia_pack_btd1",
@@ -155,7 +158,7 @@ const ownErrors = computed<FormFieldError[]>(() => {
   if (!props.modelValue.name.trim()) {
     errors.push({
       path: "name",
-      message: "Name is required.",
+      message: t("nameRequired"),
       source: "validation",
     });
   }
@@ -163,7 +166,7 @@ const ownErrors = computed<FormFieldError[]>(() => {
   if (slug && !/^[a-z0-9-]+$/.test(slug)) {
     errors.push({
       path: "slug",
-      message: "Slug may only contain lowercase letters, digits, and hyphens.",
+      message: t("slugInvalid"),
       source: "validation",
     });
   }
@@ -196,12 +199,12 @@ const errorClass = "border-(--color-danger)!";
   <div class="flex flex-col gap-3">
     <!-- Presentation -->
     <div>
-      <h2 class="font-['Luckiest_Guy'] text-2xl text-center">Presentation</h2>
+      <h2 class="font-['Luckiest_Guy'] text-2xl text-center">{{ t("presentation") }}</h2>
       <hr class="border-(--color-contrast) mb-4" />
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div class="sm:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
-            <label class="block font-bold mb-1">Name</label>
+            <label class="block font-bold mb-1">{{ t("common.name") }}</label>
             <input
               type="text"
               :value="modelValue.name"
@@ -220,12 +223,12 @@ const errorClass = "border-(--color-danger)!";
           </div>
 
           <div>
-            <label class="block font-bold mb-1">Slug</label>
+            <label class="block font-bold mb-1">{{ t("slugLabel") }}</label>
             <input
               type="text"
               :value="modelValue.slug"
               :disabled="disabled"
-              placeholder="e.g. maplist"
+              :placeholder="t('slugPlaceholder')"
               :class="[inputClass, fieldError('slug') ? errorClass : '']"
               @input="
                 update({ slug: ($event.target as HTMLInputElement).value })
@@ -243,14 +246,14 @@ const errorClass = "border-(--color-danger)!";
             <BoxedCheckbox
               :model-value="modelValue.hidden"
               :disabled="disabled"
-              label="Hidden"
+              :label="t('hidden')"
               @update:model-value="update({ hidden: $event })"
             />
           </div>
         </div>
 
         <div>
-          <label class="block font-bold mb-1">Map Submission Status</label>
+          <label class="block font-bold mb-1">{{ t("mapSubmissionStatus") }}</label>
           <select
             :value="modelValue.map_submission_status"
             :disabled="disabled"
@@ -265,9 +268,9 @@ const errorClass = "border-(--color-danger)!";
               })
             "
           >
-            <option value="closed">Closed</option>
-            <option value="open">Open</option>
-            <option value="open_chimps">Open (CHIMPS only)</option>
+            <option value="closed">{{ t("closed") }}</option>
+            <option value="open">{{ t("open") }}</option>
+            <option value="open_chimps">{{ t("openChimpsOnly") }}</option>
           </select>
           <p
             v-if="fieldError('map_submission_status')"
@@ -278,7 +281,7 @@ const errorClass = "border-(--color-danger)!";
         </div>
 
         <div>
-          <label class="block font-bold mb-1">Run Submission Status</label>
+          <label class="block font-bold mb-1">{{ t("runSubmissionStatus") }}</label>
           <select
             :value="modelValue.run_submission_status"
             :disabled="disabled"
@@ -293,9 +296,9 @@ const errorClass = "border-(--color-danger)!";
               })
             "
           >
-            <option value="closed">Closed</option>
-            <option value="open">Open</option>
-            <option value="lcc_only">LCC only</option>
+            <option value="closed">{{ t("closed") }}</option>
+            <option value="open">{{ t("open") }}</option>
+            <option value="lcc_only">{{ t("lccOnly") }}</option>
           </select>
           <p
             v-if="fieldError('run_submission_status')"
@@ -306,7 +309,7 @@ const errorClass = "border-(--color-danger)!";
         </div>
 
         <div>
-          <label class="block font-bold mb-1">Map Submission Webhook</label>
+          <label class="block font-bold mb-1">{{ t("mapSubmissionWebhook") }}</label>
           <PasswordField
             :model-value="modelValue.map_submission_wh"
             :disabled="disabled"
@@ -322,7 +325,7 @@ const errorClass = "border-(--color-danger)!";
         </div>
 
         <div>
-          <label class="block font-bold mb-1">Run Submission Webhook</label>
+          <label class="block font-bold mb-1">{{ t("runSubmissionWebhook") }}</label>
           <PasswordField
             :model-value="modelValue.run_submission_wh"
             :disabled="disabled"
@@ -338,7 +341,7 @@ const errorClass = "border-(--color-danger)!";
         </div>
 
         <div>
-          <label class="block font-bold mb-1">Button Text</label>
+          <label class="block font-bold mb-1">{{ t("buttonText") }}</label>
           <input
             type="text"
             :value="modelValue.button_text"
@@ -357,7 +360,7 @@ const errorClass = "border-(--color-danger)!";
         </div>
 
         <div>
-          <label class="block font-bold mb-1">Discord Server URL</label>
+          <label class="block font-bold mb-1">{{ t("discordServerUrl") }}</label>
           <input
             type="url"
             :value="modelValue.discord_server_url"
@@ -381,7 +384,7 @@ const errorClass = "border-(--color-danger)!";
         </div>
 
         <div class="sm:col-span-2">
-          <label class="block font-bold mb-1">Description</label>
+          <label class="block font-bold mb-1">{{ t("description") }}</label>
           <textarea
             :value="modelValue.description"
             :disabled="disabled"
@@ -406,14 +409,14 @@ const errorClass = "border-(--color-danger)!";
         </div>
 
         <div class="sm:col-span-2">
-          <label class="block font-bold mb-2">Leaderboard Types</label>
+          <label class="block font-bold mb-2">{{ t("leaderboardTypes") }}</label>
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
               <BoxedCheckbox
                 :model-value="modelValue.is_lcc_leaderboard_enabled"
                 :disabled="disabled"
                 icon="/images/medals/medal_lcc.webp"
-                label="LCCs"
+                :label="t('lccs')"
                 @update:model-value="
                   update({ is_lcc_leaderboard_enabled: $event })
                 "
@@ -430,7 +433,7 @@ const errorClass = "border-(--color-danger)!";
                 :model-value="modelValue.is_no_geraldo_leaderboard_enabled"
                 :disabled="disabled"
                 icon="/images/medals/medal_nogerry.webp"
-                label="No Optimal Hero"
+                :label="t('noOptimalHero')"
                 @update:model-value="
                   update({ is_no_geraldo_leaderboard_enabled: $event })
                 "
@@ -447,7 +450,7 @@ const errorClass = "border-(--color-danger)!";
                 :model-value="modelValue.is_black_border_leaderboard_enabled"
                 :disabled="disabled"
                 icon="/images/medals/medal_bb.webp"
-                label="Black Border"
+                :label="t('blackBorder')"
                 @update:model-value="
                   update({ is_black_border_leaderboard_enabled: $event })
                 "
@@ -463,7 +466,7 @@ const errorClass = "border-(--color-danger)!";
         </div>
 
         <div class="sm:col-span-2">
-          <label class="block font-bold mb-1">Preview Maps</label>
+          <label class="block font-bold mb-1">{{ t("previewMaps") }}</label>
           <PreviewMapsInput
             :model-value="previewMapsValue"
             :format-id="formatId"
@@ -482,11 +485,11 @@ const errorClass = "border-(--color-danger)!";
 
     <!-- Rules -->
     <div>
-      <h2 class="font-['Luckiest_Guy'] text-2xl text-center pt-12">Rules</h2>
+      <h2 class="font-['Luckiest_Guy'] text-2xl text-center pt-12">{{ t("rules") }}</h2>
       <hr class="border-(--color-contrast) mb-4" />
       <div class="flex flex-col gap-4">
         <div>
-          <label class="block font-bold mb-1">Map Submission Rules</label>
+          <label class="block font-bold mb-1">{{ t("mapSubmissionRules") }}</label>
           <textarea
             :value="modelValue.map_submission_rules"
             :disabled="disabled"
@@ -513,7 +516,7 @@ const errorClass = "border-(--color-danger)!";
 
         <div>
           <label class="block font-bold mb-1"
-            >Completion Submission Rules</label
+            >{{ t("completionSubmissionRules") }}</label
           >
           <textarea
             :value="modelValue.completion_submission_rules"
@@ -546,20 +549,20 @@ const errorClass = "border-(--color-danger)!";
           <summary
             class="cursor-pointer font-bold text-(--color-text-muted) select-none"
           >
-            Markdown reference
+            {{ t("markdownReference") }}
           </summary>
           <div
             class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 text-(--color-text-muted)"
           >
             <div class="contents font-mono">
-              <span># Heading 1</span><span>H1 heading</span>
-              <span>## Heading 2</span><span>H2 heading</span>
-              <span>**bold**</span><span>Bold text</span> <span>*italic*</span
-              ><span>Italic text</span> <span>`code`</span
-              ><span>Inline code</span> <span>[text](url)</span
-              ><span>Link</span> <span>- item</span><span>Unordered list</span>
-              <span>1. item</span><span>Ordered list</span>
-              <span>&gt; text</span><span>Blockquote</span>
+              <span># Heading 1</span><span>{{ t("md.h1") }}</span>
+              <span>## Heading 2</span><span>{{ t("md.h2") }}</span>
+              <span>**bold**</span><span>{{ t("md.boldText") }}</span> <span>*italic*</span
+              ><span>{{ t("md.italicText") }}</span> <span>`code`</span
+              ><span>{{ t("md.inlineCode") }}</span> <span>[text](url)</span
+              ><span>{{ t("md.link") }}</span> <span>- item</span><span>{{ t("md.unorderedList") }}</span>
+              <span>1. item</span><span>{{ t("md.orderedList") }}</span>
+              <span>&gt; text</span><span>{{ t("md.blockquote") }}</span>
             </div>
             <div
               class="sm:col-span-2 mt-2 border-t border-(--color-contrast) pt-2 flex flex-col gap-1"
@@ -568,13 +571,13 @@ const errorClass = "border-(--color-danger)!";
                 <code class="bg-(--color-secondary) px-1 rounded"
                   >:icon_name:</code
                 >
-                — inline icon (no border)
+                — {{ t("md.inlineIcon") }}
               </p>
               <p>
                 <code class="bg-(--color-secondary) px-1 rounded"
                   >:(icon_name):</code
                 >
-                — icon with badge border
+                — {{ t("md.iconWithBadgeBorder") }}
               </p>
             </div>
           </div>
@@ -607,3 +610,56 @@ const errorClass = "border-(--color-danger)!";
     </div>
   </div>
 </template>
+
+<i18n lang="json">
+{
+  "en": {
+    "slugLabel": "Slug",
+    "slugPlaceholder": "e.g. maplist",
+    "slugInvalid": "Slug may only contain lowercase letters, digits, and hyphens.",
+    "hidden": "Hidden",
+    "mapSubmissionStatus": "Map Submission Status",
+    "runSubmissionStatus": "Run Submission Status",
+    "closed": "Closed",
+    "open": "Open",
+    "openChimpsOnly": "Open (CHIMPS only)",
+    "lccOnly": "LCC only",
+    "mapSubmissionWebhook": "Map Submission Webhook",
+    "runSubmissionWebhook": "Run Submission Webhook",
+    "buttonText": "Button Text",
+    "discordServerUrl": "Discord Server URL",
+    "description": "Description",
+    "leaderboardTypes": "Leaderboard Types",
+    "lccs": "LCCs",
+    "noOptimalHero": "No Optimal Hero",
+    "blackBorder": "Black Border",
+    "previewMaps": "Preview Maps",
+    "presentation": "Presentation",
+    "rules": "Rules",
+    "mapSubmissionRules": "Map Submission Rules",
+    "completionSubmissionRules": "Completion Submission Rules",
+    "markdownReference": "Markdown reference",
+    "nameRequired": "Name is required.",
+    "iconGroup": {
+      "medals": "Medals",
+      "formats": "Formats",
+      "expertListDifficulties": "Expert List difficulties",
+      "botbDifficulties": "BotB difficulties",
+      "nostalgiaPackGames": "Nostalgia Pack games"
+    },
+    "md": {
+      "h1": "H1 heading",
+      "h2": "H2 heading",
+      "boldText": "Bold text",
+      "italicText": "Italic text",
+      "inlineCode": "Inline code",
+      "link": "Link",
+      "unorderedList": "Unordered list",
+      "orderedList": "Ordered list",
+      "blockquote": "Blockquote",
+      "inlineIcon": "inline icon (no border)",
+      "iconWithBadgeBorder": "icon with badge border"
+    }
+  }
+}
+</i18n>
